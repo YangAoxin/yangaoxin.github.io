@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f9f7">
+  <meta name="description" content="Aoxin Yang (杨奥新). Research on emergency management and natural hazards, selected publications, and software projects.">
+  <title>Aoxin Yang · 杨奥新</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f9f7;
+      --ink: #182923;
+      --muted: #50645c;
+      --green: #235e4e;
+      --green-dark: #194738;
+      --line: #ccd8d0;
+      --wash: #eaf2ed;
+      --serif: Georgia, 'Songti SC', 'Noto Serif CJK SC', serif;
+      --sans: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 1rem/1.65 var(--sans); }
+    a { color: var(--green); text-underline-offset: .23em; }
+    a:hover { color: var(--green-dark); }
+    :focus-visible { outline: solid 2px var(--green); outline-offset: 4px; }
+    h1, h2, h3, p, figure { margin: 0; }
+    h1, h2 { font-family: var(--serif); font-weight: 400; line-height: 1.08; }
+    h2 { font-size: clamp(2.1rem, 4.3vw, 3.25rem); letter-spacing: -.04em; }
+    h3 { font-size: 1.13rem; line-height: 1.4; font-weight: 650; }
+    section[id] { scroll-margin-top: 5.5rem; }
+    .wrap { width: min(calc(100% - 3rem), 72rem); margin-inline: auto; }
+    .jump { position: absolute; z-index: 10; top: .5rem; left: .5rem; padding: .55rem .8rem; background: white; transform: translateY(-170%); }
+    .jump:focus { transform: none; }
+    .top { position: sticky; top: 0; z-index: 3; background: var(--paper); border-bottom: 1px solid var(--line); }
+    .bar { display: flex; min-height: 4.25rem; align-items: center; justify-content: space-between; gap: 1.25rem; }
+    .mark { display: flex; align-items: center; gap: .65rem; color: var(--ink); text-decoration: none; font-weight: 650; white-space: nowrap; }
+    .mark span { display: grid; place-items: center; width: 2rem; height: 2rem; border: 1px solid var(--line); border-radius: 50%; color: var(--green-dark); font: .82rem var(--serif); }
+    nav { display: flex; align-items: center; gap: clamp(.8rem, 2.6vw, 1.85rem); margin-left: auto; }
+    nav a { text-decoration: none; color: var(--muted); font-size: .91rem; font-weight: 600; }
+    nav a:hover { text-decoration: underline; }
+    .language { background: transparent; border: 1px solid var(--line); border-radius: 999px; color: var(--green-dark); font: 600 .88rem var(--sans); padding: .4rem .75rem; cursor: pointer; white-space: nowrap; }
+    .language:hover { background: var(--wash); }
+    .hero { display: grid; grid-template-columns: 1fr 1.04fr; align-items: center; gap: clamp(2rem, 6vw, 5.5rem); padding-block: clamp(3rem, 6.6vw, 5.75rem); }
+    .hero h1 { font-size: clamp(3.05rem, 6.3vw, 6rem); letter-spacing: -.061em; }
+    .other-name { margin-top: .4rem; font: 400 clamp(1.25rem, 2.5vw, 1.9rem) / 1.4 var(--serif); color: var(--green); }
+    .affiliation { margin-top: 1.3rem; color: var(--ink); font-size: .96rem; font-weight: 650; }
+    .intro { margin-top: .8rem; max-width: 43ch; color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.13rem); }
+    .actions { display: flex; align-items: center; flex-wrap: wrap; gap: .7rem; margin-top: 1.5rem; }
+    .button { display: inline-flex; align-items: center; min-height: 2.65rem; padding: .53rem .95rem; border: 1px solid var(--green); border-radius: .4rem; color: #fff; background: var(--green); font-size: .9rem; font-weight: 650; text-decoration: none; }
+    .button:hover { background: var(--green-dark); color: #fff; }
+    .button.light { background: transparent; color: var(--green); border-color: var(--line); }
+    .button.light:hover { background: var(--wash); border-color: var(--green); }
+    .terrain { overflow: hidden; border-radius: .55rem; background: var(--wash); }
+    .terrain img { display: block; aspect-ratio: 5 / 4; width: 100%; height: auto; object-fit: cover; object-position: 55% 48%; }
+    .terrain figcaption { padding: .45rem .8rem; color: var(--muted); font-size: .82rem; }
+    .band { border-block: 1px solid var(--line); background: var(--wash); }
+    .section { padding-block: clamp(2.75rem, 5.5vw, 4.6rem); }
+    .section h2 { margin-bottom: 1.7rem; }
+    .topics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem 2.1rem; }
+    .topics article { border-top: 2px solid #99b8a9; padding-top: 1rem; }
+    .topics p, .project p, .paper details p { color: var(--muted); margin-top: .5rem; }
+    .paper { padding: 1.2rem 0; border-bottom: 1px solid var(--line); }
+    .paper:first-of-type { border-top: 1px solid var(--line); }
+    .paper h3 { margin-bottom: .36rem; max-width: 74ch; }
+    .paper-meta { color: var(--green-dark); font-size: .88rem; }
+    .authors { color: var(--muted); font-size: .92rem; margin-block: .15rem .65rem; }
+    .authors strong { color: var(--ink); }
+    .paper-actions { display: flex; gap: 1rem; align-items: baseline; font-size: .9rem; }
+    .paper-actions a { font-weight: 650; }
+    details { margin-top: .45rem; max-width: 82ch; color: var(--green); }
+    summary { cursor: pointer; width: fit-content; font-size: .9rem; font-weight: 650; }
+    details p { font-size: .95rem; }
+    .projects { border-top: 1px solid var(--line); }
+    .project-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+    .project { display: flex; flex-direction: column; padding: 1.25rem; background: #fff; border: 1px solid var(--line); border-radius: .55rem; }
+    .project.featured { background: var(--wash); }
+    .project-type { margin-bottom: .55rem; color: var(--green-dark); font-size: .85rem; font-weight: 650; }
+    .project .actions { margin-top: auto; padding-top: 1rem; gap: .55rem .9rem; font-size: .9rem; font-weight: 650; }
+    footer { border-top: 1px solid var(--line); }
+    .foot { display: flex; justify-content: space-between; gap: 1rem; padding-block: 1.35rem; font-size: .9rem; color: var(--muted); }
+    :lang(zh-CN) h1, :lang(zh-CN) h2 { letter-spacing: -.025em; }
+    @media (max-width: 780px) {
+      .hero { gap: 2.3rem; }
+      .topics, .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 600px) {
+      .wrap { width: calc(100% - 2rem); }
+      .bar { gap: .55rem; flex-wrap: wrap; padding-top: .6rem; }
+      nav { order: 1; width: 100%; margin: 0; gap: .65rem 1.15rem; padding: .2rem 0 .58rem; flex-wrap: wrap; }
+      section[id] { scroll-margin-top: 6.5rem; }
+      .hero { grid-template-columns: 1fr; }
+      .terrain img { aspect-ratio: 16 / 10; }
+      .topics, .project-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <a class="jump" href="#main" data-zh="跳到正文">Skip to content</a>
+  <header class="top" id="top">
+    <div class="bar wrap">
+      <a class="mark" href="#about"><span aria-hidden="true">AY</span> Aoxin Yang</a>
+      <nav aria-label="Primary navigation">
+        <a href="#about" data-zh="简介">About</a>
+        <a href="#research" data-zh="研究">Research</a>
+        <a href="#publications" data-zh="论文">Publications</a>
+        <a href="#projects" data-zh="作品">Projects</a>
+      </nav>
+      <button class="language" type="button" lang="zh-CN" hidden>中文</button>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero wrap" id="about" aria-labelledby="name">
+      <div>
+        <h1 id="name" data-zh="杨奥新">Aoxin Yang</h1>
+        <p class="other-name" lang="zh-CN" data-zh="Aoxin Yang">杨奥新</p>
+        <p class="affiliation" data-zh="硕士研究生 · 应急管理部国家自然灾害防治研究院">Master’s student · National Institute of Natural Hazards</p>
+        <p class="intro" data-zh="我研究自然灾害应急管理，关注不同地区、组织如何分担救灾任务，以及道路中断等变化如何影响救灾行动。">I study emergency management for natural hazards, with a focus on how organizations coordinate disaster response and adapt when access and operational needs change.</p>
+        <div class="actions">
+          <a class="button" href="#publications" data-zh="代表性论文">Selected publications</a>
+          <a class="button light" href="https://github.com/YangAoxin">GitHub</a>
+        </div>
+      </div>
+      <figure class="terrain">
+        <img src="terrain.jpg" alt="" width="1200" height="800">
+        <figcaption data-zh="山地河谷 · AI 生成的配图">Mountain river valley · AI-generated illustration</figcaption>
+      </figure>
+    </section>
+
+    <div class="band">
+      <section class="section wrap" id="research" aria-labelledby="research-title">
+        <h2 id="research-title" data-zh="研究方向">Research interests</h2>
+        <div class="topics">
+          <article>
+            <h3 data-zh="灾害应急协同">Emergency coordination</h3>
+            <p data-zh="不同地区和组织如何分担任务、把预警转化为行动，并在灾情变化时调整协作。">How organizations share tasks, act on warnings, and adapt coordination across regions as disasters evolve.</p>
+          </article>
+          <article>
+            <h3 data-zh="救灾物资与配送">Relief logistics</h3>
+            <p data-zh="道路受阻时，如何根据任务紧迫性调整配送，并延续已经开始的救援行动。">How relief teams can adapt deliveries to road disruptions while accounting for urgent needs and work already under way.</p>
+          </article>
+          <article>
+            <h3 data-zh="自然灾害风险">Natural hazard risk</h3>
+            <p data-zh="运用空间数据和可解释机器学习分析滑坡易发性等自然灾害问题。">Using spatial data and interpretable machine learning to examine questions such as landslide susceptibility.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <section class="section wrap" id="publications" aria-labelledby="publications-title">
+      <h2 id="publications-title" data-zh="代表性论文">Selected publications</h2>
+      <article class="paper">
+        <p class="paper-meta"><i>Sustainability</i> · 2026 · <span data-zh="第一作者">First author</span></p>
+        <h3>A Multiscale Review of Emergency Collaboration Across Natural Hazards</h3>
+        <p class="authors"><strong>Aoxin Yang</strong>, Daming Wu, Beinan Guo, Zixiao Li, Shaofei Lan, Peng Lu</p>
+        <div class="paper-actions"><a href="https://doi.org/10.3390/su18199988" data-zh="期刊全文（DOI）">Full text (DOI)</a></div>
+        <details>
+          <summary data-zh="论文简介">Research summary</summary>
+          <p data-zh="这篇综述从空间、组织、时间和任务四个维度比较不同灾害中的应急协同，讨论预警如何转化为行动，以及响应任务在什么情况下需要重新分配。">This review compares emergency collaboration across spatial, organizational, temporal, and task scales. It examines how responders turn warnings into action and when they need to redistribute work as conditions change.</p>
+        </details>
+      </article>
+      <article class="paper">
+        <p class="paper-meta"><i>Drones</i> · 2026</p>
+        <h3>Execution-Consistent Event-Responsive Truck–UAV Coordination Under Simulated Progressive Road Disruption</h3>
+        <p class="authors">Peng Lu, Daming Wu, Zixiao Li, Beinan Guo, Shaofei Lan, <strong>Aoxin Yang</strong></p>
+        <div class="paper-actions"><a href="https://doi.org/10.3390/drones10100778" data-zh="期刊全文（DOI）">Full text (DOI)</a></div>
+        <details>
+          <summary data-zh="论文简介">Research summary</summary>
+          <p data-zh="这项仿真研究考察了道路中断陆续被发现时，如何调整卡车与无人机的协同配送计划，并保障已开始的配送任务继续执行。">This simulation study examines how truck and drone teams can revise relief delivery plans as road blockages become known while preserving service commitments already in progress.</p>
+        </details>
+      </article>
+      <article class="paper">
+        <p class="paper-meta"><i>Land</i> · 2026</p>
+        <h3>Landslide Susceptibility Assessment in Badong County, Hubei Province, Based on Machine Learning and SHAP Interpretability Analysis</h3>
+        <p class="authors">Shaofei Lan, Daming Wu, Peng Lu, <strong>Aoxin Yang</strong>, Beinan Guo, Zixiao Li</p>
+        <div class="paper-actions"><a href="https://doi.org/10.3390/land15101972" data-zh="期刊全文（DOI）">Full text (DOI)</a></div>
+        <details>
+          <summary data-zh="论文简介">Research summary</summary>
+          <p data-zh="研究以湖北省巴东县为例，使用机器学习评估滑坡易发性，并用 SHAP 分析不同因素如何影响模型判断。">The study uses machine learning to assess landslide susceptibility in Badong County, Hubei, and SHAP to interpret how different factors contribute to model predictions.</p>
+        </details>
+      </article>
+    </section>
+
+    <div class="projects">
+      <section class="section wrap" id="projects" aria-labelledby="projects-title">
+        <h2 id="projects-title" data-zh="设计与开发作品">Design &amp; software projects</h2>
+        <div class="project-grid">
+          <article class="project featured">
+            <div class="project-type" data-zh="网页界面设计">Web interface design</div>
+            <h3 data-zh="网页交互示例集">Interactive UI gallery</h3>
+            <p data-zh="四个可直接操作的网页界面：空间棋盘、预设场景回放、卡片排序与表格搜索。演示采用手工编写的示例数据。">Four browser interfaces for exploring a spatial grid, replaying preset scenes, sorting cards, and searching a table. The demos use hand-authored sample data.</p>
+            <div class="actions">
+              <a href="https://yangaoxin.github.io/research-models-and-demos/" data-zh="打开演示">Open demo</a>
+              <a href="https://github.com/YangAoxin/research-models-and-demos" data-zh="查看源码">Source code</a>
+            </div>
+          </article>
+          <article class="project">
+            <div class="project-type" data-zh="游戏生态工具">Game ecosystem tools</div>
+            <h3 data-zh="CS2 饰品管理工具">CS2 inventory tooling</h3>
+            <p data-zh="围绕 Counter-Strike 2 饰品管理做的一组工具原型，探索库存视图和不同平台之间的操作流程。">A set of tooling prototypes for the Counter-Strike 2 item ecosystem, exploring inventory views and cross-platform workflows.</p>
+          </article>
+          <article class="project">
+            <div class="project-type" data-zh="应用界面设计">Application design</div>
+            <h3 data-zh="微信小程序与管理后台">WeChat mini program and admin dashboard</h3>
+            <p data-zh="结合微信小程序与 Web 管理后台，探索询价、库存管理和订单履约流程。">A WeChat mini program and web dashboard prototype for quote requests, inventory management, and order fulfillment.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer>
+    <div class="foot wrap">
+      <span>Aoxin Yang · <span lang="zh-CN">杨奥新</span></span>
+      <a href="https://github.com/YangAoxin">GitHub</a>
+    </div>
+  </footer>
+  <script>
+    const switcher = document.querySelector('.language');
+    const translations = [...document.querySelectorAll('[data-zh]')].map(element => ({
+      element,
+      en: element.textContent,
+      zh: element.dataset.zh,
+    }));
+    let useChinese = false;
+    switcher.hidden = false;
+    switcher.addEventListener('click', () => {
+      useChinese = !useChinese;
+      document.documentElement.lang = useChinese ? 'zh-CN' : 'en';
+      document.querySelector('nav').setAttribute('aria-label', useChinese ? '站点导航' : 'Primary navigation');
+      document.querySelector('.other-name').lang = useChinese ? 'en' : 'zh-CN';
+      for (const { element, en, zh } of translations) {
+        element.textContent = useChinese ? zh : en;
+      }
+      switcher.textContent = useChinese ? 'English' : '中文';
+      switcher.lang = useChinese ? 'en' : 'zh-CN';
+    });
+  </script>
+</body>
+</html>
