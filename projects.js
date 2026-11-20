@@ -19,7 +19,7 @@ const gallery = {
   source: 'https://github.com/YangAoxin/research-models-and-demos',
 };
 const projects = [
-  { id: 'cs2', section: 'applications', view: 'inventory', title: ['CS2 inventory tooling', 'CS2 饰品管理工具'], intro: ['Filter sample items by category and switch between a card grid and an inventory table.', '按类别筛选示例饰品，在卡片和库存表之间切换。'] },
+  { id: 'cs2', section: 'applications', view: 'lookup', title: ['CS2 item lookup and selection', 'CS2 饰品查询与选择'], intro: ['Search by Chinese name or Market Hash Name, select results across pages, and export a JSON list.', '按中文名或 Market Hash Name 搜索，分页勾选并导出 JSON 清单。'] },
   { id: 'wechat', section: 'applications', view: 'quote', title: ['WeChat mini program & admin dashboard', '微信小程序与管理后台'], intro: ['Create a sample quote request on the mobile interface, then move it through the admin workflow.', '从小程序示例提交询价，再到管理后台推进处理状态。'] },
   { id: 'ui-gallery', section: 'applications', view: 'gallery', title: ['Interactive UI gallery', '网页交互示例集'], intro: ['The original public gallery includes a spatial grid, replay, card sorting, and a searchable table.', '已公开的原版示例集含空间棋盘、场景回放、卡片排序和表格搜索。'] },
   { id: 'venue-egress', section: 'research-prototypes', view: 'egress', title: ['Venue egress & multimodal connections (IJTST project)', '场馆散场与多方式交通（IJTST 项目）'], intro: ['Step through a sample venue release and onward travel by shuttle, rail, and walking.', '切换示例时间切片，查看场馆放行、接驳车、轨道和步行去向。'] },
@@ -27,10 +27,10 @@ const projects = [
   { id: 'risk-lab', section: 'urban', view: 'risk', title: ['Urban risk & value lab', '城市风险—价值实验室'], intro: ['Drag the pressure and investment sliders to explore comparison cards with sample values.', '拖动压力和投入滑块，查看示例方案的指标对比。'] },
   { id: 'urban-pathways', section: 'urban', view: 'timeline', title: ['Long-term urban pathways', '城市长期发展路径预览'], intro: ['Select a development pathway and inspect its milestones.', '切换发展路径，查看各阶段的示例节点。'] },
   { id: 'flood-evolution', section: 'urban', view: 'flood', title: ['Synthetic urban flood evolution', '合成城市洪水演化'], intro: ['Scrub through a synthetic flood timeline and inspect individual districts.', '拖动阶段滑块，查看示例城市积水变化和分区状态。'] },
-  { id: 'flood-comparison', section: 'urban', view: 'compare', title: ['Flood scenario comparison', '城市洪水与路径比较'], intro: ['Compare two scenario maps at the same point on a shared timeline.', '用同一时间滑块并排对照两个示例场景。'] },
+  { id: 'flood-comparison', section: 'urban', view: 'compare', title: ['Flood scenario comparison', '城市洪水与路径比较'], intro: ['Step through named phases to compare two scenario maps side by side.', '按阶段前后翻看，并排对照两个示例场景。'] },
   { id: 'spatial-safety', section: 'urban', view: 'route', title: ['Dynamic spatial safety routes', '动态空间安全路径'], intro: ['Switch stages and compare example routes across a schematic city.', '切换阶段和线路，查看示意城市里的通行路径。'] },
-  { id: 'district-board', section: 'urban', view: 'board', title: ['Nine-district spatial board', '九区域动态空间棋盘'], intro: ['Inspect a district while changing the stage and the visible map layer.', '调节时间阶段、切换图层，再点击九宫格查看分区状态。'] },
-  { id: 'risk-explorer', section: 'urban', view: 'explorer', title: ['Urban risk model explorer', '城市风险模型探索器'], intro: ['Switch the chart view and adjust controls to compare illustrative indicators.', '切换图表视角并拖动滑块，观察示例指标的变化。'] },
+  { id: 'district-board', section: 'urban', view: 'board', title: ['Nine-district spatial board', '九区域动态空间棋盘'], intro: ['Choose a phase and layer, then select a district to see its status.', '选择阶段和图层，再点击九宫格查看分区状态。'] },
+  { id: 'risk-explorer', section: 'urban', view: 'explorer', title: ['Urban risk model explorer', '城市风险模型探索器'], intro: ['Choose a scenario and perspective to compare sample indicators.', '选择预设情景和查看视角，对照示例指标。'] },
   { id: 'tuanzhou-network', section: 'data', view: 'network', title: ['Evacuation case network', '团洲疏散案例网络界面'], intro: ['Inspect evacuation stages and their evidence links in a schematic network.', '用完全虚构的节点，展示团洲案例原型中分阶段查看网络与材料的方式。'] },
   { id: 'tuanzhou-map', section: 'data', view: 'map', title: ['Evacuation case map', '团洲疏散案例地图界面'], intro: ['Switch map layers to examine illustrative transfer locations and links.', '用虚构位置和连线演示团洲案例原型的地图图层切换。'] },
   { id: 'land-use', section: 'data', view: 'sankey', title: ['Land-use transitions', '土地利用变化桑基图'], intro: ['Switch periods to explore a Sankey chart adapted from a remote-sensing course project.', '切换时间段，查看由遥感课程作品改编的土地利用流向图。'] },
@@ -45,7 +45,7 @@ function thumbnail(view) {
   const bars = (values, grid = false) => values.map(size =>
     '<i style="--size:' + (grid ? size : Math.round(size * 100) + '%') + '"></i>').join('');
   const details = {
-    inventory: '<div class="mini-inventory">' + ['S', 'V', 'N', 'A', 'C', 'L'].map(mark => '<span>' + mark + '</span>').join('') + '</div>',
+    lookup: '<div class="mini-lookup"><b>' + t('Search items', '搜索饰品') + '</b><i></i><i></i><i></i></div>',
     quote: '<div class="mini-phone"><b>' + t('Quote', '询价') + '</b><i></i><i></i><i></i></div><div class="mini-console"><b>' + t('Quote inbox', '询价管理') + '</b><i></i><i></i><span>' + t('Confirmed', '已确认') + '</span></div>',
     gallery: '<div class="mini-gallery"><i></i><i></i><i></i><i></i></div>',
     egress: '<div class="mini-egress">' + t(['Venue', 'Shuttle', 'Rail', 'Walk'], ['场馆', '接驳', '轨道', '步行']).map((name, index) => '<span>' + name + '<i style="--length:' + [93, 59, 47, 34][index] + '%"></i></span>').join('') + '</div>',
@@ -113,37 +113,82 @@ function readSlider(id) {
 
 const views = {};
 
-views.inventory = () => {
-  const groups = t(['All categories', 'Finish samples', 'Sticker samples', 'Container samples'], ['全部类别', '涂装样例', '贴纸样例', '容器样例']);
+views.lookup = () => {
+  // Fictional entries keep the original name-search and export workflow reproducible without its database.
   const items = [
-    [1, 'S', ['Slate', '岩灰'], 4], [1, 'V', ['Violet', '暮紫'], 2],
-    [2, 'N', ['Northline', '北线'], 6], [2, 'S', ['Signal', '信号'], 3],
-    [3, 'A', ['Archive', '档案'], 5], [3, 'C', ['Canvas', '帆布'], 1],
+    ['AK-47 | Slate Wave (Field-Tested)', 'AK-47 | 岩灰波纹（久经沙场）'],
+    ['M4A1-S | Coastal Ink (Minimal Wear)', 'M4A1-S | 岸线墨影（略有磨损）'],
+    ['AWP | Violet Current (Factory New)', 'AWP | 暮紫流光（崭新出厂）'],
+    ['USP-S | Paper Signal (Field-Tested)', 'USP-S | 纸上信号（久经沙场）'],
+    ['Glock-18 | Fogline (Factory New)', '格洛克 18 型 | 雾线（崭新出厂）'],
+    ['MP9 | Harbor Glass (Minimal Wear)', 'MP9 | 港湾之镜（略有磨损）'],
+    ['Sticker | Northline', '印花 | 北线'],
+    ['Sticker | Atlas (Holo)', '印花 | 图集（全息）'],
+    ['Sticker | Low Tide', '印花 | 低潮'],
+    ['Canvas Case', '帆布武器箱'],
+    ['Night Shift Case', '夜班武器箱'],
+    ['Horizon Tag Charm', '地平线挂件'],
   ];
-  demo.innerHTML = '<div class="controls">' + choose('category', t('Category', '饰品类别'), groups) +
-    choose('layout', t('Layout', '展示方式'), t(['Cards', 'Table'], ['卡片', '列表'])) +
-    '</div><p class="legend" id="inventory-count" aria-live="polite"></p><div id="inventory-items"></div>';
-  const update = () => {
-    const category = read('category');
-    const filtered = items.filter(item => category === 0 || item[0] === category);
-    demo.querySelector('#inventory-count').textContent = t(filtered.length + ' sample items', filtered.length + ' 个示例条目');
-    const content = demo.querySelector('#inventory-items');
-    if (read('layout') === 0) {
-      content.innerHTML = '<div class="inventory-grid">' + filtered.map(([group, mark, name, quantity]) =>
-        '<div class="inventory-item"><div class="inventory-mark" aria-hidden="true">' + mark +
-        '</div><div class="inventory-label"><strong>' + t(...name) + '</strong><span>' +
-        groups[group] + ' · ' + t('Qty ', '数量 ') + quantity + '</span></div></div>').join('') + '</div>';
-    } else {
-      content.innerHTML = '<div class="table-wrap"><table class="data-table"><thead><tr><th scope="col">' +
-        t('Item', '饰品') + '</th><th scope="col">' + t('Category', '类别') + '</th><th scope="col">' +
-        t('Quantity', '数量') + '</th></tr></thead><tbody>' +
-        filtered.map(([group, , name, quantity]) => '<tr><td>' + t(...name) + '</td><td>' +
-          groups[group] + '</td><td>' + quantity + '</td></tr>').join('') + '</tbody></table></div>';
-    }
+  const selected = new Set();
+  const perPage = 4;
+  let page = 0;
+  demo.innerHTML = '<div class="lookup-layout"><section><label class="control">' + t('Search items', '搜索饰品') +
+    '<input type="search" id="item-search" placeholder="' + t('Try AK-47 or Northline', '试试 AK-47 或 北线') +
+    '" autocomplete="off"></label><p class="legend" id="item-count" aria-live="polite"></p>' +
+    '<div id="item-results" class="item-results"></div><div class="paging"><button id="page-prev" type="button">' +
+    t('Previous', '上一页') + '</button><output id="current-page" aria-live="polite"></output>' +
+    '<button id="page-next" type="button">' + t('Next', '下一页') + '</button></div></section>' +
+    '<section class="panel"><h3>' + t('Selected items', '已选饰品') + '</h3>' +
+    '<p id="selection-count" aria-live="polite"></p><ul id="selected-items" class="selected-items"></ul>' +
+    '<button class="action" id="export-items" type="button">' + t('Export JSON', '导出 JSON') + '</button>' +
+    '<p class="legend">' + t('Exports the selected Market Hash Names to selected_items.json.', '将已选饰品的 Market Hash Name 导出到 selected_items.json。') + '</p></section></div>';
+  const query = demo.querySelector('#item-search');
+  const results = demo.querySelector('#item-results');
+  const previous = demo.querySelector('#page-prev');
+  const next = demo.querySelector('#page-next');
+  const download = demo.querySelector('#export-items');
+
+  const updateSelection = () => {
+    demo.querySelector('#selection-count').textContent = t(selected.size + ' selected', '已选 ' + selected.size + ' 件');
+    demo.querySelector('#selected-items').innerHTML = [...selected].map(key => '<li>' + key + '</li>').join('');
+    download.disabled = selected.size === 0;
   };
-  bindControl('category', 'change', update);
-  bindControl('layout', 'change', update);
+  const update = () => {
+    const keyword = query.value.trim().toLowerCase();
+    const matches = items.filter(item => item.some(name => name.toLowerCase().includes(keyword)));
+    const pages = Math.max(1, Math.ceil(matches.length / perPage));
+    results.innerHTML = matches.slice(page * perPage, (page + 1) * perPage).map(([key, name]) =>
+      '<label class="item-result"><input type="checkbox" value="' + key + '"' + (selected.has(key) ? ' checked' : '') +
+      '><span><strong>' + t(key, name) + '</strong><small lang="' + t('zh-CN', 'en') + '">' +
+      t(name, key) + '</small></span></label>').join('');
+    if (!matches.length) results.textContent = t('No sample items match this search.', '示例库中没有匹配的饰品。');
+    demo.querySelector('#item-count').textContent = t(matches.length + ' matches', '找到 ' + matches.length + ' 件');
+    demo.querySelector('#current-page').textContent = t('Page ' + (page + 1) + ' of ' + pages, '第 ' + (page + 1) + ' 页 / 共 ' + pages + ' 页');
+    previous.disabled = page === 0;
+    next.disabled = page >= pages - 1;
+  };
+  query.addEventListener('input', () => { page = 0; update(); });
+  previous.addEventListener('click', () => { page -= 1; update(); });
+  next.addEventListener('click', () => { page += 1; update(); });
+  results.addEventListener('change', event => {
+    const checkbox = event.target;
+    if (checkbox.checked) selected.add(checkbox.value);
+    else selected.delete(checkbox.value);
+    updateSelection();
+  });
+  download.addEventListener('click', () => {
+    const json = JSON.stringify([...selected], null, 2) + '\n';
+    const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'selected_items.json';
+    demo.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
   update();
+  updateSelection();
 };
 
 views.quote = () => {
@@ -197,23 +242,27 @@ function metricBars(names, values) {
 
 function riskPanel(explorer) {
   const labels = t(['Service continuity', 'Travel access', 'Public space'], ['服务连续性', '出行可达性', '公共空间']);
-  demo.innerHTML = '<div class="controls">' +
+  const controls = explorer ?
+    choose('pressure', t('Scenario', '预设情景'), t(['Moderate', 'Heavy rainfall', 'Recovery'], ['常态', '强降雨', '恢复期'])) +
+    choose('investment', t('Investment level', '投入水平'), t(['Baseline', 'Additional'], ['基准', '增加投入'])) +
+    choose('lens', t('Perspective', '查看视角'), t(['Resident', 'Operator'], ['居民侧', '运行侧'])) :
     slider('pressure', t('Scenario pressure', '场景压力'), 0, 10, 4) +
-    slider('investment', t('Illustrative investment', '示例投入'), 0, 10, 4) +
-    (explorer ? choose('lens', t('Perspective', '查看视角'), t(['Resident', 'Operator'], ['居民侧', '运行侧'])) : '') +
+    slider('investment', t('Illustrative investment', '示例投入'), 0, 10, 4);
+  demo.innerHTML = '<div class="controls">' + controls +
     '</div><div class="split"><section class="panel"><h3>' + t('Sample plan A', '示例方案 A') +
     '</h3><div id="risk-a"></div></section><section class="panel"><h3>' + t('Sample plan B', '示例方案 B') +
     '</h3><div id="risk-b"></div></section></div>' +
     '<p class="legend">' + t('Illustrative comparison on a 0–100 scale.', '0–100 的界面示例刻度。') + '</p>';
   const update = () => {
-    const p = readSlider('pressure');
-    const i = readSlider('investment');
+    const p = explorer ? [3, 9, 5][read('pressure')] : readSlider('pressure');
+    const i = explorer ? [3, 8][read('investment')] : readSlider('investment');
     const lens = explorer ? read('lens') * 4 : 0;
     demo.querySelector('#risk-a').innerHTML = metricBars(labels, [64 - 3*p + 2*i + lens, 67 - 2*p + i, 56 - p + lens]);
     demo.querySelector('#risk-b').innerHTML = metricBars(labels, [64 - 2*p + i, 61 - p + 2*i + lens, 50 - p + 3*i]);
   };
-  bindControl('pressure', 'input', update);
-  bindControl('investment', 'input', update);
+  const controlEvent = explorer ? 'change' : 'input';
+  bindControl('pressure', controlEvent, update);
+  bindControl('investment', controlEvent, update);
   if (explorer) bindControl('lens', 'change', update);
   update();
 }
@@ -247,24 +296,45 @@ function districtDemo(view) {
   const route = view === 'route';
   const board = view === 'board';
   const map = view === 'map';
+  const flood = view === 'flood';
+  const phases = t(['Before rainfall', 'Rain begins', 'Ponding', 'Peak water', 'Receding', 'Recovery'],
+    ['降雨前', '降雨开始', '出现积水', '水位最高', '水位回落', '恢复阶段']);
+  const waterLevels = [0, 1, 3, 6, 4, 1];
+  let comparedPhase = 0;
   let active = 4;
   const layers = map ? t(['Transfer points', 'Sample link'], ['转移点位', '示例联系']) :
     t(['Flood exposure', 'Service locations'], ['积水状态', '服务点']);
+  let stageControl = '';
+  if (compare) {
+    stageControl = '<div class="paging phase-control"><button type="button" id="phase-prev">' +
+      t('Previous phase', '上一阶段') + '</button><output id="phase-name" aria-live="polite"></output>' +
+      '<button type="button" id="phase-next">' + t('Next phase', '下一阶段') + '</button></div>';
+  } else if (flood) {
+    stageControl = slider('stage', t('Flood timeline', '洪水时间轴'), 1, phases.length, 1) +
+      '<output class="phase-name" id="phase-name" aria-live="polite"></output>';
+  } else if (!map) {
+    stageControl = choose('stage', t('Phase', '阶段'), phases);
+  }
   demo.innerHTML = '<div class="controls">' +
-    (map ? '' : slider('stage', t('Stage', '阶段'), 1, 6, 1)) +
+    stageControl +
     (board || map ? choose('layer', t('Layer', '图层'), layers) : '') +
     (route ? choose('route', t('Example route', '示例线路'), t(['Via station', 'Via east park'], ['经车站', '经东园'])) : '') +
     '</div><div class="' + (compare ? 'split' : '') + '" id="districts"></div><p class="note" id="district-detail" aria-live="polite"></p>';
   const grid = demo.querySelector('#districts');
   const update = () => {
-    const stage = map ? 1 : readSlider('stage');
+    const phase = compare ? comparedPhase : map ? 0 : flood ? readSlider('stage') - 1 : read('stage');
+    if (compare || flood) demo.querySelector('#phase-name').textContent = phases[phase];
+    if (compare) {
+      demo.querySelector('#phase-prev').disabled = phase === 0;
+      demo.querySelector('#phase-next').disabled = phase >= phases.length - 1;
+    }
     const alternate = (board || map) && read('layer') === 1;
-    const routeTiles = route && read('route') === 0 ? [0, 1, stage > 3 ? 2 : 4, 5, 8] : [0, 1, 2, 5, 8];
+    const routeTiles = route && read('route') === 0 && phase !== 3 ? [0, 1, 4, 5, 8] : [0, 1, 2, 5, 8];
     const tileClass = (n, scenario) => {
       if (route) return routeTiles.includes(n) ? 'route' : '';
       if (map) return (alternate ? [0, 1, 4, 5, 8] : [1, 4, 8]).includes(n) ? 'route' : '';
       if (alternate) return [1, 4, 6, 8].includes(n) ? 'route' : '';
-      const level = [0, 2, 1, 4, 3, 5, 2, 1, 0][n] + stage - (scenario ? 2 : 0);
+      const level = [0, 2, 1, 3, 2, 4, 2, 1, 0][n] + waterLevels[phase] - (scenario ? 2 : 0);
       if (level >= 8) return 'deep';
       return level >= 5 ? 'wet' : '';
     };
@@ -288,7 +358,12 @@ function districtDemo(view) {
       ? t('Light and dark blue show two illustrative water levels.', '浅蓝和深蓝代表两档示例积水状态。')
       : districts[active] + ' · ' + descriptions[state];
   };
-  if (!map) bindControl('stage', 'input', update);
+  if (compare) {
+    bindControl('phase-prev', 'click', () => { comparedPhase -= 1; update(); });
+    bindControl('phase-next', 'click', () => { comparedPhase += 1; update(); });
+  } else if (!map) {
+    bindControl('stage', flood ? 'input' : 'change', update);
+  }
   if (board || map) bindControl('layer', 'change', update);
   if (route) bindControl('route', 'change', update);
   grid.addEventListener('click', event => {
@@ -340,18 +415,12 @@ views.egress = () => {
     [15, 0, 0, 5], [36, 6, 11, 15], [55, 15, 18, 22],
     [78, 26, 26, 26], [92, 33, 31, 28], [100, 37, 34, 29],
   ];
-  demo.innerHTML = '<div class="controls">' + slider('period', t('Time slice', '时间切片'), 1, 6, 1) +
-    '</div><div class="panel" id="egress-readout"></div><p class="legend">' +
-    t('Fictional cumulative counts out of 100 attendees.', '虚构的 100 人场景，显示累计人数。') + '</p>';
-  const update = () => {
-    const period = readSlider('period');
-    demo.querySelector('#egress-readout').innerHTML = metricBars(
-      t(['Released at venue', 'Shuttle arrivals', 'Rail arrivals', 'Arrived on foot'], ['场馆已放行', '接驳已到达', '轨道已到达', '步行已到达']),
-      cumulative[period - 1]
-    );
-  };
-  bindControl('period', 'input', update);
-  update();
+  const labels = t(['Released at venue', 'Shuttle arrivals', 'Rail arrivals', 'Arrived on foot'],
+    ['场馆已放行', '接驳已到达', '轨道已到达', '步行已到达']);
+  const times = cumulative.map((_, index) => (index + 1)*5 + t(' min', ' 分钟'));
+  stageCards(times, cumulative.map(counts => metricBars(labels, counts)));
+  demo.insertAdjacentHTML('beforeend', '<p class="legend">' +
+    t('Cumulative counts after the event in a fictional 100-person scenario.', '虚构的百人场景，显示散场后各时间点的累计人数。') + '</p>');
 };
 
 views.agent = () => {
