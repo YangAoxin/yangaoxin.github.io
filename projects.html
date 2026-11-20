@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f9f7">
+  <meta name="description" content="Aoxin Yang’s interactive interface portfolio. Application workflows, urban scenarios, maps, and data visualization.">
+  <title>Interface portfolio · Aoxin Yang</title>
+  <link rel="stylesheet" href="projects.css">
+  <script src="projects.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#content" data-zh="跳到作品列表">Skip to projects</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="./#projects"><span aria-hidden="true">AY</span> Aoxin Yang</a>
+      <div class="header-actions">
+        <a href="./#projects" data-zh="学术主页">Academic homepage</a>
+        <button class="language" type="button" lang="zh-CN" hidden>中文</button>
+      </div>
+    </div>
+  </header>
+  <main class="wrap" id="content">
+    <section class="intro" aria-labelledby="portfolio-title">
+      <div class="intro-copy">
+        <h1 id="portfolio-title" data-zh="界面作品集">Interface portfolio</h1>
+        <p data-zh="从应用流程到城市情景和数据图表。公开预览根据历史界面重新整理，使用示例数据。">Application workflows, urban scenarios, and data visualization. Explore public previews adapted from earlier designs with sample data.</p>
+        <nav class="section-nav" aria-label="Portfolio sections">
+          <a href="#applications" data-zh="应用界面">Applications</a>
+          <a href="#research-prototypes" data-zh="研究原型">Research prototypes</a>
+          <a href="#urban" data-zh="城市交互">Urban interfaces</a>
+          <a href="#data" data-zh="地图与数据">Maps &amp; data</a>
+        </nav>
+      </div>
+      <div class="intro-art" aria-hidden="true">
+        <div class="intro-board"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="intro-slider"><i></i></div>
+      </div>
+    </section>
+    <div id="collections"></div>
+    <noscript>Enable JavaScript to browse the interactive previews. / 请启用 JavaScript 以浏览交互演示。</noscript>
+  </main>
+  <footer class="site-footer"><div class="wrap">Aoxin Yang · <span lang="zh-CN">杨奥新</span></div></footer>
+  <dialog id="preview" aria-labelledby="preview-title">
+    <header class="dialog-header">
+      <div><h2 id="preview-title"></h2><p id="preview-lead"></p></div>
+      <button class="close" type="button" data-zh="关闭" autofocus>Close</button>
+    </header>
+    <div id="demo"></div>
+  </dialog>
+</body>
+</html>

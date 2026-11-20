@@ -77,6 +77,7 @@
     .project.featured { background: var(--wash); }
     .project-type { margin-bottom: .55rem; color: var(--green-dark); font-size: .85rem; font-weight: 650; }
     .project .actions { margin-top: auto; padding-top: 1rem; gap: .55rem .9rem; font-size: .9rem; font-weight: 650; }
+    .project-footer { margin-top: 1.15rem; gap: .6rem 1rem; }
     footer { border-top: 1px solid var(--line); }
     .foot { display: flex; justify-content: space-between; gap: 1rem; padding-block: 1.35rem; font-size: .9rem; color: var(--muted); }
     :lang(zh-CN) h1, :lang(zh-CN) h2 { letter-spacing: -.025em; }
@@ -198,12 +199,19 @@
             <div class="project-type" data-zh="游戏生态工具">Game ecosystem tools</div>
             <h3 data-zh="CS2 饰品管理工具">CS2 inventory tooling</h3>
             <p data-zh="围绕 Counter-Strike 2 饰品管理做的一组工具原型，探索库存视图和不同平台之间的操作流程。">A set of tooling prototypes for the Counter-Strike 2 item ecosystem, exploring inventory views and cross-platform workflows.</p>
+            <div class="actions"><a href="projects.html#cs2" data-project="cs2" data-zh="体验饰品管理界面">Try the inventory demo</a></div>
           </article>
           <article class="project">
             <div class="project-type" data-zh="应用界面设计">Application design</div>
             <h3 data-zh="微信小程序与管理后台">WeChat mini program and admin dashboard</h3>
             <p data-zh="结合微信小程序与 Web 管理后台，探索询价、库存管理和订单履约流程。">A WeChat mini program and web dashboard prototype for quote requests, inventory management, and order fulfillment.</p>
+            <div class="actions"><a href="projects.html#wechat" data-project="wechat" data-zh="体验询价与管理后台">Try the quote workflow</a></div>
           </article>
+        </div>
+        <div class="actions project-footer">
+          <a class="button" href="projects.html" data-project="" data-zh="浏览全部界面作品">Browse all interface projects</a>
+          <a href="projects.html#venue-egress" data-project="venue-egress" data-zh="场馆散场与接驳">Venue egress</a>
+          <a href="projects.html#response-agent" data-project="response-agent" data-zh="灾害应对智能体">Disaster response agent</a>
         </div>
       </section>
     </div>
@@ -221,18 +229,28 @@
       en: element.textContent,
       zh: element.dataset.zh,
     }));
-    let useChinese = false;
+    let useChinese = new URL(location.href).searchParams.get('lang') === 'zh';
     switcher.hidden = false;
-    switcher.addEventListener('click', () => {
-      useChinese = !useChinese;
+    function renderLanguage() {
       document.documentElement.lang = useChinese ? 'zh-CN' : 'en';
       document.querySelector('nav').setAttribute('aria-label', useChinese ? '站点导航' : 'Primary navigation');
       document.querySelector('.other-name').lang = useChinese ? 'en' : 'zh-CN';
       for (const { element, en, zh } of translations) {
         element.textContent = useChinese ? zh : en;
       }
+      for (const link of document.querySelectorAll('[data-project]')) {
+        const destination = new URL(link.getAttribute('href'), location.href);
+        if (useChinese) destination.searchParams.set('lang', 'zh');
+        else destination.searchParams.delete('lang');
+        link.href = destination.href;
+      }
       switcher.textContent = useChinese ? 'English' : '中文';
       switcher.lang = useChinese ? 'en' : 'zh-CN';
+    }
+    renderLanguage();
+    switcher.addEventListener('click', () => {
+      useChinese = !useChinese;
+      renderLanguage();
     });
   </script>
 </body>
