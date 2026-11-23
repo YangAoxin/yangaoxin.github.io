@@ -230,16 +230,17 @@ const chapters = [
   ['A school by the river','河畔开学','A school and playing field open on the east bank, just south of the new houses.','东岸住宅以南建起了学校，旁边留出了一块球场。',[5,8]],
   ['A riverside walk','沿河漫步','A footpath follows the east bank past both bridges. A final row of houses completes the southern approach.','一条步道沿东岸串起两座桥，南门街边也添了一排房屋。',[2,5,7,8]],
 ];
-const notes = [
-  ['North Hill starts as a grove. A hillside house appears in chapter two.','北岭原是一片树林，第二幕起可以找到林间的小屋。'],
-  ['Look for the long station roof. A second building later appears beside it.','长屋顶标出了车站的位置，后来旁边又添了一栋楼。'],
-  ['This grove stays open as houses grow around it. The riverside walk later passes its western edge.','周边住宅渐多，东园仍保留整片树林。后来的河岸步道经过它的西侧。'],
-  ['One of the first houses stands here. A neighbour arrives when the second bridge opens.','这里有小城最早的住宅之一。第二座桥开通时，它也有了新邻居。'],
-  ['Watch the roofline. The tallest block arrives in chapter four.','留意屋顶的高度，最高的那栋楼到第四幕才出现。'],
-  ['Find the first east-bank house in chapter three. Two more follow on nearby plots.','第三幕可以找到东岸的第一栋住宅，随后旁边又添了两栋。'],
-  ['The long sheds belong to the depot. Their low roofs distinguish them from the centre.','长条形的低矮屋顶是仓库，隔着街就能与城心的楼房区分开。'],
-  ['Homes arrive in three stages along the southern approach.','南侧进城的路旁分三次添了住宅，可以沿时间轴逐一找出来。'],
-  ['Until chapter five, this plot is open. The green rectangle beside the school is its playing field.','第五幕以前这里还是空地。校舍建好后，旁边绿色的长方形就是球场。'],
+// Each entry describes the selected district as it appears in that chapter.
+const districtHistory = [
+  [[1,'The hill is covered in trees.','北岭还是一片树林。'],[2,'A house now stands at the southern edge of the grove.','林地南侧多了一间屋子，其余树木仍围在屋后。']],
+  [[1,'This plot north of the centre is still open.','城心以北的地块还是空地。'],[2,'The long roof belongs to the new station.','长屋顶下是新落成的车站。'],[4,'A second building now stands beside the station.','车站旁又添了一栋楼，两栋建筑围出一小片空地。']],
+  [[1,'Trees fill this plot on the east bank.','东岸这块地上长满了树。'],[6,'The riverside walk passes the western edge of the grove.','林地保留了下来，西边多出一条沿河步道。']],
+  [[1,'One of the first houses has a yard facing the street.','最早的一批住宅中，有一户的院子朝着街道。'],[3,'Two houses now share this block near the new crossing.','街区里有了两栋住宅，去下游也多了一处过河的选择。']],
+  [[1,'A low building occupies one corner of a mostly open block.','一栋小楼占着街角，周围还留有大片空地。'],[2,'A taller neighbour changes the roofline.','街角小楼有了更高的邻居，两栋楼的屋顶错落开来。'],[4,'Three different roof heights now mark the town centre.','三栋楼高低错落，从河对岸也能认出城心。']],
+  [[1,'Across the river, the residential plots are still empty.','隔河望去，东岸的住宅地块还是空的。'],[3,'The first house appears on this bank.','东岸出现了第一栋住宅。'],[4,'A second house fills part of the open ground.','第二栋住宅落成，两栋房屋之间还留着空隙。'],[5,'Three homes now stand just north of the new school.','三栋住宅聚在新学校以北，东岸渐渐有了街区的样子。']],
+  [[1,'A long, low shed marks the timber depot.','低矮的长屋顶标出了木料仓。'],[3,'Two parallel sheds occupy the depot plot.','旁边添了一座库房，两条长屋顶并排展开。']],
+  [[1,'The southern entrance is still an open plot.','进城的南侧路口还留着一块空地。'],[2,'One house stands by the southern approach.','进城路旁出现了第一栋住宅。'],[4,'Two houses now face the approach.','第二栋房子落在路旁，街区轮廓开始显现。'],[6,'A third house completes the small southern block.','第三栋房子填进了南门街区。']],
+  [[1,'This open plot will become the school grounds.','这片空地留给了后来的学校。'],[5,'The school is open. Look for the white halfway line on the green playing field.','学校已经落成。校舍旁的小球场上，可以找到一条白色中线。']]
 ];
 const services = [1,4,6,8];
 const stage = byId('stage'), layer = byId('layer'), zoom = byId('zoom'), play = byId('play-timeline');
@@ -251,10 +252,29 @@ const tiles = districtNames.map((_,index) => {
   button.type = 'button';
   button.addEventListener('click', () => {
     activeDistrict = index;
-    renderSpatial();
+    stopPlayback();
   });
   return button;
 });
+const picker = byId('district-picker');
+districtNames.forEach((_,index) => picker.add(new Option('',String(index))));
+picker.addEventListener('change', () => {
+  activeDistrict = Number(picker.value);
+  stopPlayback();
+});
+const chapterButtons = chapters.map((_,index) => {
+  const button = element('button','','chapter-stop');
+  button.type = 'button';
+  const artwork = element('span','','landmark');
+  artwork.innerHTML = cityAtlas.landmark(index);
+  button.append(artwork,element('span','','chapter-caption'));
+  button.addEventListener('click', () => {
+    stage.value = String(index + 1);
+    stopPlayback();
+  });
+  return button;
+});
+byId('chapter-strip').append(...chapterButtons);
 const cityDrawing = element('div','','city-drawing');
 board.append(cityDrawing,...tiles);
 tiles.forEach((tile,index) => {
@@ -284,7 +304,17 @@ function renderSpatial() {
   byId('chapter-title').textContent = t(chapter[0],chapter[1]);
   byId('chapter-copy').textContent = t(chapter[2],chapter[3]);
   byId('district-name').textContent = tiles[activeDistrict].textContent+' · '+t(...districtNames[activeDistrict]);
-  byId('district-detail').textContent = t(...notes[activeDistrict]);
+  const [,en,zh] = districtHistory[activeDistrict].filter(([since]) => since<=frame).at(-1);
+  byId('district-detail').textContent = t(en,zh);
+  districtNames.forEach((name,index) => {
+    picker.options[index].textContent = tiles[index].textContent+' · '+t(...name);
+  });
+  picker.value = String(activeDistrict);
+  byId('chapter-count').textContent = t('Chapter ','第 ') + frame + t(' of 6',' 幕');
+  chapterButtons.forEach((button,index) => {
+    button.lastElementChild.textContent = t(chapters[index][0],chapters[index][1]);
+    button.setAttribute('aria-pressed',String(index===frame-1));
+  });
   byId('stage-label').textContent = t('Chapter ','场景 ') + frame + ' / ' + chapters.length;
   byId('zoom-value').textContent = zoom.value + '%';
   board.style.setProperty('--board-scale',String(Number(zoom.value) / 100));
@@ -310,9 +340,11 @@ play.addEventListener('click', () => {
 byId('reset-timeline').addEventListener('click', () => {
   stage.value = '1';
   zoom.value = '100';
+  activeDistrict = 4;
+  layer.value = 'changes';
   stopPlayback();
 });
-stage.addEventListener('input',renderSpatial);
+stage.addEventListener('input',stopPlayback);
 zoom.addEventListener('input',renderSpatial);
 layer.addEventListener('change',renderSpatial);
 byId('district-board').addEventListener('wheel',event => {
@@ -548,8 +580,16 @@ const comparisonHubs = [
   layer.innerHTML=cityAtlas.scene(6,-1,comparisonHubs[index]);
 });
 
+const layoutButtons = [...document.querySelectorAll('[data-position]')];
+layoutButtons.forEach(button => button.addEventListener('click', () => {
+  divider.value = button.dataset.position;
+  renderComparison();
+}));
 function renderComparison() {
   const percentage = divider.valueAsNumber;
+  layoutButtons.forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.position)===percentage)));
+  comparison.querySelector('.tag-a').hidden=percentage < 25;
+  comparison.querySelector('.tag-b').hidden=percentage > 75;
   comparison.style.setProperty('--split', percentage + '%');
   divider.setAttribute('aria-valuetext', t(
     percentage + '% layout A and ' + (100 - percentage) + '% layout B',

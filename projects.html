@@ -181,24 +181,28 @@
         </div>
         <div class="project-links">
           <a class="text-link" href="https://yangaoxin.github.io/research-models-and-demos/" data-zh="交互示例全集 ↗">Full interface gallery ↗</a>
-          <a class="text-link" href="https://github.com/YangAoxin/research-models-and-demos" data-zh="前端源码 ↗">Front-end source ↗</a>
+          <a class="text-link" href="https://github.com/YangAoxin/yangaoxin.github.io/blob/main/city-atlas.js" data-zh="地图绘制源码 ↗">Map drawing source ↗</a>
         </div>
       </div>
       <div class="spatial-player" id="flood-evolution">
-        <div class="map-controls">
-          <label class="field" for="layer"><span data-zh="显示图层">Layer</span><select id="layer"><option value="changes" data-zh="街区变迁">Neighbourhood changes</option><option value="services" data-zh="规划服务点">Planned services</option></select></label>
-          <label class="field zoom-field" for="zoom"><span data-zh="缩放">Zoom</span><input id="zoom" type="range" min="100" max="155" value="100" step="5"><output id="zoom-value" for="zoom">100%</output></label>
-        </div>
         <div class="spatial-body">
-          <div class="board-scroll" id="district-board" tabindex="0" aria-label="Zoomable river town map" data-aria-zh="可缩放的小城地图">
-            <div class="tile-board" id="districts"></div>
+          <div class="atlas-main">
+            <div class="board-scroll" id="district-board" tabindex="0" aria-label="Zoomable river town map" data-aria-zh="可缩放的小城地图">
+              <div class="tile-board" id="districts"></div>
+            </div>
+            <div class="map-controls">
+              <label class="field" for="layer"><span data-zh="图层">Layer</span><select id="layer"><option value="changes" data-zh="街区变迁">Neighbourhood changes</option><option value="services" data-zh="规划服务点">Planned services</option></select></label>
+              <label class="field zoom-field" for="zoom"><span data-zh="缩放">Zoom</span><input id="zoom" type="range" min="100" max="155" value="100" step="5"><output id="zoom-value" for="zoom">100%</output></label>
+            </div>
           </div>
           <aside class="district-inspector">
-            <h3 id="chapter-title"></h3><p class="chapter-copy" id="chapter-copy"></p><div class="field-note" data-zh="街区观察">Neighbourhood notes</div>
-            <p class="district-name" id="district-name"></p>
-            <p id="district-detail" aria-live="polite"></p>
+            <div class="chapter-heading"><span id="chapter-count"></span><h3 id="chapter-title"></h3></div>
+            <p class="chapter-copy" id="chapter-copy"></p>
+            <label class="district-choice" for="district-picker"><span data-zh="街区观察">Neighbourhood notes</span><select id="district-picker"></select></label>
+            <p class="visually-hidden" id="district-name"></p><p id="district-detail" aria-live="polite"></p>
           </aside>
         </div>
+        <div class="chapter-strip" id="chapter-strip" role="group" aria-label="Choose a chapter" data-aria-zh="选择小城发展阶段"></div>
         <div class="timeline-bar">
           <button id="play-timeline" class="action" type="button" data-zh="播放">Play</button>
           <label class="field" for="stage"><span id="stage-label"></span><input id="stage" type="range" min="1" max="6" value="1"></label>
@@ -213,6 +217,11 @@
             <span data-zh="分割线位置">Divider position</span>
             <input id="compare-position" type="range" min="0" max="100" value="50">
           </label>
+          <div class="layout-presets" role="group" aria-label="Comparison view" data-aria-zh="布局对照视图">
+            <button type="button" data-position="100" data-zh="看集中布局">Centralised</button>
+            <button type="button" data-position="50" data-zh="左右对照">Split view</button>
+            <button type="button" data-position="0" data-zh="看分散布局">Distributed</button>
+          </div>
           <ul class="compare-legend" aria-label="Map legend" data-aria-zh="图例">
             <li class="legend-hub" data-zh="公共设施">Public services</li>
             <li class="legend-green" data-zh="绿地">Green space</li>

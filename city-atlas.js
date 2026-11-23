@@ -91,5 +91,19 @@ const cityAtlas = (() => {
     }
     return '<svg viewBox="0 0 800 437" aria-hidden="true" focusable="false">'+s+'</svg>';
   }
-  return {scene,pin};
+  // Chapter buttons use the same drawing primitives as their map landmarks.
+  function landmark(chapter) {
+    const lawn = floor(0,0,2.3,1.6,0,'#b6c99f');
+    const water = floor(0,0,2.3,1.6,0,'#82b5b8');
+    const drawings = [
+      () => lawn+tree(.35,.4,6,'#759d73')+house(.72,.55,1.25,.65,14,roofs[0]),
+      () => lawn+house(.14,.44,1.9,.63,16,roofs[1]),
+      () => water+box(.1,.54,2.06,.5,7,'#d6ab78','#aa8464','#8a715a')+line(point(.1,1.04,11),point(2.16,1.04,11),'#795a45',2),
+      () => lawn+house(.3,.25,.8,.75,29,roofs[1],true)+house(1.15,.75,.78,.62,17,roofs[2],true),
+      () => lawn+house(.14,.18,1.84,.58,16,roofs[0],true)+floor(.65,.98,1.2,.45,.1,'#74a587','stroke="#fff4d7" stroke-width="1"'),
+      () => water+floor(.55,0,1.75,1.6,0,'#abc59c')+floor(.65,0,.23,1.6,.1,'#d5ab79')+tree(1.2,.38,6,'#649579')+tree(1.84,1.06,6,'#7fa378')
+    ];
+    return '<svg viewBox="333 24 152 96" aria-hidden="true" focusable="false">'+drawings[chapter]()+'</svg>';
+  }
+  return {scene,pin,landmark};
 })();
