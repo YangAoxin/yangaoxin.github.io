@@ -264,3 +264,29 @@ summary { font-weight: 650; color: var(--green); cursor: pointer; }
 .system-card p { margin: .55rem 0 0; font-weight: 650; color: #245c48; }
 .system-note { margin: .8rem 0 0; font-size: .82rem; color: #50645c; }
 @media (max-width: 620px) { .system-status { grid-template-columns: 1fr; } }
+
+/* River town atlas */
+#urban .spatial-player { background:#efeee6; border-color:#c9c9b9; }
+#urban .board-scroll, #urban .compare-layer { background-color:#213e3e; background-image:radial-gradient(ellipse at 48% 42%,#395754 0%,#253f40 60%,#193234 100%); }
+#urban .board-scroll { padding:0; border-radius:9px; align-self:center; }
+#urban .tile-board { position:relative; display:block; min-width:0; aspect-ratio:800/437; }
+.city-drawing,.city-drawing svg { width:100%;height:100%;display:block; }
+#urban .tile { position:absolute; transform:translate(-50%,-50%); min-height:24px; min-width:29px; padding:2px 4px; border:1px solid #e3e7d5; background:#365353; color:white; font:600 12px/1 var(--code); border-radius:14px; box-shadow:0 2px 4px #1c353a55; }
+#urban .tile.is-marked { background:#f2e4b1; border-color:#685d42; color:#283d39; }
+#urban .tile[aria-pressed="true"] { background:#8f4029; border-color:white; color:white; box-shadow:0 0 0 2px #8f4029; }
+#urban .tile:focus-visible { outline:3px solid #87e6ff; outline-offset:3px; }
+#urban .district-inspector { background:#fbf8ec; border-color:#d6d1bd; display:flex;flex-direction:column;justify-content:center; gap:.4rem; }
+#chapter-title { font:600 clamp(1.32rem,2.3vw,2rem)/1.18 var(--display); color:#294441; margin:0; }
+.chapter-copy { color:#405450; margin:0; line-height:1.55; }
+.field-note { color:#6e654c; border-top:1px solid #d7d0bb; padding-top:.8rem; margin-top:.4rem; font-size:.8rem; }
+#urban .district-name { margin:0;font-size:1.12rem; }
+#urban .compare-board { height:auto;aspect-ratio:800/437; }
+#urban .compare-layer { display:block;padding:0; }
+#urban .compare-layer svg { width:100%;height:100%;display:block; }
+#urban .legend-hub::before { background:#cf632b; }
+@media(max-width:620px){
+  #urban .district-inspector {padding:.85rem 1rem;}
+  #urban .board-scroll {width:100%;}
+  #urban .map-controls {flex-wrap:wrap;align-items:center;}
+  #urban .tile {min-width:24px;min-height:24px;font-size:10px;}
+}

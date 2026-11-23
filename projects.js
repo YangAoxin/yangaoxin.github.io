@@ -222,7 +222,25 @@ const districtNames = [
   ['West Bank','西岸'], ['Town Centre','城心'], ['East Bank','东岸'],
   ['Depot','仓库'], ['South Gate','南门'], ['School','学校'],
 ];
-const frameHighlights = [[4],[4,5],[1,4,5],[1,4,5,8],[4,8],[8]];
+const chapters = [
+  ['Riverside settlement','沿河而居','The first houses stand by the water. The timber depot shares the west bank with them.','最初的房屋沿河岸分布，木料仓也落在了西岸。',[3,4,6]],
+  ['The station opens','车站落成','A station opens north of the centre. A few houses appear on the hill and near the southern approach.','车站在城心以北落成，北岭和南侧进城的路旁也出现了人家。',[0,1,4,7]],
+  ['A second crossing','两岸相连','A bridge downstream gives the east bank a second crossing as the first homes appear there.','下游架起第二座桥，东岸也出现了第一排住宅。',[3,5,6]],
+  ['A denser centre','街区长高','A taller building changes the skyline in the centre. More homes fill in around the station and on the east bank.','城心的新楼改变了天际线，车站周边和东岸的空地也渐渐填上了住宅。',[1,4,5,7]],
+  ['A school by the river','河畔开学','A school and playing field open on the east bank, just south of the new houses.','东岸住宅以南建起了学校，旁边留出了一块球场。',[5,8]],
+  ['A riverside walk','沿河漫步','A footpath follows the east bank past both bridges. A final row of houses completes the southern approach.','一条步道沿东岸串起两座桥，南门街边也添了一排房屋。',[2,5,7,8]],
+];
+const notes = [
+  ['North Hill starts as a grove. A hillside house appears in chapter two.','北岭原是一片树林，第二幕起可以找到林间的小屋。'],
+  ['Look for the long station roof. A second building later appears beside it.','长屋顶标出了车站的位置，后来旁边又添了一栋楼。'],
+  ['This grove stays open as houses grow around it. The riverside walk later passes its western edge.','周边住宅渐多，东园仍保留整片树林。后来的河岸步道经过它的西侧。'],
+  ['One of the first houses stands here. A neighbour arrives when the second bridge opens.','这里有小城最早的住宅之一。第二座桥开通时，它也有了新邻居。'],
+  ['Watch the roofline. The tallest block arrives in chapter four.','留意屋顶的高度，最高的那栋楼到第四幕才出现。'],
+  ['Find the first east-bank house in chapter three. Two more follow on nearby plots.','第三幕可以找到东岸的第一栋住宅，随后旁边又添了两栋。'],
+  ['The long sheds belong to the depot. Their low roofs distinguish them from the centre.','长条形的低矮屋顶是仓库，隔着街就能与城心的楼房区分开。'],
+  ['Homes arrive in three stages along the southern approach.','南侧进城的路旁分三次添了住宅，可以沿时间轴逐一找出来。'],
+  ['Until chapter five, this plot is open. The green rectangle beside the school is its playing field.','第五幕以前这里还是空地。校舍建好后，旁边绿色的长方形就是球场。'],
+];
 const services = [1,4,6,8];
 const stage = byId('stage'), layer = byId('layer'), zoom = byId('zoom'), play = byId('play-timeline');
 const board = byId('districts');
@@ -237,21 +255,37 @@ const tiles = districtNames.map((_,index) => {
   });
   return button;
 });
-board.append(...tiles);
-
+const cityDrawing = element('div','','city-drawing');
+board.append(cityDrawing,...tiles);
+tiles.forEach((tile,index) => {
+  const [x,y]=cityAtlas.pin(index);
+  tile.style.left=x/800*100+'%';
+  tile.style.top=y/437*100+'%';
+});
+let previousScene = '';
 function renderSpatial() {
   const frame = Number(stage.value);
-  const marks = layer.value === 'services' ? services : frameHighlights[frame - 1];
+  const chapter = chapters[frame-1];
+  const marks = layer.value === 'services' ? services : chapter[4];
+  const sceneKey = [frame, activeDistrict, layer.value].join('/');
+  if(sceneKey !== previousScene) {
+    const hubs=layer.value==='services' ? services.map(i=>[i,1,.7]) : [];
+    cityDrawing.innerHTML=cityAtlas.scene(frame,activeDistrict,hubs);
+    previousScene=sceneKey;
+  }
   tiles.forEach((tile,index) => {
-    tile.textContent = t(...districtNames[index]);
+    const name=t(...districtNames[index]);
+    tile.textContent = String(index+1).padStart(2,'0');
+    tile.title=name;
+    tile.setAttribute('aria-label',name);
     tile.classList.toggle('is-marked',marks.includes(index));
     tile.setAttribute('aria-pressed',String(index === activeDistrict));
   });
-  byId('district-name').textContent = t(...districtNames[activeDistrict]);
-  byId('district-detail').textContent = marks.includes(activeDistrict)
-    ? t('Highlighted in this layer.','此分区在当前图层中高亮。')
-    : t('Unmarked in this layer.','此分区在当前图层中未标记。');
-  byId('stage-label').textContent = t('Frame ','画面 ') + frame + ' / ' + frameHighlights.length;
+  byId('chapter-title').textContent = t(chapter[0],chapter[1]);
+  byId('chapter-copy').textContent = t(chapter[2],chapter[3]);
+  byId('district-name').textContent = tiles[activeDistrict].textContent+' · '+t(...districtNames[activeDistrict]);
+  byId('district-detail').textContent = t(...notes[activeDistrict]);
+  byId('stage-label').textContent = t('Chapter ','场景 ') + frame + ' / ' + chapters.length;
   byId('zoom-value').textContent = zoom.value + '%';
   board.style.setProperty('--board-scale',String(Number(zoom.value) / 100));
   play.textContent = timer ? t('Pause','暂停') : t('Play','播放');
@@ -268,9 +302,9 @@ play.addEventListener('click', () => {
     return;
   }
   timer = setInterval(() => {
-    stage.value = String(Number(stage.value) % frameHighlights.length + 1);
+    stage.value = String(Number(stage.value) % chapters.length + 1);
     renderSpatial();
-  },900);
+  },2800);
   renderSpatial();
 });
 byId('reset-timeline').addEventListener('click', () => {
@@ -506,13 +540,13 @@ byId('plan-form').addEventListener('submit', event => {
 
 const comparison = byId('compare-board');
 const divider = byId('compare-position');
-const layouts = [
-  ['block', 'green', 'block', 'block', 'hub', 'hub', 'green', 'block', 'block', 'block', 'green', 'block'],
-  ['block', 'green', 'hub', 'block', 'block', 'block', 'green', 'block', 'block', 'hub', 'green', 'block'],
+const comparisonHubs = [
+  [[4,.75,.35],[4,2.35,.55],[4,1.76,2.62]],
+  [[1,1,.55],[3,1.5,1.8],[8,1.6,1.1]],
 ];
-for (const [index, layer] of [...comparison.querySelectorAll('.compare-layer')].entries()) {
-  layer.replaceChildren(...layouts[index].map(use => element('span', '', 'parcel ' + use)));
-}
+[...comparison.querySelectorAll('.compare-layer')].forEach((layer,index)=>{
+  layer.innerHTML=cityAtlas.scene(6,-1,comparisonHubs[index]);
+});
 
 function renderComparison() {
   const percentage = divider.valueAsNumber;

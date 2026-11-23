@@ -8,6 +8,7 @@
   <title>Projects · Aoxin Yang</title>
   <link rel="stylesheet" href="projects.css">
   <script src="catalog-data.js" defer></script>
+  <script src="city-atlas.js" defer></script>
   <script src="projects.js" defer></script>
 </head>
 <body>
@@ -175,8 +176,8 @@
     <section id="urban" class="spatial-section" aria-labelledby="spatial-title">
       <div class="project-head">
         <div>
-          <h2 id="spatial-title" data-zh="空间与时间交互">Spatial timeline explorer</h2>
-          <p data-zh="切换示例帧和图层，点选分区查看变化。滑块和 Ctrl / ⌘ 加滚轮可缩放棋盘。">Switch frames and layers, then select a district to inspect it. Use the zoom slider or hold Ctrl / ⌘ while scrolling over the board.</p>
+          <h2 id="spatial-title" data-zh="一座滨河小城的六次变化">A river town in six chapters</h2>
+          <p data-zh="从河岸聚落到两岸街区，拖动时间轴看小城长大。点选地图上的门牌，可以读到那一带的变化。所有场景均为虚构。">Follow a fictional settlement as it grows on both banks. Scrub through time and select a map pin to see what changed in that neighbourhood.</p>
         </div>
         <div class="project-links">
           <a class="text-link" href="https://yangaoxin.github.io/research-models-and-demos/" data-zh="交互示例全集 ↗">Full interface gallery ↗</a>
@@ -185,15 +186,15 @@
       </div>
       <div class="spatial-player" id="flood-evolution">
         <div class="map-controls">
-          <label class="field" for="layer"><span data-zh="显示图层">Layer</span><select id="layer"><option value="changes" data-zh="示例变化">Frame highlights</option><option value="services" data-zh="设施位置">Service points</option></select></label>
+          <label class="field" for="layer"><span data-zh="显示图层">Layer</span><select id="layer"><option value="changes" data-zh="街区变迁">Neighbourhood changes</option><option value="services" data-zh="规划服务点">Planned services</option></select></label>
           <label class="field zoom-field" for="zoom"><span data-zh="缩放">Zoom</span><input id="zoom" type="range" min="100" max="155" value="100" step="5"><output id="zoom-value" for="zoom">100%</output></label>
         </div>
         <div class="spatial-body">
-          <div class="board-scroll" id="district-board" tabindex="0" aria-label="Scrollable spatial board" data-aria-zh="可滚动的空间棋盘">
+          <div class="board-scroll" id="district-board" tabindex="0" aria-label="Zoomable river town map" data-aria-zh="可缩放的小城地图">
             <div class="tile-board" id="districts"></div>
           </div>
           <aside class="district-inspector">
-            <h3 data-zh="选中分区">Selected district</h3>
+            <h3 id="chapter-title"></h3><p class="chapter-copy" id="chapter-copy"></p><div class="field-note" data-zh="街区观察">Neighbourhood notes</div>
             <p class="district-name" id="district-name"></p>
             <p id="district-detail" aria-live="polite"></p>
           </aside>
@@ -206,8 +207,8 @@
       </div>
       <div class="comparison" aria-labelledby="comparison-title">
         <div class="comparison-copy">
-          <h3 id="comparison-title" data-zh="两种布局对照">Compare two layouts</h3>
-          <p data-zh="拖动分割线，比较集中和分散两种设施布局。">Drag the divider to compare centralised and distributed service layouts.</p>
+          <h3 id="comparison-title" data-zh="同一座城，设施设在哪里？">One town, two service layouts</h3>
+          <p data-zh="两张地图各有三处公共服务点。左右拖动，看看橙色标记是聚在城心，还是分布在车站、西岸和学校。">Both maps contain three service points. Swipe to see them clustered in the centre or spread across the station, west bank and school.</p>
           <label class="field" for="compare-position">
             <span data-zh="分割线位置">Divider position</span>
             <input id="compare-position" type="range" min="0" max="100" value="50">
