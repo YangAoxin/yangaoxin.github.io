@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f7f9f7">
-  <meta name="description" content="Aoxin Yang (杨奥新). Research on emergency management and natural hazards, selected publications, and software projects.">
+  <meta name="description" content="Aoxin Yang (杨奥新). Software projects, spatial analysis and emergency management.">
   <title>Aoxin Yang · 杨奥新</title>
   <style>
     :root {
@@ -103,9 +103,8 @@
       <a class="mark" href="#about"><span aria-hidden="true">AY</span> Aoxin Yang</a>
       <nav aria-label="Primary navigation">
         <a href="#about" data-zh="简介">About</a>
-        <a href="#research" data-zh="研究">Research</a>
-        <a href="#publications" data-zh="论文">Publications</a>
         <a href="#projects" data-zh="作品">Projects</a>
+        <a href="#research" data-zh="研究兴趣">Research</a>
       </nav>
       <button class="language" type="button" lang="zh-CN" hidden>中文</button>
     </div>
@@ -116,9 +115,9 @@
         <h1 id="name" data-zh="杨奥新">Aoxin Yang</h1>
         <p class="other-name" lang="zh-CN" data-zh="Aoxin Yang">杨奥新</p>
         <p class="affiliation" data-zh="硕士研究生 · 应急管理部国家自然灾害防治研究院">Master’s student · National Institute of Natural Hazards</p>
-        <p class="intro" data-zh="我研究自然灾害应急管理，关注不同地区、组织如何分担救灾任务，以及道路中断等变化如何影响救灾行动。">I study emergency management for natural hazards, with a focus on how organizations coordinate disaster response and adapt when access and operational needs change.</p>
+        <p class="intro" data-zh="我关注自然灾害、城市公共服务和应急管理，也喜欢把工作里的实际问题做成可以试用的工具。这里展示我做过的交易工作台、应用流程和交互界面。">I study natural hazards, urban services and emergency management. I like turning practical questions into tools that people can try, from a trading workbench to workflow and data interfaces.</p>
         <div class="actions">
-          <a class="button" href="#publications" data-zh="代表性论文">Selected publications</a>
+          <a class="button" href="#projects" data-zh="查看可运行作品">Explore working demos</a>
           <a class="button light" href="https://github.com/YangAoxin">GitHub</a>
         </div>
       </div>
@@ -128,78 +127,27 @@
       </figure>
     </section>
 
-    <div class="band">
-      <section class="section wrap" id="research" aria-labelledby="research-title">
-        <h2 id="research-title" data-zh="研究方向">Research interests</h2>
-        <div class="topics">
-          <article>
-            <h3 data-zh="灾害应急协同">Emergency coordination</h3>
-            <p data-zh="不同地区和组织如何分担任务、把预警转化为行动，并在灾情变化时调整协作。">How organizations share tasks, act on warnings, and adapt coordination across regions as disasters evolve.</p>
-          </article>
-          <article>
-            <h3 data-zh="救灾物资与配送">Relief logistics</h3>
-            <p data-zh="道路受阻时，如何根据任务紧迫性调整配送，并延续已经开始的救援行动。">How relief teams can adapt deliveries to road disruptions while accounting for urgent needs and work already under way.</p>
-          </article>
-          <article>
-            <h3 data-zh="自然灾害风险">Natural hazard risk</h3>
-            <p data-zh="运用空间数据和可解释机器学习分析滑坡易发性等自然灾害问题。">Using spatial data and interpretable machine learning to examine questions such as landslide susceptibility.</p>
-          </article>
-        </div>
-      </section>
-    </div>
-
-    <section class="section wrap" id="publications" aria-labelledby="publications-title">
-      <h2 id="publications-title" data-zh="代表性论文">Selected publications</h2>
-      <article class="paper">
-        <p class="paper-meta"><i>Sustainability</i> · 2026 · <span data-zh="第一作者">First author</span></p>
-        <h3>A Multiscale Review of Emergency Collaboration Across Natural Hazards</h3>
-        <p class="authors"><strong>Aoxin Yang</strong>, Daming Wu, Beinan Guo, Zixiao Li, Shaofei Lan, Peng Lu</p>
-        <div class="paper-actions"><a href="https://doi.org/10.3390/su18199988" data-zh="期刊全文（DOI）">Full text (DOI)</a></div>
-        <details>
-          <summary data-zh="论文简介">Research summary</summary>
-          <p data-zh="这篇综述从空间、组织、时间和任务四个维度比较不同灾害中的应急协同，讨论预警如何转化为行动，以及响应任务在什么情况下需要重新分配。">This review compares emergency collaboration across spatial, organizational, temporal, and task scales. It examines how responders turn warnings into action and when they need to redistribute work as conditions change.</p>
-        </details>
-      </article>
-      <article class="paper">
-        <p class="paper-meta"><i>Drones</i> · 2026</p>
-        <h3>Execution-Consistent Event-Responsive Truck–UAV Coordination Under Simulated Progressive Road Disruption</h3>
-        <p class="authors">Peng Lu, Daming Wu, Zixiao Li, Beinan Guo, Shaofei Lan, <strong>Aoxin Yang</strong></p>
-        <div class="paper-actions"><a href="https://doi.org/10.3390/drones10100778" data-zh="期刊全文（DOI）">Full text (DOI)</a></div>
-        <details>
-          <summary data-zh="论文简介">Research summary</summary>
-          <p data-zh="这项仿真研究考察了道路中断陆续被发现时，如何调整卡车与无人机的协同配送计划，并保障已开始的配送任务继续执行。">This simulation study examines how truck and drone teams can revise relief delivery plans as road blockages become known while preserving service commitments already in progress.</p>
-        </details>
-      </article>
-      <article class="paper">
-        <p class="paper-meta"><i>Land</i> · 2026</p>
-        <h3>Landslide Susceptibility Assessment in Badong County, Hubei Province, Based on Machine Learning and SHAP Interpretability Analysis</h3>
-        <p class="authors">Shaofei Lan, Daming Wu, Peng Lu, <strong>Aoxin Yang</strong>, Beinan Guo, Zixiao Li</p>
-        <div class="paper-actions"><a href="https://doi.org/10.3390/land15101972" data-zh="期刊全文（DOI）">Full text (DOI)</a></div>
-        <details>
-          <summary data-zh="论文简介">Research summary</summary>
-          <p data-zh="研究以湖北省巴东县为例，使用机器学习评估滑坡易发性，并用 SHAP 分析不同因素如何影响模型判断。">The study uses machine learning to assess landslide susceptibility in Badong County, Hubei, and SHAP to interpret how different factors contribute to model predictions.</p>
-        </details>
-      </article>
-    </section>
-
     <div class="projects">
       <section class="section wrap" id="projects" aria-labelledby="projects-title">
         <h2 id="projects-title" data-zh="设计与开发作品">Design &amp; software projects</h2>
         <div class="project-grid">
           <article class="project featured">
-            <div class="project-type" data-zh="网页界面设计">Web interface design</div>
-            <h3 data-zh="网页交互示例集">Interactive UI gallery</h3>
-            <p data-zh="四个可直接操作的网页界面：空间棋盘、预设场景回放、卡片排序与表格搜索。演示采用手工编写的示例数据。">Four browser interfaces for exploring a spatial grid, replaying preset scenes, sorting cards, and searching a table. The demos use hand-authored sample data.</p>
+            <div class="project-type" data-zh="应急管理与交互设计">Emergency management and interface design</div>
+            <h3 data-zh="灾情与预案工作台">Incident and plan workspace</h3>
+            <p data-zh="选择灾害类型并填写示例情况，查看待核实事项和任务草稿。演示使用预设情景和条目。">Select an event type and enter a sample situation to see checks and draft tasks using preset examples.</p>
             <div class="actions">
-              <a href="https://yangaoxin.github.io/research-models-and-demos/" data-zh="打开演示">Open demo</a>
-              <a href="https://github.com/YangAoxin/research-models-and-demos" data-zh="查看源码">Source code</a>
+              <a href="projects.html#plan-workspace" data-project="plan-workspace" data-zh="体验预案工作台">Try the planning workspace</a>
+              <a href="projects.html#urban" data-project="urban" data-zh="体验空间交互">Explore spatial interfaces</a>
             </div>
           </article>
           <article class="project">
             <div class="project-type" data-zh="游戏生态工具">Game ecosystem tools</div>
-            <h3 data-zh="CS2 饰品查询与选择">CS2 item lookup and selection</h3>
-            <p data-zh="由原桌面工具改编，可按中文名或 Market Hash Name 搜索饰品、分页勾选并导出清单。">A web adaptation of the desktop tool for finding items by name, selecting results across pages, and exporting their Market Hash Names.</p>
-            <div class="actions"><a href="projects.html#cs2" data-project="cs2" data-zh="体验饰品查询">Try item lookup</a></div>
+            <h3 data-zh="CS2 饰品交易工作台">CS2 item trading workbench</h3>
+            <p data-zh="我独立开发了从饰品查询到交易处理的一套工具。网页演示提供搜索、跨页勾选和清单导出，开源示例用虚构报价回放交易流程。">I independently built tools that connect item lookup with transaction processing. Try search, cross-page selection and export in the browser, or run the workflow replay with fictional quotes.</p>
+            <div class="actions">
+              <a href="projects.html#cs2" data-project="cs2" data-zh="体验选品与上架">Try the trading workflow</a>
+              <a href="https://github.com/YangAoxin/cs2-market-workbench" data-zh="查看工作流源码">Workflow source</a>
+            </div>
           </article>
           <article class="project">
             <div class="project-type" data-zh="应用界面设计">Application design</div>
@@ -210,11 +158,34 @@
         </div>
         <div class="actions project-footer">
           <a class="button" href="projects.html" data-project="" data-zh="浏览全部界面作品">Browse all interface projects</a>
-          <a href="projects.html#venue-egress" data-project="venue-egress" data-zh="场馆散场与接驳">Venue egress</a>
-          <a href="projects.html#response-agent" data-project="response-agent" data-zh="灾害应对智能体">Disaster response agent</a>
+          <a href="https://yangaoxin.github.io/research-models-and-demos/" data-zh="打开更多界面示例">More interface examples</a>
         </div>
       </section>
     </div>
+    <div class="band">
+      <section class="section wrap" id="research" aria-labelledby="research-title">
+        <h2 id="research-title" data-zh="研究方向">Research interests</h2>
+        <div class="topics">
+          <article>
+            <h3 data-zh="灾害应急协同">Emergency coordination</h3>
+            <p data-zh="不同地区和组织怎样协同开展灾害应对。">How organisations coordinate work and support one another during disasters.</p>
+          </article>
+          <article>
+            <h3 data-zh="救灾物资与配送">Relief logistics</h3>
+            <p data-zh="救灾资源怎样配置，居民如何获得需要的支持。">How relief resources are allocated and how residents reach the support they need.</p>
+          </article>
+          <article>
+            <h3 data-zh="自然灾害风险">Natural hazard risk</h3>
+            <p data-zh="用空间资料理解自然灾害风险与公共服务。">Using spatial evidence to study natural hazard risk and access to public services.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <section class="section wrap" id="publications" aria-labelledby="publications-title">
+      <h2 id="publications-title" data-zh="代表性发表">Selected publication</h2>
+      <p><a href="https://doi.org/10.3390/su18199988">A Multiscale Review of Emergency Collaboration Across Natural Hazards</a> · <i>Sustainability</i> · 2026 · <span data-zh="第一作者">First author</span></p>
+    </section>
   </main>
   <footer>
     <div class="foot wrap">

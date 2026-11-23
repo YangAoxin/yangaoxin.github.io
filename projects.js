@@ -1,538 +1,616 @@
-const ui = document.querySelector('#collections');
-const dialog = document.querySelector('#preview');
-const demo = document.querySelector('#demo');
-const language = document.querySelector('.language');
-const locationUrl = new URL(location.href);
-let isChinese = locationUrl.searchParams.get('lang') === 'zh';
-let openProject = '';
-let opener;
+'use strict';
 
-const t = (en, zh) => isChinese ? zh : en;
-const sections = [
-  { id: 'applications', title: ['Application interfaces', '应用界面'] },
-  { id: 'research-prototypes', title: ['Research prototypes', '研究原型'] },
-  { id: 'urban', title: ['Urban interaction designs', '城市交互设计'] },
-  { id: 'data', title: ['Maps & data visualization', '地图与数据可视化'] },
-];
-const gallery = {
-  live: 'https://yangaoxin.github.io/research-models-and-demos/',
-  source: 'https://github.com/YangAoxin/research-models-and-demos',
-};
-const projects = [
-  { id: 'cs2', section: 'applications', view: 'lookup', title: ['CS2 item lookup and selection', 'CS2 饰品查询与选择'], intro: ['Search by Chinese name or Market Hash Name, select results across pages, and export a JSON list.', '按中文名或 Market Hash Name 搜索，分页勾选并导出 JSON 清单。'] },
-  { id: 'wechat', section: 'applications', view: 'quote', title: ['WeChat mini program & admin dashboard', '微信小程序与管理后台'], intro: ['Create a sample quote request on the mobile interface, then move it through the admin workflow.', '从小程序示例提交询价，再到管理后台推进处理状态。'] },
-  { id: 'ui-gallery', section: 'applications', view: 'gallery', title: ['Interactive UI gallery', '网页交互示例集'], intro: ['The original public gallery includes a spatial grid, replay, card sorting, and a searchable table.', '已公开的原版示例集含空间棋盘、场景回放、卡片排序和表格搜索。'] },
-  { id: 'venue-egress', section: 'research-prototypes', view: 'egress', title: ['Venue egress & multimodal connections (IJTST project)', '场馆散场与多方式交通（IJTST 项目）'], intro: ['Step through a sample venue release and onward travel by shuttle, rail, and walking.', '切换示例时间切片，查看场馆放行、接驳车、轨道和步行去向。'] },
-  { id: 'response-agent', section: 'research-prototypes', view: 'agent', title: ['Disaster response agent', '灾害应对智能体'], intro: ['Replay a fictional incident and review how the evidence and draft task list change across stages.', '查看虚构灾情的阶段更新，以及证据、待确认事项和方案草稿如何变化。'] },
-  { id: 'risk-lab', section: 'urban', view: 'risk', title: ['Urban risk & value lab', '城市风险—价值实验室'], intro: ['Drag the pressure and investment sliders to explore comparison cards with sample values.', '拖动压力和投入滑块，查看示例方案的指标对比。'] },
-  { id: 'urban-pathways', section: 'urban', view: 'timeline', title: ['Long-term urban pathways', '城市长期发展路径预览'], intro: ['Select a development pathway and inspect its milestones.', '切换发展路径，查看各阶段的示例节点。'] },
-  { id: 'flood-evolution', section: 'urban', view: 'flood', title: ['Synthetic urban flood evolution', '合成城市洪水演化'], intro: ['Scrub through a synthetic flood timeline and inspect individual districts.', '拖动阶段滑块，查看示例城市积水变化和分区状态。'] },
-  { id: 'flood-comparison', section: 'urban', view: 'compare', title: ['Flood scenario comparison', '城市洪水与路径比较'], intro: ['Step through named phases to compare two scenario maps side by side.', '按阶段前后翻看，并排对照两个示例场景。'] },
-  { id: 'spatial-safety', section: 'urban', view: 'route', title: ['Dynamic spatial safety routes', '动态空间安全路径'], intro: ['Switch stages and compare example routes across a schematic city.', '切换阶段和线路，查看示意城市里的通行路径。'] },
-  { id: 'district-board', section: 'urban', view: 'board', title: ['Nine-district spatial board', '九区域动态空间棋盘'], intro: ['Choose a phase and layer, then select a district to see its status.', '选择阶段和图层，再点击九宫格查看分区状态。'] },
-  { id: 'risk-explorer', section: 'urban', view: 'explorer', title: ['Urban risk model explorer', '城市风险模型探索器'], intro: ['Choose a scenario and perspective to compare sample indicators.', '选择预设情景和查看视角，对照示例指标。'] },
-  { id: 'tuanzhou-network', section: 'data', view: 'network', title: ['Evacuation case network', '团洲疏散案例网络界面'], intro: ['Inspect evacuation stages and their evidence links in a schematic network.', '用完全虚构的节点，展示团洲案例原型中分阶段查看网络与材料的方式。'] },
-  { id: 'tuanzhou-map', section: 'data', view: 'map', title: ['Evacuation case map', '团洲疏散案例地图界面'], intro: ['Switch map layers to examine illustrative transfer locations and links.', '用虚构位置和连线演示团洲案例原型的地图图层切换。'] },
-  { id: 'land-use', section: 'data', view: 'sankey', title: ['Land-use transitions', '土地利用变化桑基图'], intro: ['Switch periods to explore a Sankey chart adapted from a remote-sensing course project.', '切换时间段，查看由遥感课程作品改编的土地利用流向图。'] },
-];
+const byId = (id) => document.getElementById(id);
+const langButton = byId('language');
+let chinese = new URL(location.href).searchParams.get('lang') === 'zh';
+const t = (english, mandarin) => chinese ? mandarin : english;
 
-const translated = [...document.querySelectorAll('[data-zh]')].map(node => ({
-  node, label: [node.textContent, node.dataset.zh],
-}));
+const translations = [
+  ['data-zh', null],
+  ['data-placeholder-zh', 'placeholder'],
+  ['data-aria-zh', 'aria-label'],
+].flatMap(([key, attribute]) =>
+  [...document.querySelectorAll('[' + key + ']')].map(node => ({
+    node,
+    attribute,
+    english: attribute ? node.getAttribute(attribute) : node.textContent,
+    mandarin: node.getAttribute(key),
+  }))
+);
 
-function thumbnail(view) {
-  const tiled = ['flood', 'compare', 'route', 'board', 'map'].includes(view);
-  const bars = (values, grid = false) => values.map(size =>
-    '<i style="--size:' + (grid ? size : Math.round(size * 100) + '%') + '"></i>').join('');
-  const details = {
-    lookup: '<div class="mini-lookup"><b>' + t('Search items', '搜索饰品') + '</b><i></i><i></i><i></i></div>',
-    quote: '<div class="mini-phone"><b>' + t('Quote', '询价') + '</b><i></i><i></i><i></i></div><div class="mini-console"><b>' + t('Quote inbox', '询价管理') + '</b><i></i><i></i><span>' + t('Confirmed', '已确认') + '</span></div>',
-    gallery: '<div class="mini-gallery"><i></i><i></i><i></i><i></i></div>',
-    egress: '<div class="mini-egress">' + t(['Venue', 'Shuttle', 'Rail', 'Walk'], ['场馆', '接驳', '轨道', '步行']).map((name, index) => '<span>' + name + '<i style="--length:' + [93, 59, 47, 34][index] + '%"></i></span>').join('') + '</div>',
-    agent: '<div class="mini-agent">' + t(['Report', 'Review', 'Update'], ['接报', '核对', '修订']).map(name => '<span>' + name + '</span>').join('') + '<i></i><i></i></div>',
-    timeline: '<div class="mini-timeline"><i></i><i></i><i></i></div>',
-    network: '<div class="mini-timeline"><i></i><i></i><i></i></div>',
-    sankey: '<div class="mini-stream"><i></i><i></i><i></i></div>',
-  };
-  const sample = details[view] || '<div class="mini-plot' + (tiled ? ' tiled' : '') + '">' +
-    (tiled ? bars([.3, .8, .42, .95, .63, .48, .88, .36, .65], true) : bars([.4, .65, .48, .8, .58, .94])) + '</div>';
-  return '<div class="thumb ' + view + '" aria-hidden="true"><div class="thumb-window"><div class="window-bar"></div>' +
-    sample + '</div></div>';
+function element(tag, text, className) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  if (className) node.className = className;
+  return node;
 }
 
-function renderCatalog() {
-  document.documentElement.lang = t('en', 'zh-CN');
-  document.title = t('Interface portfolio · Aoxin Yang', '界面作品集 · 杨奥新');
-  document.querySelector('.section-nav').setAttribute('aria-label', t('Portfolio sections', '作品栏目'));
-  for (const { node, label } of translated) node.textContent = t(...label);
-  language.textContent = t('中文', 'English');
-  language.lang = t('zh-CN', 'en');
-  for (const link of document.querySelectorAll('.site-header a')) {
-    link.href = t('./#projects', './?lang=zh#projects');
+const sampleItems = [
+  ['AK-47 | Slate Wave (Field-Tested)', 'AK-47 | 岩灰波纹（久经沙场）'],
+  ['M4A1-S | Coastal Ink (Minimal Wear)', 'M4A1-S | 岸线墨影（略有磨损）'],
+  ['AWP | Violet Current (Factory New)', 'AWP | 暮紫流光（崭新出厂）'],
+  ['USP-S | Paper Signal (Field-Tested)', 'USP-S | 纸上信号（久经沙场）'],
+  ['Glock-18 | Fogline (Factory New)', '格洛克 18 型 | 雾线（崭新出厂）'],
+  ['MP9 | Harbor Glass (Minimal Wear)', 'MP9 | 港湾之镜（略有磨损）'],
+  ['Sticker | Northline', '印花 | 北线'],
+  ['Sticker | Atlas (Holo)', '印花 | 图集（全息）'],
+  ['Sticker | Low Tide', '印花 | 低潮'],
+  ['Canvas Case', '帆布武器箱'],
+  ['Night Shift Case', '夜班武器箱'],
+  ['Horizon Tag Charm', '地平线挂件'],
+];
+let fullCatalogue = false;
+let items = sampleItems;
+let searchIndex = [];
+let matchingItems = [];
+const search = byId('item-search');
+const resultList = byId('item-results');
+const previous = byId('page-prev'), next = byId('page-next');
+const selectionList = byId('selected-items');
+const selected = new Set();
+const pageNumber = byId('page-number');
+let pageCount = 1;
+const pageSize = 4;
+let cataloguePage = 0;
+
+function updateSelection() {
+  byId('selection-count').textContent = t(selected.size + ' selected', '已选 ' + selected.size + ' 件');
+  byId('export-items').disabled = selected.size === 0;
+  byId('clear-items').disabled = selected.size === 0;
+  const rows = [...selected].map(index => {
+    const name = t(...items[index]);
+    const row = element('li','');
+    const remove = element('button','×','remove-item');
+    remove.type = 'button';
+    remove.dataset.remove = String(index);
+    remove.setAttribute('aria-label', t('Remove ' + name, '移除 ' + name));
+    row.append(element('span',name),remove);
+    return row;
+  });
+  selectionList.replaceChildren(...rows);
+  renderTradeItems();
+  if (!rows.length) selectionList.append(element('li',t('Select items from the catalogue.','从目录勾选饰品。'),'empty-selection'));
+}
+
+function searchCatalogue() {
+  const keyword = search.value.trim().normalize('NFKC').toLowerCase();
+  matchingItems = [];
+  for (const [index, matchText] of searchIndex.entries()) {
+    if (matchText.includes(keyword)) matchingItems.push(index);
   }
-  ui.innerHTML = sections.map(section => {
-    const cards = projects.filter(project => project.section === section.id).map(project => {
-      const actions = project.view === 'gallery'
-        ? '<a href="' + gallery.live + '">' + t('Open original gallery', '打开原版演示') + '</a><a href="' + gallery.source + '">' + t('Source code', '源码') + '</a>'
-        : '<a href="#' + project.id + '" data-preview="' + project.id + '">' + t('Open interactive preview', '打开交互预览') + '</a>';
-      return '<article class="card">' + thumbnail(project.view) + '<div class="card-content"><h3>' +
-        t(...project.title) + '</h3><p>' + t(...project.intro) + '</p><div class="card-links">' +
-        actions + '</div></div></article>';
-    }).join('');
-    return '<section class="collection" id="' + section.id + '" aria-labelledby="' + section.id +
-      '-title"><h2 id="' + section.id + '-title">' + t(...section.title) + '</h2><div class="cards">' +
-      cards + '</div></section>';
-  }).join('');
+  pageCount = Math.max(1, Math.ceil(matchingItems.length / pageSize));
+  cataloguePage = 0;
 }
 
-function choose(id, label, options) {
-  return '<label class="control">' + label + '<select id="' + id + '">' +
-    options.map((name, index) => '<option value="' + index + '">' + name + '</option>').join('') +
-    '</select></label>';
+function formatNumber(value) {
+  return value.toLocaleString(t('en','zh-CN'));
 }
 
-function slider(id, label, min, max, value) {
-  return '<label class="control"><span>' + label + ' <output id="' + id + '-value" for="' + id +
-    '">' + value + '</output></span><input id="' + id + '" type="range" min="' + min +
-    '" max="' + max + '" value="' + value + '"></label>';
-}
-
-function bindControl(id, event, update) {
-  demo.querySelector('#' + id).addEventListener(event, update);
-}
-
-function read(id) {
-  return Number(demo.querySelector('#' + id).value);
-}
-
-function readSlider(id) {
-  const value = read(id);
-  demo.querySelector('#' + id + '-value').textContent = value;
-  return value;
-}
-
-const views = {};
-
-views.lookup = () => {
-  // Fictional entries keep the original name-search and export workflow reproducible without its database.
-  const items = [
-    ['AK-47 | Slate Wave (Field-Tested)', 'AK-47 | 岩灰波纹（久经沙场）'],
-    ['M4A1-S | Coastal Ink (Minimal Wear)', 'M4A1-S | 岸线墨影（略有磨损）'],
-    ['AWP | Violet Current (Factory New)', 'AWP | 暮紫流光（崭新出厂）'],
-    ['USP-S | Paper Signal (Field-Tested)', 'USP-S | 纸上信号（久经沙场）'],
-    ['Glock-18 | Fogline (Factory New)', '格洛克 18 型 | 雾线（崭新出厂）'],
-    ['MP9 | Harbor Glass (Minimal Wear)', 'MP9 | 港湾之镜（略有磨损）'],
-    ['Sticker | Northline', '印花 | 北线'],
-    ['Sticker | Atlas (Holo)', '印花 | 图集（全息）'],
-    ['Sticker | Low Tide', '印花 | 低潮'],
-    ['Canvas Case', '帆布武器箱'],
-    ['Night Shift Case', '夜班武器箱'],
-    ['Horizon Tag Charm', '地平线挂件'],
-  ];
-  const selected = new Set();
-  const perPage = 4;
-  let page = 0;
-  demo.innerHTML = '<div class="lookup-layout"><section><label class="control">' + t('Search items', '搜索饰品') +
-    '<input type="search" id="item-search" placeholder="' + t('Try AK-47 or Northline', '试试 AK-47 或 北线') +
-    '" autocomplete="off"></label><p class="legend" id="item-count" aria-live="polite"></p>' +
-    '<div id="item-results" class="item-results"></div><div class="paging"><button id="page-prev" type="button">' +
-    t('Previous', '上一页') + '</button><output id="current-page" aria-live="polite"></output>' +
-    '<button id="page-next" type="button">' + t('Next', '下一页') + '</button></div></section>' +
-    '<section class="panel"><h3>' + t('Selected items', '已选饰品') + '</h3>' +
-    '<p id="selection-count" aria-live="polite"></p><ul id="selected-items" class="selected-items"></ul>' +
-    '<button class="action" id="export-items" type="button">' + t('Export JSON', '导出 JSON') + '</button>' +
-    '<p class="legend">' + t('Exports the selected Market Hash Names to selected_items.json.', '将已选饰品的 Market Hash Name 导出到 selected_items.json。') + '</p></section></div>';
-  const query = demo.querySelector('#item-search');
-  const results = demo.querySelector('#item-results');
-  const previous = demo.querySelector('#page-prev');
-  const next = demo.querySelector('#page-next');
-  const download = demo.querySelector('#export-items');
-
-  const updateSelection = () => {
-    demo.querySelector('#selection-count').textContent = t(selected.size + ' selected', '已选 ' + selected.size + ' 件');
-    demo.querySelector('#selected-items').innerHTML = [...selected].map(key => '<li>' + key + '</li>').join('');
-    download.disabled = selected.size === 0;
-  };
-  const update = () => {
-    const keyword = query.value.trim().toLowerCase();
-    const matches = items.filter(item => item.some(name => name.toLowerCase().includes(keyword)));
-    const pages = Math.max(1, Math.ceil(matches.length / perPage));
-    results.innerHTML = matches.slice(page * perPage, (page + 1) * perPage).map(([key, name]) =>
-      '<label class="item-result"><input type="checkbox" value="' + key + '"' + (selected.has(key) ? ' checked' : '') +
-      '><span><strong>' + t(key, name) + '</strong><small lang="' + t('zh-CN', 'en') + '">' +
-      t(name, key) + '</small></span></label>').join('');
-    if (!matches.length) results.textContent = t('No sample items match this search.', '示例库中没有匹配的饰品。');
-    demo.querySelector('#item-count').textContent = t(matches.length + ' matches', '找到 ' + matches.length + ' 件');
-    demo.querySelector('#current-page').textContent = t('Page ' + (page + 1) + ' of ' + pages, '第 ' + (page + 1) + ' 页 / 共 ' + pages + ' 页');
-    previous.disabled = page === 0;
-    next.disabled = page >= pages - 1;
-  };
-  query.addEventListener('input', () => { page = 0; update(); });
-  previous.addEventListener('click', () => { page -= 1; update(); });
-  next.addEventListener('click', () => { page += 1; update(); });
-  results.addEventListener('change', event => {
-    const checkbox = event.target;
-    if (checkbox.checked) selected.add(checkbox.value);
-    else selected.delete(checkbox.value);
-    updateSelection();
-  });
-  download.addEventListener('click', () => {
-    const json = JSON.stringify([...selected], null, 2) + '\n';
-    const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'selected_items.json';
-    demo.append(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  });
-  update();
+function renderCatalogue() {
+  const rows = matchingItems.slice(cataloguePage * pageSize,(cataloguePage + 1) * pageSize);
+  resultList.replaceChildren(...rows.map(index => {
+    const names = items[index];
+    const row = element('label','','item-row');
+    const box = document.createElement('input');
+    box.type = 'checkbox';
+    box.value = index;
+    box.checked = selected.has(index);
+    const name = element('span','');
+    name.append(element('strong',t(...names)),element('small',t(names[1],names[0])));
+    row.append(box,name);
+    return row;
+  }));
+  if (!rows.length) {
+    resultList.append(element('p',t('No items match this search.','目录没有匹配项。'),'empty-results'));
+  }
+  const total = formatNumber(items.length);
+  byId('catalogue-source').textContent = fullCatalogue
+    ? t('Local catalogue · ' + total + ' entries', '本地完整目录 · ' + total + ' 项')
+    : t('Sample catalogue', '示例目录');
+  const matches = formatNumber(matchingItems.length);
+  byId('item-count').textContent = t(matches + ' matches','找到 ' + matches + ' 件');
+  pageNumber.max = pageCount;
+  pageNumber.value = cataloguePage + 1;
+  byId('page-total').textContent = '/ ' + formatNumber(pageCount);
+  previous.disabled = cataloguePage === 0;
+  next.disabled = cataloguePage + 1 >= pageCount;
   updateSelection();
-};
+}
 
-views.quote = () => {
-  const products = ['205/55 R16', '215/60 R17', '225/50 R18'];
-  const statuses = t(['New request', 'Quoted', 'Confirmed', 'Fulfilled'], ['待处理', '已报价', '已确认', '已履约']);
-  const next = t(['Mark as quoted', 'Confirm quote', 'Mark fulfilled'], ['标记已报价', '确认报价', '标记已履约']);
-  let request;
-  demo.innerHTML = '<div class="split quote-layout"><form class="panel phone" id="quote-form"><h3>' +
-    t('Mini program · new quote', '小程序 · 发起询价') + '</h3>' +
-    choose('product', t('Sample tire size', '示例轮胎规格'), products) + '<label class="control">' +
-    t('Quantity', '数量') + '<input type="number" id="quantity" value="2" min="1" max="20" required></label>' +
-    '<button class="action" type="submit">' + t('Submit sample request', '提交示例询价') + '</button></form>' +
-    '<section class="panel"><h3>' + t('Admin dashboard · quotes', '管理后台 · 询价单') +
-    '</h3><div id="quote-result" aria-live="polite"></div>' +
-    '<button class="action next-action" type="button" id="next-status" hidden></button></section></div>';
-  const advance = demo.querySelector('#next-status');
-  const update = () => {
-    const result = demo.querySelector('#quote-result');
-    if (!request) {
-      result.textContent = t('Submit a request to see it here.', '提交询价后，后台会在这里显示。');
-      return;
-    }
-    result.innerHTML = '<p>' + t('Sample request', '示例询价单') + ' · ' +
-      products[request.product] + ' × ' + request.quantity + '</p><p class="quote-status">' +
-      statuses[request.status] + '</p><p class="note">' + t('Sample stock', '示例可用库存') +
-      ' · ' + ((request.product + 1) * 12 - (request.status === 3 ? request.quantity : 0)) + '</p>';
-    advance.hidden = request.status === 3;
-    advance.textContent = next[request.status] || '';
-    if (request.status === 3) {
-      result.tabIndex = -1;
-      result.focus();
-    }
-  };
-  bindControl('quote-form', 'submit', event => {
-    event.preventDefault();
-    request = { product: read('product'), quantity: read('quantity'), status: 0 };
-    update();
+search.addEventListener('input', () => {
+  searchCatalogue();
+  renderCatalogue();
+});
+byId('page-form').addEventListener('submit', event => {
+  event.preventDefault();
+  cataloguePage = pageNumber.valueAsNumber - 1;
+  renderCatalogue();
+});
+previous.addEventListener('click', () => {
+  cataloguePage -= 1;
+  renderCatalogue();
+});
+next.addEventListener('click', () => {
+  cataloguePage += 1;
+  renderCatalogue();
+});
+resultList.addEventListener('change', event => {
+  const index = Number(event.target.value);
+  if (event.target.checked) selected.add(index);
+  else selected.delete(index);
+  updateSelection();
+});
+selectionList.addEventListener('click', event => {
+  const button = event.target.closest('[data-remove]');
+  if (!button) return;
+  selected.delete(Number(button.dataset.remove));
+  renderCatalogue();
+  (selectionList.querySelector('button') || search).focus();
+});
+byId('clear-items').addEventListener('click', () => {
+  selected.clear();
+  renderCatalogue();
+  search.focus();
+});
+byId('export-items').addEventListener('click', () => {
+  const content = JSON.stringify([...selected].map(index => items[index][0]), null, 2) + '\n';
+  const url = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
+  const download = document.createElement('a');
+  download.href = url;
+  download.download = 'selected_items.json';
+  document.body.append(download);
+  download.click();
+  download.remove();
+  setTimeout(() => URL.revokeObjectURL(url),1000);
+});
+
+const quoteResult = byId('quote-result');
+const nextStatus = byId('next-status');
+const steps = [...byId('workflow-steps').children];
+const statusLabels = [
+  ['Received','待处理'], ['Quoted','已报价'], ['Confirmed','已确认'], ['Fulfilled','已履约'],
+];
+const advanceLabels = [
+  ['Mark as quoted','标记已报价'], ['Confirm quote','确认报价'], ['Mark fulfilled','标记已履约'],
+];
+let request = null;
+
+function renderQuote() {
+  steps.forEach((step,index) => {
+    const current = request && index === request.status;
+    if (current) step.setAttribute('aria-current','step');
+    else step.removeAttribute('aria-current');
+    step.classList.toggle('is-past', Boolean(request && index < request.status));
   });
-  bindControl('next-status', 'click', () => {
-    request.status += 1;
-    update();
-  });
-  update();
-};
-
-function metricBars(names, values) {
-  return '<div class="metrics">' + names.map((name, index) => '<label class="metric"><span>' +
-    name + '</span><meter min="0" max="100" value="' + values[index] + '">' + values[index] +
-    '</meter><b>' + values[index] + '</b></label>').join('') + '</div>';
-}
-
-function riskPanel(explorer) {
-  const labels = t(['Service continuity', 'Travel access', 'Public space'], ['服务连续性', '出行可达性', '公共空间']);
-  const controls = explorer ?
-    choose('pressure', t('Scenario', '预设情景'), t(['Moderate', 'Heavy rainfall', 'Recovery'], ['常态', '强降雨', '恢复期'])) +
-    choose('investment', t('Investment level', '投入水平'), t(['Baseline', 'Additional'], ['基准', '增加投入'])) +
-    choose('lens', t('Perspective', '查看视角'), t(['Resident', 'Operator'], ['居民侧', '运行侧'])) :
-    slider('pressure', t('Scenario pressure', '场景压力'), 0, 10, 4) +
-    slider('investment', t('Illustrative investment', '示例投入'), 0, 10, 4);
-  demo.innerHTML = '<div class="controls">' + controls +
-    '</div><div class="split"><section class="panel"><h3>' + t('Sample plan A', '示例方案 A') +
-    '</h3><div id="risk-a"></div></section><section class="panel"><h3>' + t('Sample plan B', '示例方案 B') +
-    '</h3><div id="risk-b"></div></section></div>' +
-    '<p class="legend">' + t('Illustrative comparison on a 0–100 scale.', '0–100 的界面示例刻度。') + '</p>';
-  const update = () => {
-    const p = explorer ? [3, 9, 5][read('pressure')] : readSlider('pressure');
-    const i = explorer ? [3, 8][read('investment')] : readSlider('investment');
-    const lens = explorer ? read('lens') * 4 : 0;
-    demo.querySelector('#risk-a').innerHTML = metricBars(labels, [64 - 3*p + 2*i + lens, 67 - 2*p + i, 56 - p + lens]);
-    demo.querySelector('#risk-b').innerHTML = metricBars(labels, [64 - 2*p + i, 61 - p + 2*i + lens, 50 - p + 3*i]);
-  };
-  const controlEvent = explorer ? 'change' : 'input';
-  bindControl('pressure', controlEvent, update);
-  bindControl('investment', controlEvent, update);
-  if (explorer) bindControl('lens', 'change', update);
-  update();
-}
-views.risk = () => riskPanel(false);
-views.explorer = () => riskPanel(true);
-
-views.timeline = () => {
-  const paths = t([
-    ['Audit public facilities', 'Upgrade existing service hubs', 'Review coverage gaps'],
-    ['Identify redevelopment areas', 'Open a secondary service hub', 'Review access from both hubs'],
-    ['Map relocation needs', 'Move selected functions in phases', 'Monitor access to the new hub'],
-  ], [
-    ['盘点公共设施', '改造现有服务点', '复查服务覆盖缺口'],
-    ['识别更新片区', '开放第二服务点', '复查两个服务点的可达性'],
-    ['梳理搬迁需求', '分阶段迁移部分功能', '跟踪新服务点的可达性'],
-  ]);
-  demo.innerHTML = '<div class="controls">' + choose('pathway', t('Development pathway', '发展路径'),
-    t(['Maintain', 'Transform', 'Relocate'], ['维持更新', '调整转型', '分期迁移'])) +
-    '</div><div class="panel"><ol class="steps" id="milestones" aria-live="polite"></ol></div>';
-  const update = () => {
-    demo.querySelector('#milestones').innerHTML = paths[read('pathway')].map(item => '<li>' + item + '</li>').join('');
-  };
-  bindControl('pathway', 'change', update);
-  update();
-};
-
-function districtDemo(view) {
-  const districts = t(['North Hill', 'Station', 'East Park', 'West Bank', 'Town Center', 'East Bank', 'Depot', 'South Gate', 'School'],
-    ['北岭', '车站', '东园', '西岸', '城心', '东岸', '仓库', '南门', '学校']);
-  const compare = view === 'compare';
-  const route = view === 'route';
-  const board = view === 'board';
-  const map = view === 'map';
-  const flood = view === 'flood';
-  const phases = t(['Before rainfall', 'Rain begins', 'Ponding', 'Peak water', 'Receding', 'Recovery'],
-    ['降雨前', '降雨开始', '出现积水', '水位最高', '水位回落', '恢复阶段']);
-  const waterLevels = [0, 1, 3, 6, 4, 1];
-  let comparedPhase = 0;
-  let active = 4;
-  const layers = map ? t(['Transfer points', 'Sample link'], ['转移点位', '示例联系']) :
-    t(['Flood exposure', 'Service locations'], ['积水状态', '服务点']);
-  let stageControl = '';
-  if (compare) {
-    stageControl = '<div class="paging phase-control"><button type="button" id="phase-prev">' +
-      t('Previous phase', '上一阶段') + '</button><output id="phase-name" aria-live="polite"></output>' +
-      '<button type="button" id="phase-next">' + t('Next phase', '下一阶段') + '</button></div>';
-  } else if (flood) {
-    stageControl = slider('stage', t('Flood timeline', '洪水时间轴'), 1, phases.length, 1) +
-      '<output class="phase-name" id="phase-name" aria-live="polite"></output>';
-  } else if (!map) {
-    stageControl = choose('stage', t('Phase', '阶段'), phases);
-  }
-  demo.innerHTML = '<div class="controls">' +
-    stageControl +
-    (board || map ? choose('layer', t('Layer', '图层'), layers) : '') +
-    (route ? choose('route', t('Example route', '示例线路'), t(['Via station', 'Via east park'], ['经车站', '经东园'])) : '') +
-    '</div><div class="' + (compare ? 'split' : '') + '" id="districts"></div><p class="note" id="district-detail" aria-live="polite"></p>';
-  const grid = demo.querySelector('#districts');
-  const update = () => {
-    const phase = compare ? comparedPhase : map ? 0 : flood ? readSlider('stage') - 1 : read('stage');
-    if (compare || flood) demo.querySelector('#phase-name').textContent = phases[phase];
-    if (compare) {
-      demo.querySelector('#phase-prev').disabled = phase === 0;
-      demo.querySelector('#phase-next').disabled = phase >= phases.length - 1;
-    }
-    const alternate = (board || map) && read('layer') === 1;
-    const routeTiles = route && read('route') === 0 && phase !== 3 ? [0, 1, 4, 5, 8] : [0, 1, 2, 5, 8];
-    const tileClass = (n, scenario) => {
-      if (route) return routeTiles.includes(n) ? 'route' : '';
-      if (map) return (alternate ? [0, 1, 4, 5, 8] : [1, 4, 8]).includes(n) ? 'route' : '';
-      if (alternate) return [1, 4, 6, 8].includes(n) ? 'route' : '';
-      const level = [0, 2, 1, 3, 2, 4, 2, 1, 0][n] + waterLevels[phase] - (scenario ? 2 : 0);
-      if (level >= 8) return 'deep';
-      return level >= 5 ? 'wet' : '';
-    };
-    const panel = (scenario, title) => '<section class="panel">' + (title ? '<h3>' + title + '</h3>' : '') +
-      '<div class="tile-board">' + districts.map((name, n) => {
-        const state = tileClass(n, scenario);
-        const element = compare ? 'div' : 'button';
-        const selected = compare ? '' : ' type="button" data-district="' + n + '" aria-pressed="' + (n === active) + '"';
-        return '<' + element + ' class="tile ' + state + '"' + selected + '>' + name + '</' + element + '>';
-      }).join('') + '</div></section>';
-    grid.innerHTML = panel(false, compare ? t('Scenario A', '方案 A') : '') +
-      (compare ? panel(true, t('Scenario B', '方案 B')) : '');
-    const state = tileClass(active, false);
-    const descriptions = {
-      deep: t('High water in this example', '示例积水较深'),
-      wet: t('Shallow water in this example', '示例浅积水'),
-      route: t('Highlighted in this layer', '当前图层中的高亮节点'),
-      '': t('No highlight in this view', '当前视图无标记'),
-    };
-    demo.querySelector('#district-detail').textContent = compare
-      ? t('Light and dark blue show two illustrative water levels.', '浅蓝和深蓝代表两档示例积水状态。')
-      : districts[active] + ' · ' + descriptions[state];
-  };
-  if (compare) {
-    bindControl('phase-prev', 'click', () => { comparedPhase -= 1; update(); });
-    bindControl('phase-next', 'click', () => { comparedPhase += 1; update(); });
-  } else if (!map) {
-    bindControl('stage', flood ? 'input' : 'change', update);
-  }
-  if (board || map) bindControl('layer', 'change', update);
-  if (route) bindControl('route', 'change', update);
-  grid.addEventListener('click', event => {
-    const button = event.target.closest('[data-district]');
-    if (!button) return;
-    active = Number(button.dataset.district);
-    update();
-    grid.querySelector('[data-district="' + active + '"]').focus({ preventScroll: true });
-  });
-  update();
-}
-for (const view of ['flood', 'compare', 'route', 'board', 'map']) {
-  views[view] = () => districtDemo(view);
-}
-
-function stageCards(names, values) {
-  demo.innerHTML = '<div class="panel"><div class="flow-list" id="stages">' +
-    names.map((name, index) => '<button type="button" data-stage="' + index +
-      '" aria-pressed="false">' + name + '</button>').join('') +
-    '</div><div class="note" id="stage-info" aria-live="polite"></div></div>';
-  const stages = demo.querySelector('#stages');
-  const select = index => {
-    for (const button of stages.children) button.setAttribute('aria-pressed', Number(button.dataset.stage) === index);
-    demo.querySelector('#stage-info').innerHTML = values[index];
-  };
-  stages.addEventListener('click', event => {
-    const button = event.target.closest('[data-stage]');
-    if (button) select(Number(button.dataset.stage));
-  });
-  select(0);
-}
-
-function entries(labels, values) {
-  return '<ul class="steps">' + labels.map((label, index) => '<li><strong>' + label + '</strong> · ' +
-    values[index] + '</li>').join('') + '</ul>';
-}
-
-views.network = () => {
-  const labels = t(['Node', 'Example link', 'Evidence type'], ['节点', '示例联系', '材料类型']);
-  stageCards(t(['Depart', 'Transfer', 'Arrive'], ['出发', '中转', '到达']), [
-    entries(labels, t(['Origin A', 'Origin A to Transfer B', 'Illustrative travel record'], ['出发点 A', '出发点 A 至中转点 B', '示例转移记录'])),
-    entries(labels, t(['Transfer B', 'Transfer B to Reception C', 'Illustrative route note'], ['中转点 B', '中转点 B 至接收点 C', '示例路线记录'])),
-    entries(labels, t(['Reception C', 'Reception C to Service D', 'Illustrative reception record'], ['接收点 C', '接收点 C 至服务点 D', '示例接收记录'])),
-  ]);
-};
-
-views.egress = () => {
-  const cumulative = [
-    [15, 0, 0, 5], [36, 6, 11, 15], [55, 15, 18, 22],
-    [78, 26, 26, 26], [92, 33, 31, 28], [100, 37, 34, 29],
-  ];
-  const labels = t(['Released at venue', 'Shuttle arrivals', 'Rail arrivals', 'Arrived on foot'],
-    ['场馆已放行', '接驳已到达', '轨道已到达', '步行已到达']);
-  const times = cumulative.map((_, index) => (index + 1)*5 + t(' min', ' 分钟'));
-  stageCards(times, cumulative.map(counts => metricBars(labels, counts)));
-  demo.insertAdjacentHTML('beforeend', '<p class="legend">' +
-    t('Cumulative counts after the event in a fictional 100-person scenario.', '虚构的百人场景，显示散场后各时间点的累计人数。') + '</p>');
-};
-
-views.agent = () => {
-  const labels = t(['New report', 'Evidence to check', 'Draft task'], ['新增情况', '待核对材料', '任务草稿']);
-  stageCards(t(['Initial report', 'New information', 'Plan update'], ['接报', '信息更新', '方案修订']), [
-    entries(labels, t(['Two reports of access issues', 'Check the timestamps and locations', 'Prepare an access-status list'],
-      ['收到两条通行异常报告', '对照上报时间和位置', '整理待核实路段清单'])),
-    entries(labels, t(['A second route is reported open', 'Confirm the report with a second source', 'Flag the alternative route for review'],
-      ['有消息称第二条路线可用', '用另一来源交叉核对', '标注待复核的备选路线'])),
-    entries(labels, t(['The second source confirms access', 'Keep the conflicting earlier record visible', 'Update the draft and note the reason'],
-      ['第二来源确认该路线可用', '保留早先冲突记录供复查', '更新草稿并注明修订原因'])),
-  ]);
-  demo.insertAdjacentHTML('beforeend', '<p class="legend">' +
-    t('Scripted replay of a fictional event.', '虚构事件的预设回放。') + '</p>');
-};
-
-views.sankey = () => {
-  const groups = t(['Built-up', 'Cropland', 'Vegetation'], ['建设用地', '耕地', '植被']);
-  const colors = ['#9b6998', '#9b762f', '#39816d'];
-  const periods = Array.from({ length: 6 }, (_, i) => (1985 + i*5) + '–' + (1990 + i*5));
-  demo.innerHTML = '<div class="controls">' + choose('period', t('Example period', '示例时段'), periods) +
-    '</div><div class="panel"><canvas class="chart" id="flow-chart" width="740" height="260" aria-hidden="true"></canvas>' +
-    '<div class="chart-data" id="flow-labels"></div></div><p class="legend">' +
-    t('Illustrative land-use flows in arbitrary units.', '界面示例流量，单位为示意值。') + '</p>';
-  const canvas = demo.querySelector('#flow-chart');
-  const context = canvas.getContext('2d');
-  const update = () => {
-    const index = read('period');
-    const matrix = [[26, 1, 1], [6 + index, 25 - index, 3], [2, 3, 29]];
-    const sum = row => row.reduce((total, value) => total + value, 0);
-    const scale = 1.6;
-    const positions = widths => widths.map((_, i) => 50 + sum(widths.slice(0, i)) * scale + i * 13);
-    const left = positions(matrix.map(sum));
-    const rightSums = groups.map((_, col) => sum(matrix.map(row => row[col])));
-    const right = positions(rightSums);
-    if (context) {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      const nextRight = [...right];
-      context.font = '18px system-ui';
-      context.fillStyle = '#182923';
-      context.fillText(t('From', '期初'), 135, 28);
-      context.fillText(t('To', '期末'), 550, 28);
-      matrix.forEach((row, i) => {
-        let y = left[i];
-        row.forEach((value, j) => {
-          const thickness = value * scale;
-          const endY = nextRight[j];
-          context.fillStyle = colors[i] + '8a';
-          context.beginPath();
-          context.moveTo(171, y);
-          context.bezierCurveTo(310, y, 395, endY, 550, endY);
-          context.lineTo(550, endY + thickness);
-          context.bezierCurveTo(395, endY + thickness, 310, y + thickness, 171, y + thickness);
-          context.closePath();
-          context.fill();
-          y += thickness;
-          nextRight[j] += thickness;
-        });
-        context.fillStyle = colors[i];
-        context.fillRect(160, left[i], 11, sum(row)*scale);
-        context.fillRect(550, right[i], 11, rightSums[i]*scale);
-        context.fillStyle = '#182923';
-        context.fillText(groups[i], 12, left[i] + 18);
-        context.fillText(groups[i], 575, right[i] + 18);
-      });
-    }
-    demo.querySelector('#flow-labels').innerHTML = matrix.flatMap((row, i) =>
-      row.map((value, j) => '<span>' + groups[i] + ' → ' + groups[j] + ' · ' + value + '</span>')).join('');
-  };
-  bindControl('period', 'change', update);
-  update();
-};
-
-function syncPreview() {
-  const id = location.hash.slice(1);
-  const project = projects.find(item => item.id === id && Object.hasOwn(views, item.view));
-  if (!project) {
-    if (dialog.open) dialog.close();
+  if (!request) {
+    quoteResult.replaceChildren(element('p',t('Submit a request to start.','提交示例询价，后台会显示记录。'),'quote-empty'));
+    nextStatus.hidden = true;
     return;
   }
-  document.querySelector('#preview-title').textContent = t(...project.title);
-  document.querySelector('#preview-lead').textContent = t(
-    'Interface preview with sample data. No connection to the original system.',
-    '此预览使用示例数据，独立于原系统运行。'
+  const stock = request.stock - (request.status === 3 ? request.quantity : 0);
+  quoteResult.replaceChildren(
+    element('p',request.product + ' × ' + request.quantity),
+    element('p',t(...statusLabels[request.status]),'quote-status'),
+    element('p',t('Sample stock','示例可用库存') + ' · ' + stock)
   );
-  views[project.view]();
-  openProject = id;
-  if (!dialog.open) dialog.showModal();
+  nextStatus.hidden = request.status === 3;
+  if (!nextStatus.hidden) nextStatus.textContent = t(...advanceLabels[request.status]);
+}
+byId('quote-form').addEventListener('submit', event => {
+  event.preventDefault();
+  const product = byId('product');
+  request = {
+    product: product.value,
+    quantity: byId('quantity').valueAsNumber,
+    stock: [24, 36, 48][product.selectedIndex],
+    status: 0,
+  };
+  renderQuote();
+});
+nextStatus.addEventListener('click', () => {
+  if (!request || request.status === 3) return;
+  request.status += 1;
+  renderQuote();
+  if (request.status === 3) {
+    quoteResult.tabIndex = -1;
+    quoteResult.focus();
+  }
+});
+
+const districtNames = [
+  ['North Hill','北岭'], ['Station','车站'], ['East Park','东园'],
+  ['West Bank','西岸'], ['Town Centre','城心'], ['East Bank','东岸'],
+  ['Depot','仓库'], ['South Gate','南门'], ['School','学校'],
+];
+const frameHighlights = [[4],[4,5],[1,4,5],[1,4,5,8],[4,8],[8]];
+const services = [1,4,6,8];
+const stage = byId('stage'), layer = byId('layer'), zoom = byId('zoom'), play = byId('play-timeline');
+const board = byId('districts');
+let activeDistrict = 4;
+let timer = null;
+const tiles = districtNames.map((_,index) => {
+  const button = element('button','','tile');
+  button.type = 'button';
+  button.addEventListener('click', () => {
+    activeDistrict = index;
+    renderSpatial();
+  });
+  return button;
+});
+board.append(...tiles);
+
+function renderSpatial() {
+  const frame = Number(stage.value);
+  const marks = layer.value === 'services' ? services : frameHighlights[frame - 1];
+  tiles.forEach((tile,index) => {
+    tile.textContent = t(...districtNames[index]);
+    tile.classList.toggle('is-marked',marks.includes(index));
+    tile.setAttribute('aria-pressed',String(index === activeDistrict));
+  });
+  byId('district-name').textContent = t(...districtNames[activeDistrict]);
+  byId('district-detail').textContent = marks.includes(activeDistrict)
+    ? t('Highlighted in this layer.','此分区在当前图层中高亮。')
+    : t('Unmarked in this layer.','此分区在当前图层中未标记。');
+  byId('stage-label').textContent = t('Frame ','画面 ') + frame + ' / ' + frameHighlights.length;
+  byId('zoom-value').textContent = zoom.value + '%';
+  board.style.setProperty('--board-scale',String(Number(zoom.value) / 100));
+  play.textContent = timer ? t('Pause','暂停') : t('Play','播放');
 }
 
-ui.addEventListener('click', event => {
-  const link = event.target.closest('[data-preview]');
-  if (link) opener = link;
-});
-dialog.querySelector('.close').addEventListener('click', () => dialog.close());
-dialog.addEventListener('close', () => {
-  if (location.hash === '#' + openProject) {
-    history.replaceState(null, '', location.pathname + location.search);
+function stopPlayback() {
+  if (timer) clearInterval(timer);
+  timer = null;
+  renderSpatial();
+}
+play.addEventListener('click', () => {
+  if (timer) {
+    stopPlayback();
+    return;
   }
-  if (opener?.isConnected) opener.focus({ preventScroll: true });
-  opener = null;
-  openProject = '';
+  timer = setInterval(() => {
+    stage.value = String(Number(stage.value) % frameHighlights.length + 1);
+    renderSpatial();
+  },900);
+  renderSpatial();
 });
-language.addEventListener('click', () => {
-  isChinese = !isChinese;
-  const destination = new URL(location.href);
-  if (isChinese) destination.searchParams.set('lang', 'zh');
-  else destination.searchParams.delete('lang');
-  history.replaceState(null, '', destination);
-  renderCatalog();
+byId('reset-timeline').addEventListener('click', () => {
+  stage.value = '1';
+  zoom.value = '100';
+  stopPlayback();
 });
-language.hidden = false;
-window.addEventListener('hashchange', syncPreview);
-renderCatalog();
-syncPreview();
+stage.addEventListener('input',renderSpatial);
+zoom.addEventListener('input',renderSpatial);
+layer.addEventListener('change',renderSpatial);
+byId('district-board').addEventListener('wheel',event => {
+  if (!(event.ctrlKey || event.metaKey)) return;
+  event.preventDefault();
+  zoom.value = String(Number(zoom.value) + (event.deltaY < 0 ? 5 : -5));
+  renderSpatial();
+}, { passive: false });
+document.addEventListener('visibilitychange',() => {
+  if (document.hidden && timer) stopPlayback();
+});
+
+const period = byId('period');
+for (let year = 1985; year < 2015; year += 5) {
+  period.append(element('option',year + '–' + (year + 5)));
+}
+function renderFlows() {
+  const labels = t(['Built-up','Cropland','Vegetation'],['建设用地','耕地','植被']);
+  const index = period.selectedIndex;
+  const matrix = [[26,1,1],[6+index,25-index,3],[2,3,29]];
+  const values = matrix.flatMap((row,i) => row.map((value,j) => element('span',labels[i] + ' → ' + labels[j] + ' · ' + value)));
+  byId('flow-labels').replaceChildren(...values);
+  const canvas = byId('flow-chart');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const sum = numbers => numbers.reduce((total,value) => total + value,0);
+  const start = matrix.map(sum);
+  const end = labels.map((_,column) => sum(matrix.map(row => row[column])));
+  const scale = 1.55;
+  const positions = values => values.map((_,i) => 57 + sum(values.slice(0,i)) * scale + i * 17);
+  const left = positions(start), right = positions(end);
+  const nextRight = [...right];
+  const colours = ['#9e6c96','#a47b36','#45816a'];
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.font = '17px system-ui';
+  ctx.fillStyle = '#182622';
+  ctx.fillText(t('From','期初'),152,28);
+  ctx.fillText(t('To','期末'),611,28);
+  matrix.forEach((row,i) => {
+    let y = left[i];
+    row.forEach((value,j) => {
+      const weight = value * scale;
+      const destination = nextRight[j];
+      ctx.fillStyle = colours[i] + '9c';
+      ctx.beginPath();
+      ctx.moveTo(177,y);
+      ctx.bezierCurveTo(325,y,450,destination,609,destination);
+      ctx.lineTo(609,destination + weight);
+      ctx.bezierCurveTo(450,destination + weight,325,y + weight,177,y + weight);
+      ctx.closePath();
+      ctx.fill();
+      y += weight;
+      nextRight[j] += weight;
+    });
+    ctx.fillStyle = colours[i];
+    ctx.fillRect(165,left[i],12,start[i]*scale);
+    ctx.fillRect(609,right[i],12,end[i]*scale);
+    ctx.fillStyle = '#182622';
+    ctx.fillText(labels[i],18,left[i] + 21);
+    ctx.fillText(labels[i],642,right[i] + 21);
+  });
+}
+period.addEventListener('change',renderFlows);
+
+const tradeItem = byId('trade-item');
+const tradePrice = byId('trade-price');
+const tradeStages = [...byId('trade-stages').children];
+const sampleOffer = 120;
+let trade = null;
+
+function renderTradeItems() {
+  const previousItem = tradeItem.value;
+  const sample = new Option(t('Sample item', '示例饰品'), '');
+  const options = [...selected].map(index => new Option(t(...items[index]), index));
+  tradeItem.replaceChildren(sample, ...options);
+  if (selected.has(Number(previousItem)) && previousItem !== '') tradeItem.value = previousItem;
+}
+
+function renderTrade() {
+  const action = byId('trade-action');
+  const log = byId('trade-log');
+  const priceField = byId('trade-price-field');
+  const nextAction = byId('trade-next');
+  action.hidden = !trade;
+  log.replaceChildren();
+  for (const [index, stage] of tradeStages.entries()) {
+    const current = trade?.step === index;
+    stage.classList.toggle('is-complete', Boolean(trade && (index < trade.step || trade.finished)));
+    if (current) stage.setAttribute('aria-current', 'step');
+    else stage.removeAttribute('aria-current');
+  }
+  if (!trade) {
+    log.append(element('li', t('Load a sample quote to get started.', '载入一笔示例报价，开始演示。'), 'empty-log'));
+    return;
+  }
+
+  const listing = trade.step === 2;
+  const hasPrice = !trade.finished && (listing || trade.step === 3);
+  priceField.hidden = !hasPrice;
+  tradePrice.disabled = !hasPrice;
+  tradePrice.required = hasPrice;
+  nextAction.hidden = trade.finished;
+  byId('trade-price-label').textContent = listing
+    ? t('Sample listing price', '示例上架价')
+    : t('New sample price', '示例新价');
+  const names = t(...trade.names);
+  const steps = [
+    [t('Sample quote', '示例报价'), '¥' + sampleOffer.toFixed(2), t('Simulate purchase', '模拟购买')],
+    [t('Purchase recorded', '已记录模拟购买'), '¥' + sampleOffer.toFixed(2), t('Receive into inventory', '确认入库')],
+    [t('Received into sample inventory', '已进入示例库存'), names, t('Create sample listing', '确认上架')],
+    [t('Sample listing created', '已建立示例挂单'), trade.listingPrice, t('Update listing price', '确认改价')],
+    [t('Sample listing repriced', '示例挂单已改价'), trade.revisedPrice, ''],
+  ];
+  const [status, detail, button] = steps[trade.finished ? 4 : trade.step];
+  byId('trade-current').replaceChildren(element('strong', names), element('span', status + ' · ' + detail));
+  nextAction.textContent = button;
+  for (const [label, value] of steps.slice(0, trade.finished ? 5 : trade.step + 1)) {
+    const line = element('li', '');
+    line.append(element('strong', label), element('span', value));
+    log.append(line);
+  }
+}
+
+byId('trade-start').addEventListener('submit', event => {
+  event.preventDefault();
+  trade = {
+    names: tradeItem.value === '' ? ['Sample item', '示例饰品'] : items[Number(tradeItem.value)].slice(0, 2),
+    step: 0,
+    listingPrice: null,
+    revisedPrice: null,
+    finished: false,
+  };
+  renderTrade();
+});
+
+byId('trade-action').addEventListener('submit', event => {
+  event.preventDefault();
+  if (!trade || trade.finished) return;
+  if (trade.step === 2) trade.listingPrice = '¥' + tradePrice.valueAsNumber.toFixed(2);
+  if (trade.step === 3) {
+    trade.revisedPrice = '¥' + tradePrice.valueAsNumber.toFixed(2);
+    trade.step = 4;
+    trade.finished = true;
+  } else {
+    trade.step += 1;
+  }
+  if (trade.step === 2) tradePrice.value = '149.00';
+  if (trade.step === 3) tradePrice.value = '139.00';
+  renderTrade();
+  if (trade.step === 2 || trade.step === 3) tradePrice.focus();
+  if (trade.finished) byId('trade-current').focus();
+});
+
+const planExamples = {
+  rain: [
+    ['Confirm the time and coverage of the rainfall report and the source of reports about local ponding.', '核对降雨报告的时间、覆盖范围和积水信息来源。'],
+    ['Summarise location reports and record which site conditions still need to be checked.', '汇总地点记录，注明哪些点位的情况还有待核实。'],
+    ['Rainfall example · Section 2, incident records and status updates', '强降雨示例 · 第 2 节 灾情记录与动态更新'],
+  ],
+  earthquake: [
+    ['Confirm the source and issue time of the event bulletin and the status of initial impact reports.', '核对地震速报来源、发布时间和初步影响信息的状态。'],
+    ['Group submitted observations by area and flag locations with conflicting reports.', '分区整理已收到的情况记录，标注不同来源说法不一致的地点。'],
+    ['Earthquake example · Section 3, initial impact reporting', '地震示例 · 第 3 节 初步影响信息归集'],
+  ],
+  heat: [
+    ['Check the validity period of the heat notice and the date of public service updates.', '核对高温提示的有效时段及公共服务信息的更新时间。'],
+    ['Summarise reported service availability and flag entries awaiting confirmation.', '汇总已有的服务开放记录，标出尚待确认的条目。'],
+    ['Heat example · Section 2, service information updates', '高温示例 · 第 2 节 公共服务信息更新'],
+  ],
+};
+const exampleNotes = {
+  rain: ['Ponding was reported in two areas; the latest update is still pending.', '有两处报告积水，最新情况待更新。'],
+  earthquake: ['Location reports have arrived from two sources and need to be compared.', '已收到两个来源的地点记录，有待交叉核对。'],
+  heat: ['The opening hours of two public service sites are still being checked.', '有两处公共服务点的开放时段仍在核实。'],
+};
+const areaInput = byId('area');
+const hazardInput = byId('hazard');
+let plan = null;
+
+function renderPlan() {
+  const output = byId('plan-result');
+  if (!plan) {
+    output.replaceChildren(element('p', t('Choose an event type and enter an area to see an example.', '选择事件类型并填写示例区域，即可查看输出。'), 'plan-empty'));
+    return;
+  }
+
+  const example = planExamples[plan.hazard];
+  const hazard = [...hazardInput.options].find(option => option.value === plan.hazard).textContent;
+  const sections = [
+    [t('Scenario', '情景'), hazard + ' · ' + plan.area],
+  ];
+  if (plan.note) sections.push([t('Submitted note', '输入记录'), plan.note]);
+  sections.push(
+    [t('Items to verify', '待核实事项'), t(...example[0])],
+    [t('Draft task', '任务草稿'), t(...example[1])],
+    [t('Example plan entry', '示例预案条目'), t(...example[2])],
+  );
+  const details = element('dl', '');
+  for (const [label, value] of sections) {
+    const group = element('div', '');
+    group.append(element('dt', label), element('dd', value));
+    details.append(group);
+  }
+  output.replaceChildren(details);
+}
+
+areaInput.addEventListener('input', () => areaInput.setCustomValidity(''));
+byId('load-plan-example').addEventListener('click', () => {
+  areaInput.setCustomValidity('');
+  areaInput.value = t('District A', 'A 区');
+  byId('incident-note').value = t(...exampleNotes[hazardInput.value]);
+  byId('plan-form').requestSubmit();
+});
+byId('plan-form').addEventListener('submit', event => {
+  event.preventDefault();
+  const area = areaInput.value.trim();
+  if (!area) {
+    areaInput.setCustomValidity(t('Enter an example area.', '请输入示例区域。'));
+    areaInput.reportValidity();
+    return;
+  }
+  plan = { area, hazard: hazardInput.value, note: byId('incident-note').value.trim() };
+  renderPlan();
+});
+
+const comparison = byId('compare-board');
+const divider = byId('compare-position');
+const layouts = [
+  ['block', 'green', 'block', 'block', 'hub', 'hub', 'green', 'block', 'block', 'block', 'green', 'block'],
+  ['block', 'green', 'hub', 'block', 'block', 'block', 'green', 'block', 'block', 'hub', 'green', 'block'],
+];
+for (const [index, layer] of [...comparison.querySelectorAll('.compare-layer')].entries()) {
+  layer.replaceChildren(...layouts[index].map(use => element('span', '', 'parcel ' + use)));
+}
+
+function renderComparison() {
+  const percentage = divider.valueAsNumber;
+  comparison.style.setProperty('--split', percentage + '%');
+  divider.setAttribute('aria-valuetext', t(
+    percentage + '% layout A and ' + (100 - percentage) + '% layout B',
+    '布局 A ' + percentage + '%，布局 B ' + (100 - percentage) + '%',
+  ));
+}
+
+function dragDivider(event) {
+  const area = comparison.getBoundingClientRect();
+  const percent = Math.round((event.clientX - area.left) / area.width * 100);
+  divider.value = Math.min(100, Math.max(0, percent));
+  renderComparison();
+}
+
+divider.addEventListener('input', renderComparison);
+comparison.addEventListener('pointerdown', event => {
+  if (event.button !== 0) return;
+  comparison.setPointerCapture(event.pointerId);
+  dragDivider(event);
+});
+comparison.addEventListener('pointermove', event => {
+  if (comparison.hasPointerCapture(event.pointerId)) dragDivider(event);
+});
+
+const systemScenario = byId('system-scenario');
+const systemNames = [['Facilities', '基础设施'], ['Public services', '公共服务'], ['Information updates', '信息更新']];
+const systemExamples = {
+  normal: [['Operating', '正常运行'], ['Available', '正常提供'], ['Routine updates', '常态更新']],
+  disturbance: [['Under review', '状态核查中'], ['Partially available', '部分可用'], ['Updates pending', '等待更新']],
+  recovery: [['Restoring', '逐步恢复'], ['Resuming', '陆续恢复'], ['Updating', '持续更新']],
+};
+function renderSystem() {
+  const status = byId('system-status');
+  status.replaceChildren(...systemNames.map((name, index) => {
+    const card = element('article', '', 'system-card');
+    card.append(element('h3', t(...name)), element('p', t(...systemExamples[systemScenario.value][index])));
+    return card;
+  }));
+}
+systemScenario.addEventListener('change', renderSystem);
+
+function applyLanguage() {
+  document.documentElement.lang = t('en','zh-CN');
+  document.title = t('Projects · Aoxin Yang','软件与交互作品 · 杨奥新');
+  for (const {node,attribute,english,mandarin} of translations) {
+    if (attribute) node.setAttribute(attribute,t(english,mandarin));
+    else node.textContent = t(english,mandarin);
+  }
+  langButton.textContent = t('中文','English');
+  langButton.lang = t('zh-CN','en');
+  for (const link of document.querySelectorAll('[data-home]')) link.href = t('index.html','index.html?lang=zh');
+  renderCatalogue();
+  renderQuote();
+  renderSpatial();
+  renderFlows();
+  renderTrade();
+  renderPlan();
+  renderComparison();
+  renderSystem();
+}
+langButton.addEventListener('click', () => {
+  chinese = !chinese;
+  const current = new URL(location.href);
+  if (chinese) current.searchParams.set('lang','zh');
+  else current.searchParams.delete('lang');
+  history.replaceState(null,'',current);
+  applyLanguage();
+});
+function revealDeepLink() {
+  if (location.hash === '#land-use') byId('land-use').open = true;
+}
+window.addEventListener('hashchange',revealDeepLink);
+async function loadCatalogue() {
+  if (!window.CS2_CATALOG_GZIP || !window.DecompressionStream) return sampleItems;
+  try {
+    const bytes = Uint8Array.from(atob(window.CS2_CATALOG_GZIP), character => character.charCodeAt(0));
+    const json = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    return await new Response(json).json();
+  } catch {
+    return sampleItems;
+  }
+}
+
+async function startShowcase() {
+  items = await loadCatalogue();
+  fullCatalogue = items !== sampleItems;
+  if (!fullCatalogue) {
+    selected.add(0);
+    selected.add(4);
+  }
+  searchIndex = items.map(names => names.join(' ').normalize('NFKC').toLowerCase());
+  searchCatalogue();
+  applyLanguage();
+  revealDeepLink();
+  langButton.hidden = false;
+}
+
+startShowcase();
