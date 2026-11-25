@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Image Annotation · Aoxin Yang</title>
+<style>
+:root{color-scheme:light;font-family:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;background:#edf0e8;color:#213229;--line:#c2d0c4;--green:#205647;--muted:#4e6359;--paper:#fcfcf4}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body,h1,h2,p{margin:0}
+a{color:var(--green);font-weight:700}
+.wrap{width:min(1080px,calc(100% - 44px));margin-inline:auto}
+.site{border-bottom:1px solid var(--line)}
+.site-inner{min-height:61px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.site a{text-decoration:none}
+.site a:hover{text-decoration:underline}
+button,input,select{font:inherit;color:inherit}
+button,input,select{border:1px solid var(--line);border-radius:6px;padding:.5rem .66rem;background:var(--paper)}
+button:not(:disabled),select,input[type=file]{cursor:pointer}
+button:hover:not(:disabled){border-color:var(--green)}
+button:disabled{opacity:.55}
+:focus-visible{outline:3px solid #ab552f;outline-offset:3px}
+.intro{padding:35px 0 20px}
+h1{font-size:clamp(2.55rem,6.8vw,4.85rem);line-height:1;letter-spacing:-.055em}
+:lang(zh-CN) h1{letter-spacing:-.025em}
+.intro p,.help,.description{color:var(--muted);line-height:1.5;font-size:.92rem;margin-top:9px}
+.editor{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(235px,1fr);gap:13px;align-items:start}
+.board,.panel{border:1px solid var(--line);border-radius:11px;padding:13px;min-width:0;background:var(--paper)}
+.board{background:#dce6dc;display:grid;justify-items:center;gap:7px}
+canvas{display:block;width:100%;max-height:68svh;object-fit:contain;aspect-ratio:var(--ratio);touch-action:none;cursor:crosshair;border-radius:4px}
+#canvas-shell{width:100%;max-height:68svh}
+#canvas-shell canvas{height:auto;max-height:none}
+.panel{display:grid;gap:10px}
+.panel h2{font-size:1.2rem}
+.panel label{display:grid;gap:4px;font-size:.86rem;font-weight:680}
+.panel input{min-width:0;width:100%}
+.panel input[type=file]{font-size:.8rem}
+.panel input[type=file]::file-selector-button{font:inherit}
+.rows{display:grid;gap:5px}
+.mark{display:flex;justify-content:space-between;gap:8px;text-align:left;min-width:0}
+.mark span:first-child{overflow-wrap:anywhere}
+.mark[aria-pressed=true]{background:#dbead8;border-color:var(--green)}
+.mark span+span{color:var(--muted);font-size:.8rem;white-space:nowrap}
+.actions{display:flex;flex-wrap:wrap;gap:6px}
+.export{background:var(--green);color:white;font-weight:730}
+button.export:hover{background:#194738}
+#feedback{font-size:.86rem;color:var(--muted)}
+#feedback[data-error=true]{color:#922f22}
+#source-size{font-size:.8rem;color:var(--muted)}
+@media(max-width:740px){
+ .wrap{width:calc(100% - 28px)}
+ .editor{grid-template-columns:minmax(0,1fr)}
+ .intro{padding:24px 0 14px}
+}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap site-inner">
+  <a id="back" href="interface-demos.html" data-en="Aoxin Yang / Interactive demos" data-zh="杨奥新 / 交互作品">Aoxin Yang / Interactive demos</a>
+  <button type="button" id="language" lang="zh-CN">中文</button>
+</div></header>
+<main class="wrap">
+  <header class="intro">
+    <h1 data-en="Image annotation" data-zh="图片标注工作台">Image annotation</h1>
+    <p data-en="Drag a box on the image, name it and export the marked PNG. Your file stays in this browser." data-zh="在图片上拖出标注框，添加标签后导出 PNG。图片在当前浏览器内处理。">Drag a box on the image, name it and export the marked PNG. Your file stays in this browser.</p>
+  </header>
+  <div class="editor">
+    <section class="board" aria-label="Image preview" data-aria-en="Image preview" data-aria-zh="图片预览">
+      <div id="canvas-shell">
+        <canvas id="canvas" width="840" height="560" tabindex="0" aria-label="Image annotation canvas" data-aria-en="Image annotation canvas" data-aria-zh="图片标注画布" aria-describedby="canvas-help"></canvas>
+      </div>
+      <output id="source-size" aria-label="Image size" data-aria-en="Image size" data-aria-zh="图片尺寸"></output>
+    </section>
+    <section class="panel" aria-labelledby="controls">
+      <h2 id="controls" data-en="Annotations" data-zh="标注">Annotations</h2>
+      <label>
+        <span data-en="Open a local image" data-zh="打开本地图片">Open a local image</span>
+        <input type="file" id="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp">
+      </label>
+      <div class="actions">
+        <button type="button" id="add" data-en="Add box" data-zh="添加标注框">Add box</button>
+        <button type="button" id="sample" data-en="Restore sample" data-zh="恢复示例">Restore sample</button>
+      </div>
+      <p class="help" id="canvas-help" data-en="On the focused canvas, arrows move the selected box. Shift + arrows resize it." data-zh="聚焦画布后，方向键可移动选中的框，Shift 加方向键可调整尺寸。">On the focused canvas, arrows move the selected box. Shift + arrows resize it.</p>
+      <div id="marks" class="rows" role="group" aria-label="Annotation boxes" data-aria-en="Annotation boxes" data-aria-zh="标注框列表"></div>
+      <label>
+        <span data-en="Label" data-zh="标签">Label</span>
+        <input type="text" id="label" maxlength="42">
+      </label>
+      <div class="actions">
+        <button type="button" id="remove" data-en="Remove selected" data-zh="删除选中框">Remove selected</button>
+        <button type="button" id="export" class="export" data-en="Export PNG" data-zh="导出 PNG">Export PNG</button>
+      </div>
+      <p id="feedback" role="status"></p>
+    </section>
+  </div>
+</main>
+<script>
+"use strict";
+
+const el = id => document.getElementById(id);
+let zh = new URLSearchParams(location.search).get("lang") === "zh";
+const t = (en, chinese) => zh ? chinese : en;
+const canvas = el("canvas");
+const ctx = canvas.getContext("2d");
+const maxSide = 2048;
+const minSize = 14;
+const defaultLabels = [["Poster", "展板"], ["Notice", "活动信息"]];
+const sampleBoxes = [{x:54,y:56,w:390,h:335,sample:0},{x:510,y:202,w:256,h:224,sample:1}];
+let image = null;
+let boxes = [];
+let selected = -1;
+let drag = null;
+let message = "";
+let importSequence = 0;
+
+const labelOf = box => box.sample === undefined ? box.label : t(...defaultLabels[box.sample]);
+const fallbackLabel = index => t(`Box ${index + 1}`, `标注框 ${index + 1}`);
+const clamp = (n, lower, upper) => Math.min(upper, Math.max(lower, n));
+
+function sampleArt() {
+  ctx.fillStyle = "#eee5ca";
+  ctx.fillRect(0,0,840,560);
+  ctx.fillStyle = "#d3d5b5";
+  ctx.fillRect(0,425,840,135);
+  ctx.fillStyle = "#faf2db";
+  ctx.fillRect(68,69,363,310);
+  ctx.fillStyle = "#285745";
+  ctx.fillRect(88,89,323,270);
+  ctx.fillStyle = "#9db47b";
+  ctx.beginPath();
+  ctx.arc(326,175,58,0,Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = "#bfd2c0";
+  ctx.font = "bold 49px system-ui";
+  ctx.fillText(t("Make", "周末"),112,249);
+  ctx.fillText(t("together", "手作"),112,304);
+  ctx.fillStyle = "#f6f6e5";
+  ctx.fillRect(524,216,229,195);
+  ctx.fillStyle = "#aa6139";
+  ctx.fillRect(550,244,61,7);
+  ctx.fillStyle = "#305743";
+  ctx.font = "bold 22px system-ui";
+  ctx.fillText(t("Art room", "社区手作室"),550,287);
+  ctx.font = "17px system-ui";
+  ctx.fillText(t("Saturday", "周六"),550,325);
+  ctx.fillText("10:00–12:00",550,354);
+}
+
+function draw(markSelection = true) {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+  if (image) ctx.drawImage(image,0,0,canvas.width,canvas.height);
+  else sampleArt();
+
+  const fontSize = Math.max(12, Math.round(Math.max(canvas.width,canvas.height) * .022));
+  for (const [i,box] of boxes.entries()) {
+    const active = markSelection && selected === i;
+    const colour = active ? "#ffdc8d" : "#ddf7b7";
+    const line = Math.max(2, Math.round(fontSize / 7));
+    ctx.strokeStyle = "#18362d";
+    ctx.lineWidth = line + 2;
+    ctx.strokeRect(box.x,box.y,box.w,box.h);
+    ctx.strokeStyle = colour;
+    ctx.lineWidth = line;
+    ctx.strokeRect(box.x,box.y,box.w,box.h);
+    const label = labelOf(box) || fallbackLabel(i);
+    ctx.font = `700 ${fontSize}px system-ui`;
+    const available = Math.max(0,canvas.width - 8);
+    const width = Math.min(available,ctx.measureText(label).width + 12);
+    const left = Math.min(box.x,Math.max(0,canvas.width - width));
+    const height = fontSize + 9;
+    const top = box.y >= height ? box.y - height : box.y;
+    ctx.fillStyle = colour;
+    ctx.fillRect(left,top,width,height);
+    if (width > 12) {
+      ctx.fillStyle = "#18362d";
+      ctx.fillText(label,left+6,top+fontSize+2,width-12);
+    }
+  }
+  if (markSelection && drag?.box) {
+    const box = drag.box;
+    ctx.save();
+    ctx.strokeStyle = "#102a22";
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6,4]);
+    ctx.strokeRect(box.x,box.y,box.w,box.h);
+    ctx.restore();
+  }
+}
+
+function renderFeedback() {
+  const messages = {
+    size: ["Choose a PNG, JPEG or WebP image up to 20 MB.", "请选择不超过 20 MB 的 PNG、JPEG 或 WebP 图片。"],
+    invalid: ["This image could not be opened.", "无法打开这张图片。"],
+    exported: ["PNG ready.", "PNG 已生成。"],
+    failed: ["The PNG export could not be created.", "无法生成 PNG。"],
+  };
+  const feedback = el("feedback");
+  feedback.textContent = message ? t(...messages[message]) : "";
+  feedback.dataset.error = String(["size","invalid","failed"].includes(message));
+}
+
+function renderList() {
+  el("marks").replaceChildren(...boxes.map((box,index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "mark";
+    button.setAttribute("aria-pressed",String(index === selected));
+    const text = document.createElement("span");
+    text.textContent = labelOf(box) || fallbackLabel(index);
+    const size = document.createElement("span");
+    size.textContent = `${box.w} × ${box.h}`;
+    button.append(text,size);
+    button.addEventListener("click",() => {
+      selected = index;
+      render();
+      el("marks").children[index]?.focus({preventScroll:true});
+    });
+    return button;
+  }));
+}
+
+function render() {
+  draw();
+  renderList();
+  const hasBox = selected >= 0;
+  el("label").value = hasBox ? labelOf(boxes[selected]) : "";
+  el("label").disabled = !hasBox;
+  el("remove").disabled = !hasBox;
+  el("source-size").value = `${canvas.width} × ${canvas.height} px`;
+  renderFeedback();
+}
+
+function fitCanvas(width,height) {
+  canvas.width = width;
+  canvas.height = height;
+  const ratio = width / height;
+  canvas.style.setProperty("--ratio", String(ratio));
+  el("canvas-shell").style.width = `min(100%, calc(68svh * ${ratio}))`;
+}
+
+function restoreSample() {
+  importSequence += 1;
+  el("file").value = "";
+  image = null;
+  drag = null;
+  boxes = sampleBoxes.map(box => ({...box}));
+  selected = 0;
+  message = "";
+  fitCanvas(840,560);
+  render();
+}
+
+el("sample").addEventListener("click",restoreSample);
+el("file").addEventListener("change",async () => {
+  const file = el("file").files[0];
+  if (!file) return;
+  const id = ++importSequence;
+  const knownImage = ["image/png","image/jpeg","image/webp"].includes(file.type);
+  const supported = /\.(png|jpe?g|webp)$/i.test(file.name) && (!file.type || knownImage);
+  if (file.size > 20 * 1024 * 1024 || !supported) {
+    message = "size";
+    el("file").value = "";
+    renderFeedback();
+    return;
+  }
+  const url = URL.createObjectURL(file);
+  const loaded = new Image();
+  loaded.src = url;
+  try {
+    await loaded.decode();
+    if (id !== importSequence) return;
+    const scale = Math.min(1,maxSide/Math.max(loaded.naturalWidth,loaded.naturalHeight));
+    image = loaded;
+    drag = null;
+    boxes = [];
+    selected = -1;
+    message = "";
+    fitCanvas(Math.max(1,Math.round(loaded.naturalWidth*scale)),Math.max(1,Math.round(loaded.naturalHeight*scale)));
+    render();
+  } catch {
+    if (id === importSequence) {
+      message = "invalid";
+      el("file").value = "";
+      renderFeedback();
+    }
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+});
+
+function point(event) {
+  const bounds = canvas.getBoundingClientRect();
+  return {
+    x:clamp(Math.round((event.clientX - bounds.left)*canvas.width/bounds.width),0,canvas.width),
+    y:clamp(Math.round((event.clientY - bounds.top)*canvas.height/bounds.height),0,canvas.height),
+  };
+}
+function rectangle(a,b) {
+  return {x:Math.min(a.x,b.x),y:Math.min(a.y,b.y),w:Math.abs(a.x-b.x),h:Math.abs(a.y-b.y),label:""};
+}
+canvas.addEventListener("pointerdown",event => {
+  if (event.button !== 0 || drag) return;
+  canvas.setPointerCapture(event.pointerId);
+  drag = {id:event.pointerId,start:point(event),box:null};
+});
+canvas.addEventListener("pointermove",event => {
+  if (!drag || event.pointerId !== drag.id) return;
+  drag.box = rectangle(drag.start,point(event));
+  draw();
+});
+canvas.addEventListener("pointerup",event => {
+  if (!drag || event.pointerId !== drag.id) return;
+  const box = rectangle(drag.start,point(event));
+  drag = null;
+  if (box.w >= minSize && box.h >= minSize) {
+    boxes.push(box);
+    selected = boxes.length - 1;
+  } else {
+    const p = point(event);
+    selected = boxes.findLastIndex(item => p.x >= item.x && p.y >= item.y && p.x <= item.x+item.w && p.y <= item.y+item.h);
+  }
+  render();
+});
+canvas.addEventListener("pointercancel",() => { drag = null; draw(); });
+
+el("add").addEventListener("click",() => {
+  const w = Math.max(1,Math.round(canvas.width/4));
+  const h = Math.max(1,Math.round(canvas.height/4));
+  boxes.push({x:Math.floor((canvas.width-w)/2),y:Math.floor((canvas.height-h)/2),w,h,label:""});
+  selected = boxes.length - 1;
+  render();
+  canvas.focus({preventScroll:true});
+});
+canvas.addEventListener("keydown",event => {
+  if (selected < 0) return;
+  const movement = {ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
+  const step = movement[event.key];
+  if (!step) return;
+  event.preventDefault();
+  const delta = Math.max(1,Math.round(Math.max(canvas.width,canvas.height)*.006));
+  const box = boxes[selected];
+  const [dx,dy] = step.map(value => value*delta);
+  if (event.shiftKey) {
+    const maxW = canvas.width-box.x;
+    const maxH = canvas.height-box.y;
+    box.w = clamp(box.w+dx,Math.min(minSize,maxW),maxW);
+    box.h = clamp(box.h+dy,Math.min(minSize,maxH),maxH);
+  } else {
+    box.x = clamp(box.x+dx,0,canvas.width-box.w);
+    box.y = clamp(box.y+dy,0,canvas.height-box.h);
+  }
+  render();
+});
+el("label").addEventListener("input",() => {
+  if (selected === -1) return;
+  boxes[selected].label = el("label").value;
+  delete boxes[selected].sample;
+  draw();
+  renderList();
+});
+el("remove").addEventListener("click",() => {
+  if (selected < 0) return;
+  boxes.splice(selected,1);
+  selected = Math.min(selected,boxes.length-1);
+  render();
+});
+el("export").addEventListener("click",() => {
+  draw(false);
+  canvas.toBlob(blob => {
+    message = blob ? "exported" : "failed";
+    renderFeedback();
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const download = document.createElement("a");
+    download.download = "annotated-image.png";
+    download.href = url;
+    download.click();
+    setTimeout(() => URL.revokeObjectURL(url),5000);
+  },"image/png");
+  draw();
+});
+function language() {
+  document.documentElement.lang = t("en","zh-CN");
+  document.title = t("Image Annotation · Aoxin Yang","图片标注工作台 · 杨奥新");
+  document.querySelectorAll("[data-en]").forEach(node => { node.textContent = t(node.dataset.en,node.dataset.zh); });
+  document.querySelectorAll("[data-aria-en]").forEach(node => { node.setAttribute("aria-label",t(node.dataset.ariaEn,node.dataset.ariaZh)); });
+  el("language").textContent = t("中文","English");
+  el("language").lang = t("zh-CN","en");
+  const back = new URL(el("back").href);
+  if (zh) back.searchParams.set("lang","zh");
+  else back.searchParams.delete("lang");
+  el("back").href = back.href;
+  render();
+}
+el("language").addEventListener("click",() => { zh = !zh; language(); });
+restoreSample();
+language();
+</script>
+</body>
+</html>
