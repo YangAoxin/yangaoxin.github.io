@@ -7,6 +7,39 @@
   <meta name="description" content="Try Aoxin Yang’s CS2 item workbench, WeChat quote workflow, planning workspace, and spatial explorer.">
   <title>Projects · Aoxin Yang</title>
   <link rel="stylesheet" href="projects.css">
+  <style>
+    .showcase {
+      padding: clamp(16px, 3vw, 28px);
+      margin-bottom: 20px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #eaf0e6;
+    }
+    .showcase-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 4px 20px;
+      margin-bottom: 12px;
+    }
+    .showcase-head h2 { margin: 0; font-size: clamp(1.5rem, 3vw, 2.15rem); }
+    .showcase-head a { color: var(--green); font-size: .88rem; font-weight: 650; }
+    .showcase-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
+    .showcase-group { min-width: 0; padding: 10px; border-radius: 7px; background: #fafcf7; }
+    .showcase-group h3 { margin: 0 0 .35rem; color: var(--muted); font-size: .84rem; }
+    .showcase-group ul { margin: 0; padding: 0; list-style: none; }
+    .showcase-group a {
+      display: block;
+      padding: .3rem 0;
+      color: var(--green);
+      font-size: .88rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+    @media (max-width: 720px) { .showcase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 380px) { .showcase-group { padding: 8px; } }
+  </style>
   <script src="catalog-data.js" defer></script>
   <script src="city-atlas.js" defer></script>
   <script src="projects.js" defer></script>
@@ -30,12 +63,52 @@
         <p data-zh="试用基于既有项目制作的交易、询价和科研界面演示。饰品目录使用实际名称，流程采用示例数据。">Explore interface demos based on my trading, quote and research projects. The catalogue uses real item names and workflows use sample data.</p>
       </div>
       <nav class="jump-list" aria-label="Jump to a project" data-aria-zh="跳到项目">
+        <a href="#interactive-demos"><span data-zh="交互小作品">Interactive demos</span><span aria-hidden="true">↘</span></a>
         <a href="#cs2"><span data-zh="CS2 饰品工作台">CS2 workbench</span><span aria-hidden="true">↘</span></a>
         <a href="#wechat"><span data-zh="微信询价流程">WeChat quote flow</span><span aria-hidden="true">↘</span></a>
         <a href="#plan-workspace"><span data-zh="应急预案工具">Emergency planning tool</span><span aria-hidden="true">↘</span></a>
         <a href="#urban"><span data-zh="城市空间与发展">Urban spaces</span><span aria-hidden="true">↘</span></a>
         <a href="#systems"><span data-zh="整体安全系统界面">System overview</span><span aria-hidden="true">↘</span></a>
       </nav>
+    </section>
+
+    <section id="interactive-demos" class="showcase" aria-labelledby="showcase-title">
+      <div class="showcase-head">
+        <h2 id="showcase-title" data-zh="交互小作品">Interactive demos</h2>
+        <a href="interface-demos.html" data-showcase-link data-zh="浏览和搜索全部 10 个作品">Browse and search all 10 demos</a>
+      </div>
+      <div class="showcase-grid">
+        <div class="showcase-group">
+          <h3 data-zh="数据与地图">Data &amp; maps</h3>
+          <ul>
+          <li><a href="demo-data-map-tools.html#csv" data-showcase-link data-zh="CSV 工作台">CSV workbench</a></li>
+          <li><a href="demo-data-map-tools.html#route" data-showcase-link data-zh="滨河路线画板">Riverwalk route sketch</a></li>
+          </ul>
+        </div>
+        <div class="showcase-group">
+          <h3 data-zh="流程与信息">Workflow interfaces</h3>
+          <ul>
+          <li><a href="demo-workflows.html#schedule" data-showcase-link data-zh="社区活动日程">Community programme</a></li>
+          <li><a href="demo-workflows.html#routes" data-showcase-link data-zh="展馆导览">Gallery guide</a></li>
+          <li><a href="demo-workflows.html#handover" data-showcase-link data-zh="场地交接看板">Room handover board</a></li>
+          <li><a href="demo-workflows.html#compare" data-showcase-link data-zh="活动公告对照">Event notice comparison</a></li>
+          </ul>
+        </div>
+        <div class="showcase-group">
+          <h3 data-zh="滑块与图表">Sliders &amp; charts</h3>
+          <ul>
+          <li><a href="demo-visual-controls.html#light-heading" data-showcase-link data-zh="舞台灯光配色">Stage lighting palette</a></li>
+          <li><a href="demo-visual-controls.html#size-heading" data-showcase-link data-zh="图像画幅对比">Image format comparison</a></li>
+          </ul>
+        </div>
+        <div class="showcase-group">
+          <h3 data-zh="创作工具">Creative tools</h3>
+          <ul>
+          <li><a href="demo-creative-workbench.html#map" data-showcase-link data-zh="街区拼搭">Neighbourhood builder</a></li>
+          <li><a href="demo-creative-workbench.html#poster" data-showcase-link data-zh="展签设计">Exhibition label</a></li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <section id="applications" aria-label="Applications" data-aria-zh="应用作品">
@@ -264,5 +337,21 @@
   </main>
 
   <footer class="site-footer"><div class="wrap footer-inner"><span>Aoxin Yang · 杨奥新</span><a href="https://github.com/YangAoxin">GitHub</a></div></footer>
+  <script>
+    (() => {
+      const links = [...document.querySelectorAll('[data-showcase-link]')];
+      function applyLocale(chinese) {
+        for (const link of links) {
+          const url = new URL(link.href);
+          if (chinese) url.searchParams.set('lang', 'zh');
+          else url.searchParams.delete('lang');
+          link.href = url.href;
+        }
+      }
+      applyLocale(new URL(location.href).searchParams.get('lang') === 'zh');
+      new MutationObserver(() => applyLocale(document.documentElement.lang === 'zh-CN'))
+        .observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    })();
+  </script>
 </body>
 </html>
