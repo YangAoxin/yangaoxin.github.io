@@ -4,10 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f7f7f1">
-  <meta name="description" content="Try Aoxin Yang’s CS2 item workbench, WeChat quote workflow, planning workspace, and spatial explorer.">
+  <meta name="description" content="Explore Aoxin Yang’s urban and public safety projects, software applications, and interactive browser demos.">
   <title>Projects · Aoxin Yang</title>
   <link rel="stylesheet" href="projects.css">
   <style>
+    html { scroll-behavior: auto; }
     .showcase {
       padding: clamp(16px, 3vw, 28px);
       margin-bottom: 20px;
@@ -39,6 +40,58 @@
     }
     @media (max-width: 720px) { .showcase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 380px) { .showcase-group { padding: 8px; } }
+    .portfolio-intro { padding: clamp(22px, 4vw, 44px) 0 25px; }
+    .portfolio-intro h1 { margin-bottom: .55rem; }
+    .portfolio-index {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .portfolio-index-group {
+      min-width: 0;
+      padding: 14px 15px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fcfdf8;
+    }
+    .portfolio-index-title { margin: 0 0 .45rem; font: 700 clamp(1.25rem, 2.3vw, 1.7rem)/1.15 var(--display); letter-spacing: -.03em; }
+    .portfolio-index-title a { color: var(--green); text-decoration-thickness: 1px; }
+    .portfolio-index-group ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .25rem .85rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .portfolio-index-group li, .portfolio-index-group p { font-size: .87rem; color: var(--muted); }
+    .portfolio-index-group p { margin: 0; }
+    .portfolio-index-group li a { text-decoration: none; }
+    .portfolio-index-group li a:hover { text-decoration: underline; }
+    .portfolio-index-group:last-child { background: #eaf0e6; }
+    .portfolio-family {
+      margin-bottom: clamp(30px, 5vw, 54px);
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+    .portfolio-family-head { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+    .portfolio-family-head h2 { margin: 0; font-size: clamp(1.58rem, 3vw, 2.35rem); }
+    .portfolio-return { color: var(--green); font-size: .85rem; font-weight: 650; }
+    .portfolio-project-title {
+      font-family: var(--display);
+      line-height: 1.08;
+      letter-spacing: -.035em;
+      font-size: clamp(2rem, 3.6vw, 3.3rem);
+      margin-bottom: .65rem;
+    }
+    #city-safety > #urban { padding-top: 0; }
+    #city-safety > #data { padding-bottom: 0; }
+    .showcase-head-links { display: flex; flex-wrap: wrap; gap: .3rem 1rem; }
+    @media (max-width: 710px) {
+      .portfolio-index { grid-template-columns: minmax(0, 1fr); gap: 7px; }
+      .portfolio-index-group { padding: 9px 11px; }
+    }
   </style>
   <script src="catalog-data.js" defer></script>
   <script src="city-atlas.js" defer></script>
@@ -57,65 +110,161 @@
   </header>
 
   <main class="wrap" id="content">
-    <section class="intro" aria-labelledby="portfolio-title">
-      <div>
-        <h1 id="portfolio-title" data-zh="软件与交互作品">Software &amp; interface projects</h1>
-        <p data-zh="试用基于既有项目制作的交易、询价和科研界面演示。饰品目录使用实际名称，流程采用示例数据。">Explore interface demos based on my trading, quote and research projects. The catalogue uses real item names and workflows use sample data.</p>
-      </div>
-      <nav class="jump-list" aria-label="Jump to a project" data-aria-zh="跳到项目">
-        <a href="#interactive-demos"><span data-zh="交互小作品">Interactive demos</span><span aria-hidden="true">↘</span></a>
-        <a href="#cs2"><span data-zh="CS2 饰品工作台">CS2 workbench</span><span aria-hidden="true">↘</span></a>
-        <a href="#wechat"><span data-zh="微信询价流程">WeChat quote flow</span><span aria-hidden="true">↘</span></a>
-        <a href="#plan-workspace"><span data-zh="应急预案工具">Emergency planning tool</span><span aria-hidden="true">↘</span></a>
-        <a href="#urban"><span data-zh="城市空间与发展">Urban spaces</span><span aria-hidden="true">↘</span></a>
-        <a href="#systems"><span data-zh="整体安全系统界面">System overview</span><span aria-hidden="true">↘</span></a>
+    <section class="portfolio-intro" aria-labelledby="portfolio-title">
+      <h1 id="portfolio-title" data-zh="软件与交互作品">Software &amp; interface projects</h1>
+      <nav class="portfolio-index" id="project-index" aria-label="Browse by theme" data-aria-zh="按主题浏览">
+        <div class="portfolio-index-group">
+          <div class="portfolio-index-title"><a href="#city-safety" data-zh="城市与公共安全">Urban &amp; public safety</a></div>
+          <ul>
+            <li><a href="#urban" data-zh="城市变迁">Urban change</a></li>
+            <li><a href="#plan-workspace" data-zh="应急预案">Emergency planning</a></li>
+            <li><a href="#systems" data-zh="整体安全系统">Safety system</a></li>
+            <li><a href="#land-use" data-zh="土地利用流向">Land-use flows</a></li>
+          </ul>
+        </div>
+        <div class="portfolio-index-group">
+          <div class="portfolio-index-title"><a href="#applications" data-zh="软件应用">Software applications</a></div>
+          <ul>
+            <li><a href="#cs2" data-zh="CS2 交易工作台">CS2 trading workbench</a></li>
+            <li><a href="#wechat" data-zh="微信询价与后台">WeChat quotes &amp; admin</a></li>
+          </ul>
+        </div>
+        <div class="portfolio-index-group">
+          <div class="portfolio-index-title"><a href="#interactive-demos" data-zh="交互小作品">Interactive demos</a></div>
+          <p data-zh="10 个小工具，涵盖数据、地图、图表与创作">10 small tools for data, maps, charts and design</p>
+        </div>
       </nav>
     </section>
 
-    <section id="interactive-demos" class="showcase" aria-labelledby="showcase-title">
-      <div class="showcase-head">
-        <h2 id="showcase-title" data-zh="交互小作品">Interactive demos</h2>
-        <a href="interface-demos.html" data-showcase-link data-zh="浏览和搜索全部 10 个作品">Browse and search all 10 demos</a>
+    <section id="city-safety" class="portfolio-family" aria-labelledby="city-safety-title">
+      <div class="portfolio-family-head">
+        <h2 id="city-safety-title" data-zh="城市与公共安全">Urban &amp; public safety</h2>
+        <a class="portfolio-return" href="#project-index" data-zh="返回作品索引 ↑">Back to project index ↑</a>
       </div>
-      <div class="showcase-grid">
-        <div class="showcase-group">
-          <h3 data-zh="数据与地图">Data &amp; maps</h3>
-          <ul>
-          <li><a href="demo-data-map-tools.html#csv" data-showcase-link data-zh="CSV 工作台">CSV workbench</a></li>
-          <li><a href="demo-data-map-tools.html#route" data-showcase-link data-zh="滨河路线画板">Riverwalk route sketch</a></li>
-          </ul>
+      <section id="urban" class="spatial-section" aria-labelledby="spatial-title">
+        <div class="project-head">
+          <div>
+            <h3 class="portfolio-project-title" id="spatial-title" data-zh="一座滨河小城的六次变化">A river town in six chapters</h3>
+            <p data-zh="从河岸聚落到两岸街区，拖动时间轴看小城长大。点选地图上的门牌，可以读到那一带的变化。所有场景均为虚构。">Follow a fictional settlement as it grows on both banks. Scrub through time and select a map pin to see what changed in that neighbourhood.</p>
+          </div>
+          <div class="project-links">
+            <a class="text-link" href="https://yangaoxin.github.io/research-models-and-demos/" data-zh="基础界面示例 ↗">Basic UI examples ↗</a>
+            <a class="text-link" href="https://github.com/YangAoxin/yangaoxin.github.io/blob/main/city-atlas.js" data-zh="地图绘制源码 ↗">Map drawing source ↗</a>
+          </div>
         </div>
-        <div class="showcase-group">
-          <h3 data-zh="流程与信息">Workflow interfaces</h3>
-          <ul>
-          <li><a href="demo-workflows.html#schedule" data-showcase-link data-zh="社区活动日程">Community programme</a></li>
-          <li><a href="demo-workflows.html#routes" data-showcase-link data-zh="展馆导览">Gallery guide</a></li>
-          <li><a href="demo-workflows.html#handover" data-showcase-link data-zh="场地交接看板">Room handover board</a></li>
-          <li><a href="demo-workflows.html#compare" data-showcase-link data-zh="活动公告对照">Event notice comparison</a></li>
-          </ul>
+        <div class="spatial-player" id="flood-evolution">
+          <div class="spatial-body">
+            <div class="atlas-main">
+              <div class="board-scroll" id="district-board" tabindex="0" aria-label="Zoomable river town map" data-aria-zh="可缩放的小城地图">
+                <div class="tile-board" id="districts"></div>
+              </div>
+              <div class="map-controls">
+                <label class="field" for="layer"><span data-zh="图层">Layer</span><select id="layer"><option value="changes" data-zh="街区变迁">Neighbourhood changes</option><option value="services" data-zh="规划服务点">Planned services</option></select></label>
+                <label class="field zoom-field" for="zoom"><span data-zh="缩放">Zoom</span><input id="zoom" type="range" min="100" max="155" value="100" step="5"><output id="zoom-value" for="zoom">100%</output></label>
+              </div>
+            </div>
+            <aside class="district-inspector">
+              <div class="chapter-heading"><span id="chapter-count"></span><h3 id="chapter-title"></h3></div>
+              <p class="chapter-copy" id="chapter-copy"></p>
+              <label class="district-choice" for="district-picker"><span data-zh="街区观察">Neighbourhood notes</span><select id="district-picker"></select></label>
+              <p class="visually-hidden" id="district-name"></p><p id="district-detail" aria-live="polite"></p>
+            </aside>
+          </div>
+          <div class="chapter-strip" id="chapter-strip" role="group" aria-label="Choose a chapter" data-aria-zh="选择小城发展阶段"></div>
+          <div class="timeline-bar">
+            <button id="play-timeline" class="action" type="button" data-zh="播放">Play</button>
+            <label class="field" for="stage"><span id="stage-label"></span><input id="stage" type="range" min="1" max="6" value="1"></label>
+            <button id="reset-timeline" class="quiet" type="button" data-zh="重置">Reset</button>
+          </div>
         </div>
-        <div class="showcase-group">
-          <h3 data-zh="滑块与图表">Sliders &amp; charts</h3>
-          <ul>
-          <li><a href="demo-visual-controls.html#light-heading" data-showcase-link data-zh="舞台灯光配色">Stage lighting palette</a></li>
-          <li><a href="demo-visual-controls.html#size-heading" data-showcase-link data-zh="图像画幅对比">Image format comparison</a></li>
-          </ul>
+        <div class="comparison" aria-labelledby="comparison-title">
+          <div class="comparison-copy">
+            <h3 id="comparison-title" data-zh="同一座城，设施设在哪里？">One town, two service layouts</h3>
+            <p data-zh="两张地图各有三处公共服务点。左右拖动，看看橙色标记是聚在城心，还是分布在车站、西岸和学校。">Both maps contain three service points. Swipe to see them clustered in the centre or spread across the station, west bank and school.</p>
+            <label class="field" for="compare-position">
+              <span data-zh="分割线位置">Divider position</span>
+              <input id="compare-position" type="range" min="0" max="100" value="50">
+            </label>
+            <div class="layout-presets" role="group" aria-label="Comparison view" data-aria-zh="布局对照视图">
+              <button type="button" data-position="100" data-zh="看集中布局">Centralised</button>
+              <button type="button" data-position="50" data-zh="左右对照">Split view</button>
+              <button type="button" data-position="0" data-zh="看分散布局">Distributed</button>
+            </div>
+            <ul class="compare-legend" aria-label="Map legend" data-aria-zh="图例">
+              <li class="legend-hub" data-zh="公共设施">Public services</li>
+              <li class="legend-green" data-zh="绿地">Green space</li>
+              <li class="legend-block" data-zh="建成用地">Developed land</li>
+            </ul>
+          </div>
+          <div id="compare-board" class="compare-board" aria-hidden="true">
+            <div class="compare-layer compare-a"></div>
+            <div class="compare-layer compare-b"></div>
+            <span class="compare-tag tag-a" data-zh="A · 集中布局">A · Centralised</span><span class="compare-tag tag-b" data-zh="B · 分散布局">B · Distributed</span>
+            <div class="compare-divider"></div>
+          </div>
         </div>
-        <div class="showcase-group">
-          <h3 data-zh="创作工具">Creative tools</h3>
-          <ul>
-          <li><a href="demo-creative-workbench.html#map" data-showcase-link data-zh="街区拼搭">Neighbourhood builder</a></li>
-          <li><a href="demo-creative-workbench.html#poster" data-showcase-link data-zh="展签设计">Exhibition label</a></li>
-          </ul>
+      </section>
+
+      <section id="plan-workspace" class="plan-project" aria-labelledby="plan-title">
+        <div class="project-head">
+          <div>
+            <h3 class="portfolio-project-title" id="plan-title" data-zh="灾情与预案工作台">Incident to plan workspace</h3>
+            <p data-zh="输入一个示例情景，查看按事件类型预设的待核实事项和任务草稿。已知情况会原样显示在输出中。">Enter a sample incident to see preset checks and draft tasks for the selected event type. Your note is displayed in the output.</p>
+          </div>
         </div>
-      </div>
+        <div class="plan-layout">
+          <form id="plan-form" class="plan-form">
+            <h3 data-zh="情景输入">Scenario input</h3>
+            <label class="field" for="hazard"><span data-zh="事件类型">Event type</span><select id="hazard"><option value="rain" data-zh="强降雨">Heavy rainfall</option><option value="earthquake" data-zh="地震">Earthquake</option><option value="heat" data-zh="高温">Extreme heat</option></select></label>
+            <label class="field" for="area"><span data-zh="示例区域">Example area</span><input id="area" maxlength="60" required placeholder="District A" data-placeholder-zh="例如 A 区"></label>
+            <label class="field" for="incident-note"><span data-zh="已知情况">Known conditions</span><textarea id="incident-note" rows="3" maxlength="240" placeholder="Add an example situation" data-placeholder-zh="输入一条示例情况"></textarea></label>
+            <div class="plan-actions">
+              <button class="action" type="submit" data-zh="生成示例输出">Generate sample output</button>
+              <button class="quiet" id="load-plan-example" type="button" data-zh="填入示例">Fill in an example</button>
+            </div>
+          </form>
+          <section class="plan-output" aria-labelledby="plan-result-title">
+            <h3 id="plan-result-title" data-zh="示例输出">Example output</h3>
+            <div id="plan-result" aria-live="polite"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="system-project" id="systems" aria-labelledby="systems-title">
+        <div class="project-head">
+          <div>
+            <h3 class="portfolio-project-title" id="systems-title" data-zh="整体安全系统概览">System overview</h3>
+            <p data-zh="选择示例情景，查看城市设施、公共服务和信息更新的不同状态。界面使用预设示例，用于展示系统概览与状态切换。">Choose a sample scenario to view different statuses for facilities, services and information updates. This interface uses preset examples.</p>
+          </div>
+        </div>
+        <div class="system-panel">
+          <label class="field" for="system-scenario"><span data-zh="示例情景">Sample scenario</span><select id="system-scenario"><option value="normal" data-zh="日常运行">Everyday operations</option><option value="disturbance" data-zh="受到扰动">During disruption</option><option value="recovery" data-zh="逐步恢复">Gradual recovery</option></select></label>
+          <div id="system-status" class="system-status" aria-live="polite"></div>
+          <p class="system-note" data-zh="状态为演示示例，选择不同情景即可查看切换效果。">Statuses are illustrative. Select another scenario to see them change.</p>
+        </div>
+      </section>
+
+      <section class="data-section" id="data" aria-label="Data visualisation" data-aria-zh="数据可视化">
+        <details id="land-use">
+          <summary><span data-zh="课程作品 · 土地利用流向图">Course project · Land-use flow diagram</span></summary>
+          <p data-zh="用示例数据演示地类变化。切换时段查看流向和对应数值。">An example of how land-use changes can be visualised. Switch periods to inspect the flows and their values.</p>
+          <label class="field period-field" for="period"><span data-zh="示例时段">Example period</span><select id="period"></select></label>
+          <canvas id="flow-chart" width="830" height="270" aria-hidden="true"></canvas>
+          <div id="flow-labels" class="flow-labels"></div>
+        </details>
+      </section>
+
     </section>
 
-    <section id="applications" aria-label="Applications" data-aria-zh="应用作品">
+    <section id="applications" class="portfolio-family" aria-labelledby="applications-title">
+      <div class="portfolio-family-head">
+        <h2 id="applications-title" data-zh="软件应用">Software applications</h2>
+        <a class="portfolio-return" href="#project-index" data-zh="返回作品索引 ↑">Back to project index ↑</a>
+      </div>
       <article class="workbench" id="cs2" aria-labelledby="cs2-title">
         <div class="workbench-head">
           <div>
-            <h2 id="cs2-title" data-zh="CS2 饰品工作台">CS2 item workbench</h2>
+            <h3 class="portfolio-project-title" id="cs2-title" data-zh="CS2 饰品工作台">CS2 item workbench</h3>
             <p data-zh="独立开发的饰品交易工作流。从双语选品走到模拟购买、入库、上架和改价。">I built an end-to-end workflow for trading game items. Try catalogue search and selection, then step through a sample purchase, inventory receipt, listing and repricing.</p>
           </div>
           <div class="workbench-links">
@@ -189,7 +338,7 @@
 
       <article class="quote-project" id="wechat" aria-labelledby="quote-title">
         <div class="project-copy">
-          <h2 id="quote-title" data-zh="微信询价与管理后台">WeChat quote workflow</h2>
+          <h3 class="portfolio-project-title" id="quote-title" data-zh="微信询价与管理后台">WeChat quote workflow</h3>
           <p data-zh="把客户提交的询价放进后台处理队列。可以从左侧发起一笔示例询价，再从右侧推进同一笔单据。">I prototyped both sides of a quote request. Submit a sample request in the phone interface and handle that same request in the admin view.</p>
           <ol class="workflow-steps" id="workflow-steps" aria-label="Request progress" data-aria-zh="询价进度">
             <li data-zh="提交询价">Request</li><li data-zh="报价">Quote</li><li data-zh="确认">Confirm</li><li data-zh="履约">Fulfil</li>
@@ -221,118 +370,48 @@
       </article>
     </section>
 
-    <section id="plan-workspace" class="plan-project" aria-labelledby="plan-title">
-      <div class="project-head">
-        <div>
-          <h2 id="plan-title" data-zh="灾情与预案工作台">Incident to plan workspace</h2>
-          <p data-zh="输入一个示例情景，查看按事件类型预设的待核实事项和任务草稿。已知情况会原样显示在输出中。">Enter a sample incident to see preset checks and draft tasks for the selected event type. Your note is displayed in the output.</p>
+    <section id="interactive-demos" class="showcase" aria-labelledby="showcase-title">
+      <div class="showcase-head">
+        <h2 id="showcase-title" data-zh="交互小作品">Interactive demos</h2>
+        <div class="showcase-head-links">
+          <a href="interface-demos.html" data-showcase-link data-zh="浏览和搜索全部 10 个作品">Browse and search all 10 demos</a>
+          <a class="portfolio-return" href="#project-index" data-zh="返回作品索引 ↑">Back to project index ↑</a>
         </div>
       </div>
-      <div class="plan-layout">
-        <form id="plan-form" class="plan-form">
-          <h3 data-zh="情景输入">Scenario input</h3>
-          <label class="field" for="hazard"><span data-zh="事件类型">Event type</span><select id="hazard"><option value="rain" data-zh="强降雨">Heavy rainfall</option><option value="earthquake" data-zh="地震">Earthquake</option><option value="heat" data-zh="高温">Extreme heat</option></select></label>
-          <label class="field" for="area"><span data-zh="示例区域">Example area</span><input id="area" maxlength="60" required placeholder="District A" data-placeholder-zh="例如 A 区"></label>
-          <label class="field" for="incident-note"><span data-zh="已知情况">Known conditions</span><textarea id="incident-note" rows="3" maxlength="240" placeholder="Add an example situation" data-placeholder-zh="输入一条示例情况"></textarea></label>
-          <div class="plan-actions">
-            <button class="action" type="submit" data-zh="生成示例输出">Generate sample output</button>
-            <button class="quiet" id="load-plan-example" type="button" data-zh="填入示例">Fill in an example</button>
-          </div>
-        </form>
-        <section class="plan-output" aria-labelledby="plan-result-title">
-          <h3 id="plan-result-title" data-zh="示例输出">Example output</h3>
-          <div id="plan-result" aria-live="polite"></div>
-        </section>
-      </div>
-    </section>
-
-    <section id="urban" class="spatial-section" aria-labelledby="spatial-title">
-      <div class="project-head">
-        <div>
-          <h2 id="spatial-title" data-zh="一座滨河小城的六次变化">A river town in six chapters</h2>
-          <p data-zh="从河岸聚落到两岸街区，拖动时间轴看小城长大。点选地图上的门牌，可以读到那一带的变化。所有场景均为虚构。">Follow a fictional settlement as it grows on both banks. Scrub through time and select a map pin to see what changed in that neighbourhood.</p>
-        </div>
-        <div class="project-links">
-          <a class="text-link" href="https://yangaoxin.github.io/research-models-and-demos/" data-zh="交互示例全集 ↗">Full interface gallery ↗</a>
-          <a class="text-link" href="https://github.com/YangAoxin/yangaoxin.github.io/blob/main/city-atlas.js" data-zh="地图绘制源码 ↗">Map drawing source ↗</a>
-        </div>
-      </div>
-      <div class="spatial-player" id="flood-evolution">
-        <div class="spatial-body">
-          <div class="atlas-main">
-            <div class="board-scroll" id="district-board" tabindex="0" aria-label="Zoomable river town map" data-aria-zh="可缩放的小城地图">
-              <div class="tile-board" id="districts"></div>
-            </div>
-            <div class="map-controls">
-              <label class="field" for="layer"><span data-zh="图层">Layer</span><select id="layer"><option value="changes" data-zh="街区变迁">Neighbourhood changes</option><option value="services" data-zh="规划服务点">Planned services</option></select></label>
-              <label class="field zoom-field" for="zoom"><span data-zh="缩放">Zoom</span><input id="zoom" type="range" min="100" max="155" value="100" step="5"><output id="zoom-value" for="zoom">100%</output></label>
-            </div>
-          </div>
-          <aside class="district-inspector">
-            <div class="chapter-heading"><span id="chapter-count"></span><h3 id="chapter-title"></h3></div>
-            <p class="chapter-copy" id="chapter-copy"></p>
-            <label class="district-choice" for="district-picker"><span data-zh="街区观察">Neighbourhood notes</span><select id="district-picker"></select></label>
-            <p class="visually-hidden" id="district-name"></p><p id="district-detail" aria-live="polite"></p>
-          </aside>
-        </div>
-        <div class="chapter-strip" id="chapter-strip" role="group" aria-label="Choose a chapter" data-aria-zh="选择小城发展阶段"></div>
-        <div class="timeline-bar">
-          <button id="play-timeline" class="action" type="button" data-zh="播放">Play</button>
-          <label class="field" for="stage"><span id="stage-label"></span><input id="stage" type="range" min="1" max="6" value="1"></label>
-          <button id="reset-timeline" class="quiet" type="button" data-zh="重置">Reset</button>
-        </div>
-      </div>
-      <div class="comparison" aria-labelledby="comparison-title">
-        <div class="comparison-copy">
-          <h3 id="comparison-title" data-zh="同一座城，设施设在哪里？">One town, two service layouts</h3>
-          <p data-zh="两张地图各有三处公共服务点。左右拖动，看看橙色标记是聚在城心，还是分布在车站、西岸和学校。">Both maps contain three service points. Swipe to see them clustered in the centre or spread across the station, west bank and school.</p>
-          <label class="field" for="compare-position">
-            <span data-zh="分割线位置">Divider position</span>
-            <input id="compare-position" type="range" min="0" max="100" value="50">
-          </label>
-          <div class="layout-presets" role="group" aria-label="Comparison view" data-aria-zh="布局对照视图">
-            <button type="button" data-position="100" data-zh="看集中布局">Centralised</button>
-            <button type="button" data-position="50" data-zh="左右对照">Split view</button>
-            <button type="button" data-position="0" data-zh="看分散布局">Distributed</button>
-          </div>
-          <ul class="compare-legend" aria-label="Map legend" data-aria-zh="图例">
-            <li class="legend-hub" data-zh="公共设施">Public services</li>
-            <li class="legend-green" data-zh="绿地">Green space</li>
-            <li class="legend-block" data-zh="建成用地">Developed land</li>
+      <div class="showcase-grid">
+        <div class="showcase-group">
+          <h3 data-zh="数据与地图">Data &amp; maps</h3>
+          <ul>
+          <li><a href="demo-data-map-tools.html#csv" data-showcase-link data-zh="CSV 工作台">CSV workbench</a></li>
+          <li><a href="demo-data-map-tools.html#route" data-showcase-link data-zh="滨河路线画板">Riverwalk route sketch</a></li>
           </ul>
         </div>
-        <div id="compare-board" class="compare-board" aria-hidden="true">
-          <div class="compare-layer compare-a"></div>
-          <div class="compare-layer compare-b"></div>
-          <span class="compare-tag tag-a" data-zh="A · 集中布局">A · Centralised</span><span class="compare-tag tag-b" data-zh="B · 分散布局">B · Distributed</span>
-          <div class="compare-divider"></div>
+        <div class="showcase-group">
+          <h3 data-zh="流程与信息">Workflow interfaces</h3>
+          <ul>
+          <li><a href="demo-workflows.html#schedule" data-showcase-link data-zh="社区活动日程">Community programme</a></li>
+          <li><a href="demo-workflows.html#routes" data-showcase-link data-zh="展馆导览">Gallery guide</a></li>
+          <li><a href="demo-workflows.html#handover" data-showcase-link data-zh="场地交接看板">Room handover board</a></li>
+          <li><a href="demo-workflows.html#compare" data-showcase-link data-zh="活动公告对照">Event notice comparison</a></li>
+          </ul>
+        </div>
+        <div class="showcase-group">
+          <h3 data-zh="滑块与图表">Sliders &amp; charts</h3>
+          <ul>
+          <li><a href="demo-visual-controls.html#light-heading" data-showcase-link data-zh="舞台灯光配色">Stage lighting palette</a></li>
+          <li><a href="demo-visual-controls.html#size-heading" data-showcase-link data-zh="图像画幅对比">Image format comparison</a></li>
+          </ul>
+        </div>
+        <div class="showcase-group">
+          <h3 data-zh="创作工具">Creative tools</h3>
+          <ul>
+          <li><a href="demo-creative-workbench.html#map" data-showcase-link data-zh="街区拼搭">Neighbourhood builder</a></li>
+          <li><a href="demo-creative-workbench.html#poster" data-showcase-link data-zh="展签设计">Exhibition label</a></li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <section class="system-project" id="systems" aria-labelledby="systems-title">
-      <div class="project-head">
-        <div>
-          <h2 id="systems-title" data-zh="整体安全系统概览">System overview</h2>
-          <p data-zh="选择示例情景，查看城市设施、公共服务和信息更新的不同状态。界面使用预设示例，用于展示系统概览与状态切换。">Choose a sample scenario to view different statuses for facilities, services and information updates. This interface uses preset examples.</p>
-        </div>
-      </div>
-      <div class="system-panel">
-        <label class="field" for="system-scenario"><span data-zh="示例情景">Sample scenario</span><select id="system-scenario"><option value="normal" data-zh="日常运行">Everyday operations</option><option value="disturbance" data-zh="受到扰动">During disruption</option><option value="recovery" data-zh="逐步恢复">Gradual recovery</option></select></label>
-        <div id="system-status" class="system-status" aria-live="polite"></div>
-        <p class="system-note" data-zh="状态为演示示例，选择不同情景即可查看切换效果。">Statuses are illustrative. Select another scenario to see them change.</p>
-      </div>
-    </section>
-
-    <section class="data-section" id="data" aria-label="Data visualisation" data-aria-zh="数据可视化">
-      <details id="land-use">
-        <summary><span data-zh="课程作品 · 土地利用流向图">Course project · Land-use flow diagram</span></summary>
-        <p data-zh="用示例数据演示地类变化。切换时段查看流向和对应数值。">An example of how land-use changes can be visualised. Switch periods to inspect the flows and their values.</p>
-        <label class="field period-field" for="period"><span data-zh="示例时段">Example period</span><select id="period"></select></label>
-        <canvas id="flow-chart" width="830" height="270" aria-hidden="true"></canvas>
-        <div id="flow-labels" class="flow-labels"></div>
-      </details>
-    </section>
     <noscript>Please enable JavaScript to try the demos. / 请启用 JavaScript 来体验作品。</noscript>
   </main>
 
