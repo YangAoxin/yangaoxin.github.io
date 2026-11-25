@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive Demos · Aoxin Yang</title>
+<style>
+:root{font-family:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;color:#20312e;background:#f0f0e5;--line:#becbc1;--green:#245545;--muted:#4f6059}
+*{box-sizing:border-box}
+body,h1,h2,p{margin:0}
+.wrap{width:min(1040px,calc(100% - 48px));margin-inline:auto}
+a{color:var(--green)}
+:focus-visible{outline:3px solid #a94836;outline-offset:3px}
+header{border-bottom:1px solid var(--line)}
+header .wrap{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+header a{font-weight:700;text-decoration:none}
+header a:hover{text-decoration:underline}
+button{padding:.5rem .75rem;border:1px solid var(--line);border-radius:6px;background:#fafcf2;color:inherit;font:inherit;cursor:pointer}
+button:hover{background:#e4eee3}
+.intro{padding:55px 0 30px}
+h1{font-size:clamp(3rem,7vw,5.7rem);letter-spacing:-.06em;line-height:.99}
+:lang(zh-CN) h1{letter-spacing:-.042em}
+.intro p{font-size:1.05rem;line-height:1.5;color:var(--muted);margin-top:14px}
+.collection{padding:23px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(170px,.85fr) minmax(0,2.7fr);gap:20px}
+.eyeline{display:block;border-radius:4px;width:34px;height:5px;background:#567c64;margin-bottom:13px}
+.visual .eyeline{background:#7184a9}
+.creative .eyeline{background:#ad694e}
+h2{font-size:clamp(1.26rem,3vw,1.65rem);letter-spacing:-.025em}
+.cards{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.cards a{min-height:106px;display:block;padding:13px 36px 13px 14px;background:#fcfcf2;position:relative;border:1px solid var(--line);border-radius:8px;text-decoration:none}
+.cards a:hover{border-color:var(--green);background:#f5f9ee}
+.cards a::after{content:"↗";position:absolute;right:13px;top:13px}
+.cards strong{font-size:1.04rem}
+.cards p{font-size:.88rem;color:var(--muted);line-height:1.4;margin-top:6px}
+.visual .cards a{background:#e8edf7}
+.visual .cards a:hover{background:#dee8fb}
+.creative .cards a{background:#f7e9de}
+.creative .cards a:hover{background:#fae4d4}
+footer{border-top:1px solid var(--line);padding:18px 0 38px;color:var(--muted);font-size:.85rem}
+@media(max-width:680px){.wrap{width:calc(100% - 30px)}.intro{padding:38px 0 23px}.collection{grid-template-columns:minmax(0,1fr);gap:13px}.eyeline{margin-bottom:8px}.cards a{padding-right:30px}}
+@media(max-width:360px){.cards{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+</head>
+<body>
+<header><div class="wrap">
+  <a href="https://yangaoxin.github.io/projects.html" data-en="Aoxin Yang / Portfolio" data-zh="杨奥新 / 作品集">Aoxin Yang / Portfolio</a>
+  <button type="button" id="language" lang="zh-CN">中文</button>
+</div></header>
+<main class="wrap">
+  <section class="intro">
+    <h1 data-en="Interactive Demos" data-zh="交互作品">Interactive Demos</h1>
+    <p data-en="Explore eight small browser interfaces with fictional examples." data-zh="八个可直接上手的浏览器作品，使用虚构场景和示例数据。">Explore eight small browser interfaces with fictional examples.</p>
+  </section>
+  <section class="collection" aria-labelledby="tools">
+    <div><span class="eyeline" aria-hidden="true"></span><h2 id="tools" data-en="Workflow interfaces" data-zh="流程与信息界面">Workflow interfaces</h2></div>
+    <ul class="cards">
+      <li><a href="demo-workflows.html#schedule" data-demo><strong data-en="Community programme" data-zh="社区活动日程">Community programme</strong><p data-en="Filter sessions by day and room." data-zh="按日期和场地筛选活动。">Filter sessions by day and room.</p></a></li>
+      <li><a href="demo-workflows.html#routes" data-demo><strong data-en="Gallery guide" data-zh="展馆导览">Gallery guide</strong><p data-en="Explore a themed route on a floor plan." data-zh="在平面图上逐站查看主题路线。">Explore a themed route on a floor plan.</p></a></li>
+      <li><a href="demo-workflows.html#handover" data-demo><strong data-en="Room handover board" data-zh="场地交接看板">Room handover board</strong><p data-en="Move cards between status columns." data-zh="移动记录卡片并查看状态计数。">Move cards between status columns.</p></a></li>
+      <li><a href="demo-workflows.html#compare" data-demo><strong data-en="Event notice comparison" data-zh="活动公告对照">Event notice comparison</strong><p data-en="Read two versions and isolate changes." data-zh="并排查看两版公告，可只显示变化。">Read two versions and isolate changes.</p></a></li>
+    </ul>
+  </section>
+  <section class="collection visual" aria-labelledby="controls">
+    <div><span class="eyeline" aria-hidden="true"></span><h2 id="controls" data-en="Visual controls" data-zh="滑块与图表联动">Visual controls</h2></div>
+    <ul class="cards">
+      <li><a href="demo-visual-controls.html#light-heading" data-demo><strong data-en="Stage lighting palette" data-zh="舞台灯光配色">Stage lighting palette</strong><p data-en="Adjust two sliders and watch the colour plot move." data-zh="双滑块联动定位点、色样和颜色值。">Adjust two sliders and watch the colour plot move.</p></a></li>
+      <li><a href="demo-visual-controls.html#size-heading" data-demo><strong data-en="Image format comparison" data-zh="图像画幅对比">Image format comparison</strong><p data-en="Move a width slider to compare three heights." data-zh="调整宽度，查看三种画幅的高度差值。">Move a width slider to compare three heights.</p></a></li>
+    </ul>
+  </section>
+  <section class="collection creative" aria-labelledby="workbench">
+    <div><span class="eyeline" aria-hidden="true"></span><h2 id="workbench" data-en="Creative workbench" data-zh="可编辑的小工具">Creative workbench</h2></div>
+    <ul class="cards">
+      <li><a href="demo-creative-workbench.html#map" data-demo><strong data-en="Neighbourhood builder" data-zh="街区拼搭">Neighbourhood builder</strong><p data-en="Paint a small map with houses, trees and paths." data-zh="在地图上自由铺设房屋、树木和步道。">Paint a small map with houses, trees and paths.</p></a></li>
+      <li><a href="demo-creative-workbench.html#poster" data-demo><strong data-en="Exhibition label" data-zh="展签设计">Exhibition label</strong><p data-en="Write a label, choose a palette and export a PNG." data-zh="编排文字、选择配色并导出 PNG。">Write a label, choose a palette and export a PNG.</p></a></li>
+    </ul>
+  </section>
+  <footer><a href="https://github.com/YangAoxin">GitHub ↗</a></footer>
+</main>
+<script>
+"use strict";
+
+const switcher = document.getElementById("language");
+let chinese = new URLSearchParams(location.search).get("lang") === "zh";
+
+function renderLanguage() {
+  document.documentElement.lang = chinese ? "zh-CN" : "en";
+  document.title = chinese ? "交互作品 · 杨奥新" : "Interactive Demos · Aoxin Yang";
+  document.querySelectorAll("[data-en]").forEach(item => {
+    item.textContent = chinese ? item.dataset.zh : item.dataset.en;
+  });
+  document.querySelectorAll("[data-demo]").forEach(item => {
+    const target = new URL(item.href);
+    if (chinese) target.searchParams.set("lang", "zh");
+    else target.searchParams.delete("lang");
+    item.href = target.href;
+  });
+  switcher.textContent = chinese ? "English" : "中文";
+  switcher.lang = chinese ? "en" : "zh-CN";
+}
+switcher.addEventListener("click", () => {
+  chinese = !chinese;
+  renderLanguage();
+});
+renderLanguage();
+
+</script>
+</body>
+</html>

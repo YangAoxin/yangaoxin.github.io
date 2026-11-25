@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Interface Studies · Aoxin Yang</title>
+  <style>
+:root {
+  color-scheme: light;
+  --page: #f1f1e8;
+  --paper: #fafbf4;
+  --ink: #1b302c;
+  --muted: #4f635c;
+  --line: #cbd4c9;
+  --green: #215d4b;
+  --leaf: #d7ebbb;
+  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); }
+[hidden] { display: none !important; }
+button, select, input { font: inherit; }
+a { color: var(--green); }
+button:not(:disabled), select, .check { cursor: pointer; }
+button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 3px solid #b05825;
+  outline-offset: 3px;
+}
+.wrap { width: min(1120px, calc(100% - 60px)); margin-inline: auto; }
+.skip { position: fixed; left: 14px; top: -4rem; padding: 10px; background: var(--paper); z-index: 3; }
+.skip:focus { top: 10px; }
+.site-header { border-bottom: 1px solid var(--line); }
+.header-inner, .footer { display: flex; justify-content: space-between; align-items: center; gap: 18px; }
+.header-inner { min-height: 62px; }
+.brand { color: var(--ink); text-decoration: none; font-weight: 700; }
+.brand:hover { text-decoration: underline; }
+.plain, .secondary {
+  background: transparent; color: var(--ink); border: 1px solid var(--line);
+  border-radius: 6px; padding: .48rem .8rem;
+}
+.plain:hover, .secondary:hover { background: #e5eae0; }
+.intro { padding: 48px 0 32px; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: clamp(2.65rem, 6.2vw, 5.25rem); line-height: 1; letter-spacing: -.058em; }
+:lang(zh-CN) h1 { letter-spacing: -.045em; }
+h2 { font-size: clamp(1.55rem, 3.5vw, 2.2rem); letter-spacing: -.038em; line-height: 1.15; }
+.intro p, .section-head p { color: var(--muted); margin-top: 12px; line-height: 1.55; }
+.tabs { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); border-block: 1px solid var(--line); }
+.tabs a {
+  color: var(--ink); text-decoration: none; font-weight: 700; min-height: 54px; padding: 10px 14px;
+  display: grid; place-items: center; text-align: center; border-bottom: 3px solid transparent;
+}
+.tabs a:hover { background: #e8ece1; }
+.tabs a[aria-current] { background: #e0ead9; border-bottom-color: var(--green); }
+.demo { margin-top: 32px; }
+.section-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+.field { display: grid; gap: 6px; font-size: .85rem; font-weight: 700; }
+.field select, .ticket select {
+  min-height: 38px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--paper); color: var(--ink); padding: .4rem .65rem;
+}
+.segmented { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.segmented button {
+  padding: .5rem .82rem; border: 1px solid var(--line); border-radius: 6px;
+  color: var(--ink); background: var(--paper); min-height: 38px;
+}
+.segmented button:hover, .segmented button[aria-pressed="true"] { border-color: var(--green); }
+.segmented button[aria-pressed="true"] { background: var(--green); color: #fff; }
+.panel { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; }
+.detail { border-radius: 10px; padding: 22px; overflow-wrap: anywhere; }
+.dark { background: #173c34; color: #fafbf4; }
+.detail .eyebrow { color: #d1e5be; font-size: .82rem; margin-bottom: 10px; }
+.detail h3 { font-size: 1.4rem; letter-spacing: -.02em; }
+.detail p + p, .detail h3 + p { margin-top: 12px; }
+.detail p { line-height: 1.55; }
+.detail .meta { font-variant-numeric: tabular-nums; color: #e3eddd; }
+.schedule-layout, .route-layout { display: grid; grid-template-columns: minmax(0, 2.35fr) minmax(230px, 1fr); gap: 15px; }
+.schedule-grid { padding: 15px; }
+.schedule-grid > * + * { margin-top: 8px; }
+.times, .lane { display: grid; grid-template-columns: 90px minmax(0,1fr); align-items: center; gap: 8px; }
+.time-labels { display: flex; justify-content: space-between; color: var(--muted); font-size: .75rem; font-variant-numeric: tabular-nums; }
+.room { font-size: .86rem; font-weight: 700; }
+.track {
+  display: grid; grid-template-columns: repeat(16, minmax(0,1fr)); gap: 2px;
+  min-height: 70px; padding: 6px 2px; border-radius: 5px;
+  background: repeating-linear-gradient(to right,#e7ede4 0,#e7ede4 calc(12.5% - 1px),#cdd8cd calc(12.5% - 1px),#cdd8cd 12.5%);
+}
+.event {
+  display: grid; align-content: center; text-align: left; font-size: .83rem; font-weight: 700; line-height: 1.22;
+  background: #f3ebcf; border: 1px solid #d5c392; border-radius: 6px; color: #302a19;
+  grid-column: var(--start) / span var(--duration); padding: .32rem .42rem; overflow-wrap: anywhere;
+}
+.event[aria-pressed="true"] { background: var(--leaf); border-color: var(--green); color: var(--ink); box-shadow: inset 0 0 0 1px var(--green); }
+.event-time { font-size: .7rem; font-weight: 400; margin-top: 4px; }
+.empty { font-size: .85rem; color: var(--muted); padding: 6px; }
+.route-panel { padding: 16px; }
+.floor { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); grid-template-rows: repeat(2,minmax(82px,auto)); gap: 8px; }
+.stop {
+  display: grid; align-content: space-between; gap: 10px; min-height: 82px;
+  text-align: left; padding: .7rem; background: #e9ece4; border: 1px solid var(--line);
+  border-radius: 6px; color: var(--ink); font-weight: 700;
+}
+.stop:disabled { color: #4f635c; }
+.stop.on-route { background: #d7ebbb; border-color: #94ad84; }
+.stop[aria-pressed="true"] { background: #215d4b; color: white; border-color: #215d4b; }
+.stop-mark { font-size: .76rem; font-variant-numeric: tabular-nums; }
+.legend, .notice, .room-note { color: var(--muted); font-size: .86rem; line-height: 1.45; }
+.legend, .notice { margin-top: 12px; }
+.kanban { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+.column { min-height: 225px; background: #e3eae1; padding: 12px; border-radius: 10px; border: 1px solid var(--line); }
+.column h3 { font-size: 1rem; display: flex; justify-content: space-between; margin: 4px 0 12px; }
+.ticket { border: 1px solid var(--line); border-radius: 7px; background: var(--paper); padding: 12px; margin-bottom: 9px; }
+.ticket h4 { margin: 5px 0 9px; }
+.ticket select { max-width: 100%; font-size: .86rem; }
+.check { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+.check input { accent-color: var(--green); width: 17px; height: 17px; }
+.diff { overflow: hidden; }
+.diff-row { display: grid; grid-template-columns: minmax(85px, .7fr) repeat(2,minmax(0,1fr)); border-top: 1px solid var(--line); }
+.diff-row > * { min-width: 0; padding: .8rem .9rem; overflow-wrap: anywhere; }
+.diff-row > * + * { border-left: 1px solid var(--line); }
+.diff-head { border-top: 0; background: #e3eae1; font-weight: 700; }
+.diff-label { font-weight: 700; }
+.old.changed { background: #f7eadb; }
+.new.changed { background: #e5efda; }
+.footer { color: var(--muted); font-size: .85rem; line-height: 1.5; border-top: 1px solid var(--line); margin-top: 44px; padding-block: 18px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 780px) {
+  .schedule-layout, .route-layout { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 600px) {
+  .wrap { width: calc(100% - 30px); }
+  .intro { padding: 36px 0 24px; }
+  .tabs { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .section-head { align-items: start; flex-direction: column; gap: 12px; }
+  .times { display: none; }
+  .lane { grid-template-columns: minmax(0,1fr); border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  .lane:last-child { border: 0; padding-bottom: 0; }
+  .track { display: flex; flex-wrap: wrap; background: transparent; min-height: auto; gap: 6px; }
+  .event { min-height: 44px; flex: 1 1 120px; }
+  .kanban { grid-template-columns: 1fr; }
+  .column { min-height: 0; }
+  .diff-row { grid-template-columns: minmax(70px,.8fr) repeat(2,minmax(0,1fr)); }
+  .diff-row > * { padding: .6rem .45rem; }
+}
+
+</style>
+  
+</head>
+<body>
+  <a class="skip" href="#main" data-en="Skip to demo" data-zh="跳到演示">Skip to demo</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="https://yangaoxin.github.io/projects.html" data-en="Aoxin Yang / Projects" data-zh="杨奥新 / 作品集">Aoxin Yang / Projects</a>
+      <button type="button" id="language" lang="zh-CN" class="plain">中文</button>
+    </div>
+  </header>
+  <main class="wrap" id="main">
+    <section class="intro">
+      <h1 data-en="Interface Studies" data-zh="交互界面作品">Interface Studies</h1>
+      <p data-en="Four interactive prototypes for an imaginary community arts centre." data-zh="以一座虚构的社区艺术中心为场景，体验四个交互原型。">Four interactive prototypes for an imaginary community arts centre.</p>
+    </section>
+    <nav class="tabs" aria-label="Demos" data-aria-en="Demos" data-aria-zh="演示入口">
+      <a href="#schedule" data-en="Programme" data-zh="活动日程">Programme</a>
+      <a href="#routes" data-en="Gallery guide" data-zh="展馆导览">Gallery guide</a>
+      <a href="#handover" data-en="Handover board" data-zh="交接看板">Handover board</a>
+      <a href="#compare" data-en="Notice comparison" data-zh="公告对照">Notice comparison</a>
+    </nav>
+    <section id="schedule" class="demo" aria-labelledby="schedule-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="schedule-heading" data-en="Community programme" data-zh="社区活动日程">Community programme</h2>
+          <p data-en="Choose a day and a room. Select a session to see its time and venue." data-zh="按日期和场地筛选，选择活动查看时间与地点。">Choose a day and a room. Select a session to see its time and venue.</p>
+        </div>
+        <label class="field">
+          <span data-en="Room" data-zh="场地">Room</span>
+          <select id="room" aria-controls="schedule-grid"></select>
+        </label>
+      </div>
+      <div class="segmented" id="days" aria-label="Day" data-aria-en="Day" data-aria-zh="日期"></div>
+      <div class="schedule-layout">
+        <div id="schedule-grid" class="panel schedule-grid"></div>
+        <aside id="session-detail" class="detail dark" aria-live="polite"></aside>
+      </div>
+    </section>
+    <section id="routes" class="demo" aria-labelledby="routes-heading" hidden>
+      <div class="section-head">
+        <div>
+          <h2 id="routes-heading" data-en="Gallery guide" data-zh="展馆导览">Gallery guide</h2>
+          <p data-en="Select a themed route, then explore its stops on the floor plan." data-zh="选择展览主题路线，再在平面示意图上逐站查看。">Select a themed route, then explore its stops on the floor plan.</p>
+        </div>
+      </div>
+      <div id="route-options" class="segmented" aria-label="Routes" data-aria-en="Routes" data-aria-zh="路线"></div>
+      <div class="route-layout">
+        <div class="panel route-panel">
+          <div id="floor" class="floor"></div>
+          <p class="legend" data-en="Numbers show the order of stops on the selected route." data-zh="数字表示所选路线的参观顺序。">Numbers show the order of stops on the selected route.</p>
+        </div>
+        <aside id="route-detail" class="detail dark" aria-live="polite"></aside>
+      </div>
+    </section>
+    <section id="handover" class="demo" aria-labelledby="handover-heading" hidden>
+      <div class="section-head">
+        <div>
+          <h2 id="handover-heading" data-en="Room preparation handover" data-zh="场地准备交接看板">Room preparation handover</h2>
+          <p data-en="Move an example card to another column using its status menu." data-zh="用卡片上的状态下拉菜单，将示例记录移到另一列。">Move an example card to another column using its status menu.</p>
+        </div>
+        <button id="reset-board" class="secondary" type="button" data-en="Reset board" data-zh="恢复示例">Reset board</button>
+      </div>
+      <div id="kanban" class="kanban"></div>
+      <p id="board-status" class="notice" role="status"></p>
+    </section>
+    <section id="compare" class="demo" aria-labelledby="compare-heading" hidden>
+      <div class="section-head">
+        <div>
+          <h2 id="compare-heading" data-en="Event notice comparison" data-zh="活动公告版本对照">Event notice comparison</h2>
+          <p data-en="Compare two fictional notices and show only the fields that changed." data-zh="并排阅读两份虚构公告，可以单独查看发生变化的字段。">Compare two fictional notices and show only the fields that changed.</p>
+        </div>
+        <label class="check">
+          <input id="changed-only" type="checkbox">
+          <span data-en="Changes only" data-zh="只看变化">Changes only</span>
+        </label>
+      </div>
+      <div class="segmented" id="notices" aria-label="Notices" data-aria-en="Notices" data-aria-zh="公告"></div>
+      <div id="diff" class="panel diff"></div>
+      <p id="diff-status" class="notice" role="status"></p>
+    </section>
+  </main>
+  <footer class="wrap footer">
+    <span data-en="All examples use fictional names, places and records." data-zh="名称、场地和记录均为虚构示例。">All examples use fictional names, places and records.</span>
+    <a href="https://github.com/YangAoxin">GitHub ↗</a>
+  </footer>
+<script>
+"use strict";
+
+const $ = (id) => document.getElementById(id);
+let language = new URLSearchParams(location.search).get("lang") === "zh" ? "zh" : "en";
+const text = (english, chinese) => language === "zh" ? chinese : english;
+const local = ([english, chinese]) => text(english, chinese);
+
+function el(tag, content = "", className = "") {
+  const node = document.createElement(tag);
+  node.textContent = content;
+  if (className) node.className = className;
+  return node;
+}
+
+function choice(container, options, selected, onChoose) {
+  container.setAttribute("role", "group");
+  container.replaceChildren(...options.map((label, index) => {
+    const button = el("button", local(label));
+    button.type = "button";
+    button.setAttribute("aria-pressed", String(selected === index));
+    button.addEventListener("click", () => {
+      onChoose(index);
+      container.children[index]?.focus({preventScroll: true});
+    });
+    return button;
+  }));
+}
+
+function selectOptions(select, options, value) {
+  select.replaceChildren(...options.map(([key, label]) => {
+    const option = el("option", local(label));
+    option.value = key;
+    return option;
+  }));
+  select.value = value;
+}
+
+const days = [["Friday", "周五"], ["Saturday", "周六"], ["Sunday", "周日"]];
+const rooms = [
+  ["Studio", "手作室"],
+  ["Reading room", "阅览室"],
+  ["Courtyard", "庭院"],
+];
+const sessions = [
+  {day: 0, room: 0, start: 9.5, end: 11.5, title: ["Paper folding", "纸艺手作"], note: ["Fold simple shapes using coloured paper at the shared worktable.", "在共用工作桌上，用彩色纸折出简单图形。"]},
+  {day: 0, room: 0, start: 13, end: 15, title: ["Open studio", "开放工坊"], note: ["Try out materials and tools at your own pace.", "自行选择材料，试用工坊工具。"]},
+  {day: 0, room: 1, start: 10.5, end: 12.5, title: ["Short reads", "短篇共读"], note: ["Pick a short story and talk about it with other readers.", "选一篇短故事，和其他读者聊聊感受。"]},
+  {day: 0, room: 1, start: 14.5, end: 16.5, title: ["Book swap", "旧书交换"], note: ["Bring a book and browse the exchange table.", "带一本旧书来，看看交换桌上有什么。"]},
+  {day: 0, room: 2, start: 11, end: 13, title: ["Plant corner", "庭院绿植角"], note: ["Look around the courtyard and label a few pots.", "在庭院走一走，给花盆写上植物名。"]},
+  {day: 1, room: 0, start: 10, end: 12, title: ["Clay models", "黏土小物"], note: ["Shape a small object and leave it to dry on the rack.", "捏一个黏土小物，放到架上晾干。"]},
+  {day: 1, room: 1, start: 13.5, end: 15.5, title: ["Sketchbook club", "速写小组"], note: ["Share a sketch in a relaxed group session.", "带着一页速写，和小组交流。"]},
+  {day: 1, room: 0, start: 15, end: 17, title: ["String trio", "弦乐三重奏"], note: ["The concert has moved to the studio.", "演奏地点已移到手作室。"]},
+  {day: 2, room: 0, start: 11, end: 13, title: ["Print workshop", "手工拓印"], note: ["Experiment with simple prints and coloured ink.", "用彩色油墨尝试简单的拓印。"]},
+  {day: 2, room: 2, start: 13, end: 15, title: ["Sunday sketch", "周日写生"], note: ["Choose a place to sketch in the courtyard.", "在庭院里找个位置写生。"]},
+];
+
+let day = 0;
+let room = "all";
+let session = sessions[0];
+
+function hour(value) {
+  return `${Math.floor(value).toString().padStart(2, "0")}:${value % 1 ? "30" : "00"}`;
+}
+
+function renderSchedule() {
+  choice($("days"), days, day, (index) => {
+    day = index;
+    renderSchedule();
+  });
+  const visible = sessions.filter((item) => item.day === day && (room === "all" || String(item.room) === room));
+  if (!visible.includes(session)) session = visible[0];
+  const grid = $("schedule-grid");
+  if (!visible.length) {
+    grid.replaceChildren(el("p", text("No sessions in this room on the selected day.", "所选场地在这一天没有活动。"), "empty"));
+    $("session-detail").replaceChildren(el("p", text("Try another day or room.", "可以换一天或换一个场地。")));
+    return;
+  }
+
+  const times = el("div", "", "times");
+  const timeLabels = el("div", "", "time-labels");
+  [9, 11, 13, 15, 17].forEach((value) => timeLabels.append(el("span", hour(value))));
+  times.append(el("span", ""), timeLabels);
+  grid.replaceChildren(times);
+  rooms.forEach((name, index) => {
+    const items = visible.filter((item) => item.room === index);
+    if (!items.length) return;
+    const lane = el("div", "", "lane");
+    const track = el("div", "", "track");
+    items.forEach((item) => {
+      const button = el("button", local(item.title), "event");
+      button.type = "button";
+      button.id = "session-" + sessions.indexOf(item);
+      button.style.setProperty("--start", String((item.start - 9) * 2 + 1));
+      button.style.setProperty("--duration", String((item.end - item.start) * 2));
+      button.setAttribute("aria-pressed", String(item === session));
+      button.append(el("span", `${hour(item.start)}–${hour(item.end)}`, "event-time"));
+      button.addEventListener("click", () => {
+        session = item;
+        renderSchedule();
+        $(button.id).focus({preventScroll: true});
+      });
+      track.append(button);
+    });
+    lane.append(el("span", local(name), "room"), track);
+    grid.append(lane);
+  });
+  $("session-detail").replaceChildren(
+    el("p", local(days[session.day]), "eyebrow"),
+    el("h3", local(session.title)),
+    el("p", `${hour(session.start)}–${hour(session.end)} · ${local(rooms[session.room])}`, "meta"),
+    el("p", local(session.note)),
+  );
+}
+
+const stops = [
+  {title: ["Lobby", "入口大厅"], note: ["Pick up a gallery leaflet at the front desk.", "在前台领取展览折页。"]},
+  {title: ["Print gallery", "版画展室"], note: ["Look for the woodcut prints on the far wall.", "找一找对面墙上的木刻作品。"]},
+  {title: ["Media room", "影像室"], note: ["The screen shows a short loop of artist interviews.", "屏幕循环播放简短的艺术家访谈。"]},
+  {title: ["Reading corner", "阅读角"], note: ["Browse material samples and books at the low tables.", "在矮桌旁翻看材料样本和图书。"]},
+  {title: ["Workshop", "手作工坊"], note: ["See the tools set out on the demonstration table.", "看看演示桌上摆放的手作工具。"]},
+  {title: ["Courtyard", "庭院"], note: ["Take a break on a bench by the planters.", "可以在花槽旁的长椅休息。"]},
+];
+const routes = [
+  {name: ["Printmakers' route", "版画主题"], stops: [0, 1, 4, 5]},
+  {name: ["Quiet visit", "安静参观"], stops: [0, 3, 5]},
+  {name: ["Media and making", "影像与手作"], stops: [0, 2, 4]},
+];
+let route = 0;
+let activeStop = 0;
+
+function renderRoute() {
+  choice($("route-options"), routes.map((item) => item.name), route, (index) => {
+    route = index;
+    activeStop = routes[route].stops[0];
+    renderRoute();
+  });
+  const sequence = routes[route].stops;
+  $("floor").replaceChildren(...stops.map((stop, index) => {
+    const order = sequence.indexOf(index);
+    const button = el("button", "", "stop");
+    button.type = "button";
+    button.id = "stop-" + index;
+    button.disabled = order < 0;
+    button.classList.toggle("on-route", order >= 0);
+    button.setAttribute("aria-pressed", String(index === activeStop));
+    const mark = order >= 0 ? text("STOP ", "站点 ") + (order + 1) : "";
+    button.append(el("span", mark, "stop-mark"), el("span", local(stop.title)));
+    button.addEventListener("click", () => {
+      activeStop = index;
+      renderRoute();
+      $(button.id).focus({preventScroll: true});
+    });
+    return button;
+  }));
+  const details = stops[activeStop];
+  $("route-detail").replaceChildren(
+    el("p", text("Stop ", "站点 ") + (sequence.indexOf(activeStop) + 1) + " / " + sequence.length, "eyebrow"),
+    el("h3", local(details.title)),
+    el("p", local(details.note)),
+  );
+}
+
+const columns = [["To do", "待处理"], ["In progress", "进行中"], ["Ready", "已就绪"]];
+const tickets = [
+  {title: ["Set out folding paper", "摆好手作纸"], room: 0, initial: 0},
+  {title: ["Put up the welcome sign", "挂好欢迎牌"], room: 2, initial: 0},
+  {title: ["Count the spare chairs", "清点备用椅"], room: 1, initial: 1},
+  {title: ["Return the brushes", "整理画笔"], room: 0, initial: 2},
+  {title: ["Set up the book stand", "摆好图书展示架"], room: 1, initial: 2},
+];
+let ticketColumns = tickets.map((item) => item.initial);
+let lastMoved = null;
+
+function renderBoard() {
+  const target = $("kanban");
+  const options = columns.map((label, index) => [String(index), label]);
+  target.replaceChildren(...columns.map((name, columnIndex) => {
+    const column = el("section", "", "column");
+    const heading = el("h3", local(name));
+    const count = ticketColumns.filter((index) => index === columnIndex).length;
+    heading.append(el("span", String(count)));
+    column.append(heading);
+    if (!count) column.append(el("p", text("No cards", "暂无记录"), "empty"));
+    tickets.forEach((ticket, index) => {
+      if (ticketColumns[index] !== columnIndex) return;
+      const card = el("article", "", "ticket");
+      const menu = el("select");
+      menu.id = "ticket-status-" + index;
+      menu.setAttribute("aria-label", text("Status for ", "状态：") + local(ticket.title));
+      selectOptions(menu, options, String(ticketColumns[index]));
+      menu.addEventListener("change", () => {
+        ticketColumns[index] = Number(menu.value);
+        lastMoved = index;
+        renderBoard();
+        $(menu.id).focus({preventScroll: true});
+      });
+      card.append(el("p", local(rooms[ticket.room]), "room-note"), el("h4", local(ticket.title)), menu);
+      column.append(card);
+    });
+    return column;
+  }));
+  $("board-status").textContent = lastMoved === null ? "" :
+    local(tickets[lastMoved].title) + " → " + local(columns[ticketColumns[lastMoved]]);
+}
+
+const notices = [
+  {title: ["Courtyard concert", "庭院音乐会"], fields: [
+    [["Event", "活动"], ["String trio", "弦乐三重奏"], ["String trio", "弦乐三重奏"]],
+    [["Start time", "开始时间"], ["14:00", "14:00"], ["15:00", "15:00"]],
+    [["Venue", "地点"], ["Courtyard", "庭院"], ["Studio", "手作室"]],
+    [["Entry", "入场方式"], ["Free entry", "免费入场"], ["Free entry", "免费入场"]],
+  ]},
+  {title: ["Book swap", "旧书交换"], fields: [
+    [["Event", "活动"], ["Book swap", "旧书交换"], ["Book swap", "旧书交换"]],
+    [["Start time", "开始时间"], ["14:30", "14:30"], ["14:30", "14:30"]],
+    [["Venue", "地点"], ["Reading room", "阅览室"], ["Reading room", "阅览室"]],
+    [["Items per visitor", "每人可带"], ["Up to 2 books", "最多两本书"], ["Up to 4 books", "最多四本书"]],
+  ]},
+];
+let notice = 0;
+
+function gridRow(items, heading = false) {
+  const row = el("div", "", "diff-row" + (heading ? " diff-head" : ""));
+  row.setAttribute("role", "row");
+  items.forEach(([value, className], index) => {
+    const cell = el("span", value, className);
+    cell.setAttribute("role", heading ? "columnheader" : index === 0 ? "rowheader" : "cell");
+    row.append(cell);
+  });
+  return row;
+}
+
+function renderDiff() {
+  choice($("notices"), notices.map((item) => item.title), notice, (index) => {
+    notice = index;
+    renderDiff();
+  });
+  const showingChanges = $("changed-only").checked;
+  const diff = $("diff");
+  diff.setAttribute("role", "table");
+  diff.setAttribute("aria-label", local(notices[notice].title));
+  diff.replaceChildren(gridRow([
+    [text("Field", "字段")], [text("Original", "原版")], [text("Updated", "更新版")],
+  ], true));
+
+  let changes = 0;
+  for (const [field, original, updated] of notices[notice].fields) {
+    const changed = original.some((value, index) => value !== updated[index]);
+    if (changed) changes += 1;
+    if (showingChanges && !changed) continue;
+    const changedClass = changed ? " changed" : "";
+    const row = gridRow([
+      [local(field), "diff-label"],
+      [local(original), "old" + changedClass],
+      [local(updated), "new" + changedClass],
+    ]);
+    if (changed) row.firstElementChild.append(el("span", text(" (changed)", "（已变更）"), "visually-hidden"));
+    diff.append(row);
+  }
+  $("diff-status").textContent = text(
+    changes === 1 ? "1 field changed." : `${changes} fields changed.`,
+    `${changes} 个字段发生变化。`,
+  );
+}
+
+const demos = ["schedule", "routes", "handover", "compare"];
+let current = "schedule";
+
+function showDemo() {
+  const hash = location.hash.slice(1);
+  if (!hash) current = "schedule";
+  else if (demos.includes(hash)) current = hash;
+  demos.forEach((id) => {
+    const open = current === id;
+    $(id).hidden = !open;
+    const link = document.querySelector(`.tabs a[href="#${id}"]`);
+    if (open) link.setAttribute("aria-current", "location");
+    else link.removeAttribute("aria-current");
+  });
+}
+
+function renderLanguage() {
+  document.documentElement.lang = text("en", "zh-CN");
+  document.title = text("Interface Studies · Aoxin Yang", "交互界面作品 · 杨奥新");
+  document.querySelectorAll("[data-en]").forEach((node) => {
+    node.textContent = node.dataset[language];
+  });
+  document.querySelectorAll("[data-aria-en]").forEach((node) => {
+    node.setAttribute("aria-label", text(node.dataset.ariaEn, node.dataset.ariaZh));
+  });
+  $("language").textContent = text("中文", "English");
+  $("language").lang = text("zh-CN", "en");
+  selectOptions($("room"), [["all", ["All rooms", "所有场地"]], ...rooms.map((name, index) => [String(index), name])], room);
+  renderSchedule();
+  renderRoute();
+  renderBoard();
+  renderDiff();
+}
+
+$("language").addEventListener("click", () => {
+  language = text("zh", "en");
+  renderLanguage();
+});
+$("room").addEventListener("change", () => {
+  room = $("room").value;
+  renderSchedule();
+});
+$("reset-board").addEventListener("click", () => {
+  ticketColumns = tickets.map((item) => item.initial);
+  lastMoved = null;
+  renderBoard();
+  $("board-status").textContent = text("Example cards restored.", "已恢复初始示例。");
+});
+$("changed-only").addEventListener("change", renderDiff);
+window.addEventListener("hashchange", showDemo);
+
+renderLanguage();
+showDemo();
+
+</script>
+</body>
+</html>
