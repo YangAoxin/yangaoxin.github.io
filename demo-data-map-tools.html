@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data &amp; Map Tools · Aoxin Yang</title>
+<style>
+:root{font-family:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;color:#223231;background:#ecf0e9;--line:#c3d0c8;--muted:#475c57;--leaf:#20594a;--paper:#fcfcf6}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body,h1,h2,p{margin:0}
+.wrap{width:min(1080px,calc(100% - 42px));margin-inline:auto}
+a{color:var(--leaf)}
+button,input,select{font:inherit}
+button,input,select{border:1px solid var(--line);border-radius:6px;background:#f6f8ef;padding:.5rem .65rem;color:inherit}
+button:not(:disabled),input[type=file],select{cursor:pointer}
+button:disabled{opacity:.55}
+button:not(:disabled):hover{border-color:var(--leaf)}
+:focus-visible{outline:2px solid #a34728;outline-offset:3px}
+.mast{border-bottom:1px solid var(--line)}
+.mast-inner{min-height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.mast a{font-weight:700}
+.intro{padding:38px 0 24px}
+h1{font-size:clamp(2.65rem,7vw,5.1rem);line-height:1;letter-spacing:-.055em}
+:lang(zh-CN) h1{letter-spacing:-.025em}
+.intro nav{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px}
+.tool{border-top:1px solid var(--line);padding:23px 0 32px;scroll-margin-top:12px}
+.section-head{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:14px}
+h2{font-size:clamp(1.45rem,3.5vw,2rem);letter-spacing:-.035em}
+.section-head p,.hint{color:var(--muted);line-height:1.45;margin-top:6px}
+.section-head button{flex-shrink:0}
+.data-layout{display:grid;grid-template-columns:minmax(210px,.92fr) minmax(0,2.5fr);gap:12px}
+.route-layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(240px,1fr);gap:12px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:13px;min-width:0}
+.filters{display:grid;align-content:start;gap:7px}
+.filters label,.route-panel label{font-size:.87rem;font-weight:700}
+.filters input,.filters select,.route-panel input{max-width:100%;min-width:0}
+.filters input[type=file]{margin-bottom:6px;padding:.4rem;font-size:.83rem}
+.filters input[type=file]::file-selector-button{max-width:100%;font:inherit;padding:.25rem .33rem}
+.filters button#clear{font-size:.82rem;text-align:left}
+.bars{display:grid;gap:5px}
+.group-bar{text-align:left;position:relative;isolation:isolate;min-width:0;font-size:.82rem;display:flex;justify-content:space-between;gap:7px;overflow:hidden}
+.group-bar[aria-pressed=true]{border-color:var(--leaf);font-weight:700}
+.group-bar::before{content:"";position:absolute;z-index:-1;inset:0 auto 0 0;width:var(--bar);background:#d5e6cf}
+.group-bar[aria-pressed=true]::before{background:#b5d4a5}
+.group-bar span:first-child{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.table-head,.pagination{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.table-view{overflow:auto;min-height:130px;margin:11px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+thead{background:#e9f1e7;text-align:left}
+th,td{border-bottom:1px solid #dee5db;padding:.58rem .48rem;vertical-align:top;min-width:72px;max-width:280px;overflow-wrap:anywhere}
+tbody tr:nth-child(even){background:#f3f5eb}
+.pagination{font-size:.87rem}
+#error{color:#982f26;font-size:.91rem;margin-top:9px}
+.map-card canvas{width:100%;display:block;border-radius:6px;cursor:crosshair;background:#e8e0ca}
+.legend{display:flex;gap:15px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:.84rem}
+.legend>span{display:flex;gap:5px;align-items:center}
+.legend i{width:13px;height:9px;border-radius:2px}
+.river{background:#8cbccc}.park{background:#96ad79}.way{background:#a84630}
+.route-total output{display:block;font-size:1.9rem;font-weight:700;margin:.28rem 0 .65rem;font-variant-numeric:tabular-nums}
+#coordinates{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+#coordinates label{display:grid;gap:4px}
+#coordinates button{grid-column:1/-1}
+.hint{font-size:.84rem}
+.way-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;font-size:.86rem}
+#points{max-height:116px;overflow:auto;margin:10px 0 0;padding-left:22px;font-size:.83rem;line-height:1.5}
+@media(max-width:700px){.wrap{width:calc(100% - 28px)}.data-layout,.route-layout{grid-template-columns:minmax(0,1fr)}.section-head{flex-wrap:wrap}.intro{padding:31px 0 20px}}
+
+</style>
+
+</head>
+<body>
+<header class="mast">
+  <div class="wrap mast-inner">
+    <a href="interface-demos.html" id="gallery" data-en="Aoxin Yang / Interface demos" data-zh="杨奥新 / 交互作品">Aoxin Yang / Interface demos</a>
+    <button type="button" id="language" lang="zh-CN">中文</button>
+  </div>
+</header>
+<main class="wrap">
+  <header class="intro">
+    <h1 data-en="Data &amp; Map Tools" data-zh="数据与地图工具">Data &amp; Map Tools</h1>
+    <nav aria-label="Tools" data-aria-en="Tools" data-aria-zh="工具入口">
+      <a href="#csv" data-en="CSV workbench" data-zh="CSV 工作台">CSV workbench</a>
+      <a href="#route" data-en="Route sketch" data-zh="路线画板">Route sketch</a>
+    </nav>
+  </header>
+
+  <section id="csv" class="tool" aria-labelledby="csv-title">
+    <div class="section-head">
+      <div>
+        <h2 id="csv-title" data-en="CSV workbench" data-zh="CSV 工作台">CSV workbench</h2>
+        <p data-en="Try the sample or open a UTF‑8 CSV. Files are processed in this browser." data-zh="试用示例，或打开自己的 UTF‑8 CSV。文件只在当前浏览器内处理。">Try the sample or open a UTF‑8 CSV. Files are processed in this browser.</p>
+      </div>
+      <button type="button" id="sample" data-en="Load example" data-zh="载入示例">Load example</button>
+    </div>
+    <div class="data-layout">
+      <aside class="card filters">
+        <label for="file" data-en="Open CSV" data-zh="打开 CSV">Open CSV</label>
+        <input type="file" id="file" accept=".csv,text/csv">
+        <label for="search" data-en="Find rows" data-zh="搜索记录">Find rows</label>
+        <input type="search" id="search" placeholder="Search any column" data-placeholder-en="Search any column" data-placeholder-zh="搜索任意列">
+        <label for="group" data-en="Group by column" data-zh="按字段分组">Group by column</label>
+        <select id="group"></select>
+        <div id="bars" class="bars" role="group" aria-label="Filter by group" data-aria-en="Filter by group" data-aria-zh="按分组筛选"></div>
+        <button type="button" id="clear" data-en="Clear group filter" data-zh="清除分组筛选">Clear group filter</button>
+      </aside>
+      <div class="card record-card">
+        <div class="table-head">
+          <strong id="rows-label"></strong>
+          <button type="button" id="export" data-en="Export JSON" data-zh="导出 JSON">Export JSON</button>
+        </div>
+        <p id="error" role="alert" hidden></p>
+        <div class="table-view" tabindex="0" role="region" aria-label="CSV table" data-aria-en="CSV table" data-aria-zh="CSV 数据表">
+          <table id="data" aria-labelledby="rows-label"></table>
+        </div>
+        <div class="pagination">
+          <button type="button" id="prev" data-en="Previous" data-zh="上一页">Previous</button>
+          <span id="pages" role="status"></span>
+          <button type="button" id="next" data-en="Next" data-zh="下一页">Next</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="route" class="tool" aria-labelledby="route-title">
+    <div class="section-head">
+      <div>
+        <h2 id="route-title" data-en="Riverwalk route sketch" data-zh="滨河步行路线画板">Riverwalk route sketch</h2>
+        <p data-en="Place waypoints on a fictional map and see the length in map units." data-zh="在虚构地图上点选途经点，查看路线长度（图上单位）。">Place waypoints on a fictional map and see the length in map units.</p>
+      </div>
+      <button type="button" id="route-sample" data-en="Load example" data-zh="载入示例">Load example</button>
+    </div>
+    <div class="route-layout">
+      <div class="card map-card">
+        <canvas id="map" width="720" height="420" role="img" aria-label="Fictional map with a river and footbridge" data-aria-en="Fictional map with a river and footbridge" data-aria-zh="有河流和步行桥的虚构地图"></canvas>
+        <div class="legend">
+          <span><i class="river"></i><span data-en="River" data-zh="河流">River</span></span>
+          <span><i class="park"></i><span data-en="Green space" data-zh="绿地">Green space</span></span>
+          <span><i class="way"></i><span data-en="Your route" data-zh="绘制路线">Your route</span></span>
+        </div>
+      </div>
+      <aside class="card route-panel">
+        <div class="route-total">
+          <span data-en="Route length" data-zh="路线长度">Route length</span>
+          <output id="length" aria-live="polite"></output>
+        </div>
+        <form id="coordinates">
+          <label>X <input type="number" id="x" min="0" max="100" value="50" required></label>
+          <label>Y <input type="number" id="y" min="0" max="60" value="30" required></label>
+          <button type="submit" data-en="Add point" data-zh="添加点">Add point</button>
+        </form>
+        <p class="hint" data-en="Coordinates increase rightward and downward." data-zh="横坐标向右递增，纵坐标向下递增。">Coordinates increase rightward and downward.</p>
+        <div class="way-actions">
+          <button type="button" id="undo" data-en="Undo last point" data-zh="撤销末点">Undo last point</button>
+          <button type="button" id="clear-map" data-en="Clear" data-zh="清空">Clear</button>
+        </div>
+        <ol id="points" aria-label="Waypoints" data-aria-en="Waypoints" data-aria-zh="途经点"></ol>
+      </aside>
+    </div>
+  </section>
+</main>
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+let chinese = new URLSearchParams(location.search).get("lang") === "zh";
+const t = (en, zh) => chinese ? zh : en;
+function node(tag, text = "") {
+  const item = document.createElement(tag);
+  item.textContent = text;
+  return item;
+}
+
+function parseCSV(source) {
+  const records = [];
+  let row = [];
+  let field = "";
+  let mode = "start";
+  const input = source.replace(/^\uFEFF/, "");
+
+  function pushField() {
+    row.push(field);
+    field = "";
+    mode = "start";
+  }
+  function pushRow() {
+    pushField();
+    if (row.length > 1 || row[0] !== "") records.push(row);
+    row = [];
+  }
+
+  for (let i = 0; i < input.length; i += 1) {
+    const char = input[i];
+    if (mode === "quoted") {
+      if (char !== '"') field += char;
+      else if (input[i + 1] === '"') {
+        field += '"';
+        i += 1;
+      } else mode = "closed";
+      continue;
+    }
+    if (char === ",") pushField();
+    else if (char === "\n" || char === "\r") {
+      pushRow();
+      if (char === "\r" && input[i + 1] === "\n") i += 1;
+    } else if (char === '"' && mode === "start") mode = "quoted";
+    else {
+      if (mode === "closed" || char === '"') throw new Error("format");
+      field += char;
+      mode = "plain";
+    }
+  }
+  if (mode === "quoted") throw new Error("format");
+  if (row.length || field || mode === "closed") pushRow();
+
+  const [header, ...rows] = records;
+  if (!header?.length) throw new Error("format");
+  const names = header.map(item => item.trim());
+  if (names.some(item => !item) || new Set(names).size !== names.length ||
+      rows.some(record => record.length !== names.length)) throw new Error("format");
+  if (names.length > 35 || rows.length > 10000) throw new Error("limit");
+  return {names, rows};
+}
+
+const exampleEn = `Activity,Room,Day,Seats
+Paper workshop,Studio,Friday,16
+Open studio,Studio,Friday,12
+Short fiction,Reading room,Friday,10
+Book swap,Reading room,Friday,18
+Courtyard plants,Courtyard,Friday,14
+Clay workshop,Studio,Saturday,16
+Sketch club,Reading room,Saturday,20
+Print workshop,Studio,Sunday,16
+Sunday sketch,Courtyard,Sunday,22
+Small concert,Courtyard,Saturday,24
+Book repair,Studio,Sunday,12
+Picture books,Reading room,Sunday,15
+Pencil drawing,Studio,Saturday,18
+Plant sketch,Courtyard,Sunday,12`;
+const exampleZh = `活动,场地,日期,名额
+纸艺手作,手作室,周五,16
+开放工坊,手作室,周五,12
+短篇共读,阅览室,周五,10
+旧书交换,阅览室,周五,18
+庭院植物角,庭院,周五,14
+黏土小物,手作室,周六,16
+速写小组,阅览室,周六,20
+手工拓印,手作室,周日,16
+周日写生,庭院,周日,22
+庭院音乐会,庭院,周六,24
+书籍修补,手作室,周日,12
+绘本阅读,阅览室,周日,15
+铅笔绘画,手作室,周六,18
+植物写生,庭院,周日,12`;
+const perPage = 8;
+let dataset;
+let searchRows = [];
+let filteredRows = [];
+let groupColumn = 1;
+let selectedGroup = null;
+let page = 0;
+let usingSample = true;
+let error = "";
+let importId = 0;
+const sortGroups = ([first, countA], [second, countB]) => countB - countA || first.localeCompare(second);
+const normalize = text => text.normalize("NFKC").toLocaleLowerCase();
+
+function setData(next, sample) {
+  dataset = next;
+  searchRows = next.rows.map(row => normalize(row.join("\n")));
+  groupColumn = sample ? 1 : 0;
+  usingSample = sample;
+  selectedGroup = null;
+  page = 0;
+  $("search").value = "";
+  error = "";
+  renderData();
+}
+
+function renderGroups(rows) {
+  const counts = new Map();
+  for (const row of rows) {
+    const key = row[groupColumn];
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  const rankings = [...counts].sort(sortGroups);
+  const visible = rankings.slice(0, 6);
+  if (selectedGroup !== null && counts.has(selectedGroup) && !visible.some(([key]) => key === selectedGroup)) {
+    visible.push([selectedGroup, counts.get(selectedGroup)]);
+  }
+  const bars = visible.map(([name, count]) => {
+    const bar = node("button");
+    bar.type = "button";
+    bar.className = "group-bar";
+    bar.setAttribute("aria-pressed", String(name === selectedGroup));
+    bar.style.setProperty("--bar", (100 * count / rankings[0][1]) + "%");
+    bar.append(node("span", name || t("(empty)", "（空白）")), node("span", String(count)));
+    bar.addEventListener("click", () => {
+      selectedGroup = selectedGroup === name ? null : name;
+      page = 0;
+      renderData();
+      $("bars").children[visible.findIndex(([key]) => key === name)]?.focus({preventScroll:true});
+    });
+    return bar;
+  });
+  $("bars").replaceChildren(...bars);
+}
+
+function renderData() {
+  $("group").replaceChildren(...dataset.names.map((name, index) => {
+    const option = node("option", name);
+    option.value = String(index);
+    return option;
+  }));
+  $("group").value = String(groupColumn);
+  const query = normalize($("search").value.trim());
+  const searchedRows = dataset.rows.filter((_, index) => searchRows[index].includes(query));
+  renderGroups(searchedRows);
+  filteredRows = selectedGroup === null
+    ? searchedRows : searchedRows.filter(row => row[groupColumn] === selectedGroup);
+  const pages = Math.max(1, Math.ceil(filteredRows.length / perPage));
+  page = Math.min(page, pages - 1);
+  const header = node("thead");
+  const headings = node("tr");
+  headings.append(...dataset.names.map(label => {
+    const cell = node("th", label);
+    cell.scope = "col";
+    return cell;
+  }));
+  header.append(headings);
+  const body = node("tbody");
+  for (const row of filteredRows.slice(page * perPage, (page + 1) * perPage)) {
+    const line = node("tr");
+    line.append(...row.map(value => node("td", value)));
+    body.append(line);
+  }
+  if (!filteredRows.length) {
+    const empty = node("td", t("No matching records.", "没有符合条件的记录。"));
+    empty.colSpan = dataset.names.length;
+    const line = node("tr");
+    line.append(empty);
+    body.append(line);
+  }
+  $("data").replaceChildren(header, body);
+  $("rows-label").textContent = t(
+    `${filteredRows.length} of ${dataset.rows.length} records`,
+    `${filteredRows.length} / ${dataset.rows.length} 条记录`,
+  );
+  $("pages").textContent = t(`Page ${page + 1} of ${pages}`, `第 ${page + 1} / ${pages} 页`);
+  $("prev").disabled = page === 0;
+  $("next").disabled = page + 1 === pages;
+  $("clear").disabled = selectedGroup === null;
+  $("export").disabled = !filteredRows.length;
+  $("error").hidden = !error;
+  const limits = t("Use a file up to 1 MB, 35 columns and 10,000 records.", "文件需在 1 MB、35 列和 10,000 条记录以内。");
+  const format = t("Use a UTF‑8 CSV with unique column titles and the same number of columns in every row.", "请选择 UTF‑8 CSV，首行列名需唯一，每条记录的列数需一致。");
+  $("error").textContent = error === "limit" ? limits : error ? format : "";
+}
+
+function loadExample() {
+  importId += 1;
+  $("file").value = "";
+  setData(parseCSV(t(exampleEn, exampleZh)), true);
+}
+$("sample").addEventListener("click", loadExample);
+$("file").addEventListener("change", async () => {
+  const file = $("file").files[0];
+  if (!file) return;
+  const id = ++importId;
+  try {
+    if (file.size > 1024 * 1024) throw new Error("limit");
+    const contents = new TextDecoder("utf-8", {fatal:true}).decode(await file.arrayBuffer());
+    if (id === importId) setData(parseCSV(contents), false);
+  } catch (failure) {
+    if (id !== importId) return;
+    $("file").value = "";
+    error = failure.message === "limit" ? "limit" : "format";
+    renderData();
+  }
+});
+$("search").addEventListener("input", () => { page = 0; renderData(); });
+$("group").addEventListener("change", () => {
+  groupColumn = Number($("group").value);
+  selectedGroup = null;
+  page = 0;
+  renderData();
+});
+$("clear").addEventListener("click", () => { selectedGroup = null; page = 0; renderData(); });
+$("prev").addEventListener("click", () => { page -= 1; renderData(); });
+$("next").addEventListener("click", () => { page += 1; renderData(); });
+$("export").addEventListener("click", () => {
+  const records = filteredRows.map(row => Object.fromEntries(dataset.names.map((name, index) => [name, row[index]])));
+  const url = URL.createObjectURL(new Blob([JSON.stringify(records, null, 2)], {type:"application/json"}));
+  const download = node("a");
+  download.href = url;
+  download.download = "filtered-records.json";
+  download.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+});
+
+const canvas = $("map");
+const ctx = canvas.getContext("2d");
+const mapHeight = 60;
+const mapWidth = 100;
+const river = [[0,12],[19,17],[31,32],[44,36],[58,27],[70,24],[86,39],[100,48]];
+const banks = [[8,20],[23,28],[35,45],[51,48],[60,39],[78,36],[89,49],[97,53]];
+const sampleRoute = [[12,36],[25,44],[47,42],[52,34],[58,24],[76,21],[90,28]];
+let waypoints = sampleRoute.map(point => [...point]);
+const screenX = x => x * canvas.width / mapWidth;
+const screenY = y => y * canvas.height / mapHeight;
+
+function path(points, colour, width) {
+  if (!points.length) return;
+  ctx.beginPath();
+  ctx.moveTo(screenX(points[0][0]), screenY(points[0][1]));
+  for (const [x,y] of points.slice(1)) ctx.lineTo(screenX(x), screenY(y));
+  ctx.lineWidth = width;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = colour;
+  ctx.stroke();
+}
+function rectangle(x, y, w, h, colour) {
+  ctx.fillStyle = colour;
+  ctx.fillRect(screenX(x), screenY(y), screenX(w), screenY(h));
+}
+function renderRoute() {
+  rectangle(0, 0, mapWidth, mapHeight, "#e8e0ca");
+  for (const [x,y,w,h] of [[4,27,12,18],[67,5,20,9],[46,46,13,8],[82,17,14,14],[27,7,12,10]]) {
+    rectangle(x,y,w,h,"#a6bd86");
+  }
+  for (const [x,y] of [[28,47],[36,49],[70,42],[74,45],[63,12],[52,14],[23,7],[10,52],[90,8]]) {
+    rectangle(x,y,6,4,"#c9ab88");
+    rectangle(x+1,y+1,4,2,"#ead0b0");
+  }
+  path(river,"#8cbccc",45);
+  path(river,"#b7d9df",17);
+  path(banks,"#f8f1de",6);
+  path([[46,44],[57,21]],"#b28c64",12);
+  path([[46,44],[57,21]],"#f5deb6",6);
+  path(waypoints,"#fcf7e6",10);
+  path(waypoints,"#a84630",5);
+
+  let length = 0;
+  waypoints.forEach(([x,y], index) => {
+    if (index) {
+      const [previousX, previousY] = waypoints[index - 1];
+      length += Math.hypot(x - previousX, y - previousY);
+    }
+    const px = Math.max(12, Math.min(canvas.width - 12, screenX(x)));
+    const py = Math.max(12, Math.min(canvas.height - 12, screenY(y)));
+    ctx.beginPath();
+    ctx.arc(px, py, 10, 0, Math.PI * 2);
+    ctx.fillStyle = "#793821";
+    ctx.fill();
+    ctx.fillStyle = "#fff9e9";
+    ctx.font = "bold 11px system-ui";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(String(index + 1), px, py);
+  });
+  $("length").value = length.toFixed(1) + t(" units", " 图上单位");
+  $("points").replaceChildren(...waypoints.map(([x,y]) => node("li", `X ${x}, Y ${y}`)));
+  $("undo").disabled = !waypoints.length;
+  $("clear-map").disabled = !waypoints.length;
+}
+function addPoint(x, y) {
+  waypoints.push([x,y]);
+  $("x").value = x;
+  $("y").value = y;
+  renderRoute();
+}
+canvas.addEventListener("click", event => {
+  const rect = canvas.getBoundingClientRect();
+  const x = Math.round(mapWidth * (event.clientX - rect.left) / rect.width);
+  const y = Math.round(mapHeight * (event.clientY - rect.top) / rect.height);
+  addPoint(Math.min(mapWidth, Math.max(0, x)), Math.min(mapHeight, Math.max(0, y)));
+});
+$("coordinates").addEventListener("submit", event => {
+  event.preventDefault();
+  addPoint($("x").valueAsNumber, $("y").valueAsNumber);
+});
+$("undo").addEventListener("click", () => { waypoints.pop(); renderRoute(); });
+$("clear-map").addEventListener("click", () => { waypoints = []; renderRoute(); });
+$("route-sample").addEventListener("click", () => {
+  waypoints = sampleRoute.map(point => [...point]);
+  renderRoute();
+});
+
+function renderLanguage() {
+  document.documentElement.lang = t("en","zh-CN");
+  document.title = t("Data & Map Tools · Aoxin Yang","数据与地图工具 · 杨奥新");
+  for (const element of document.querySelectorAll("[data-en]")) {
+    element.textContent = t(element.dataset.en,element.dataset.zh);
+  }
+  for (const element of document.querySelectorAll("[data-aria-en]")) {
+    element.setAttribute("aria-label",t(element.dataset.ariaEn,element.dataset.ariaZh));
+  }
+  $("search").placeholder = t($("search").dataset.placeholderEn,$("search").dataset.placeholderZh);
+  $("language").textContent = t("中文","English");
+  $("language").lang = t("zh-CN","en");
+  const gallery = new URL($("gallery").href);
+  if (chinese) gallery.searchParams.set("lang","zh");
+  else gallery.searchParams.delete("lang");
+  $("gallery").href = gallery.href;
+  if (usingSample) loadExample();
+  else renderData();
+  renderRoute();
+}
+$("language").addEventListener("click", () => { chinese = !chinese; renderLanguage(); });
+renderLanguage();
+
+</script>
+</body>
+</html>

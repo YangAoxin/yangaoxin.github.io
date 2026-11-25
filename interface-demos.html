@@ -7,6 +7,7 @@
 <style>
 :root{font-family:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;color:#20312e;background:#f0f0e5;--line:#becbc1;--green:#245545;--muted:#4f6059}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body,h1,h2,p{margin:0}
 .wrap{width:min(1040px,calc(100% - 48px));margin-inline:auto}
 a{color:var(--green)}
@@ -21,10 +22,16 @@ button:hover{background:#e4eee3}
 h1{font-size:clamp(3rem,7vw,5.7rem);letter-spacing:-.06em;line-height:.99}
 :lang(zh-CN) h1{letter-spacing:-.042em}
 .intro p{font-size:1.05rem;line-height:1.5;color:var(--muted);margin-top:14px}
+.discover{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;margin-bottom:18px}
+.discover label{display:grid;gap:5px;font-size:.87rem;font-weight:700;flex:0 1 400px}
+.discover input{width:100%;font:inherit;color:inherit;background:#fcfcf2;border:1px solid var(--line);border-radius:6px;padding:.63rem .72rem}
+.discover output,.empty{font-size:.87rem;color:var(--muted)}
+.empty{padding:22px 0;border-top:1px solid var(--line)}
 .collection{padding:23px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(170px,.85fr) minmax(0,2.7fr);gap:20px}
 .eyeline{display:block;border-radius:4px;width:34px;height:5px;background:#567c64;margin-bottom:13px}
 .visual .eyeline{background:#7184a9}
 .creative .eyeline{background:#ad694e}
+.data .eyeline{background:#4d766f}
 h2{font-size:clamp(1.26rem,3vw,1.65rem);letter-spacing:-.025em}
 .cards{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .cards a{min-height:106px;display:block;padding:13px 36px 13px 14px;background:#fcfcf2;position:relative;border:1px solid var(--line);border-radius:8px;text-decoration:none}
@@ -36,6 +43,8 @@ h2{font-size:clamp(1.26rem,3vw,1.65rem);letter-spacing:-.025em}
 .visual .cards a:hover{background:#dee8fb}
 .creative .cards a{background:#f7e9de}
 .creative .cards a:hover{background:#fae4d4}
+.data .cards a{background:#dfede6}
+.data .cards a:hover{background:#d5e8e0}
 footer{border-top:1px solid var(--line);padding:18px 0 38px;color:var(--muted);font-size:.85rem}
 @media(max-width:680px){.wrap{width:calc(100% - 30px)}.intro{padding:38px 0 23px}.collection{grid-template-columns:minmax(0,1fr);gap:13px}.eyeline{margin-bottom:8px}.cards a{padding-right:30px}}
 @media(max-width:360px){.cards{grid-template-columns:minmax(0,1fr)}}
@@ -50,7 +59,22 @@ footer{border-top:1px solid var(--line);padding:18px 0 38px;color:var(--muted);f
 <main class="wrap">
   <section class="intro">
     <h1 data-en="Interactive Demos" data-zh="交互作品">Interactive Demos</h1>
-    <p data-en="Explore eight small browser interfaces with fictional examples." data-zh="八个可直接上手的浏览器作品，使用虚构场景和示例数据。">Explore eight small browser interfaces with fictional examples.</p>
+    <p data-en="Try ten browser tools for data, maps, graphics and workflow design." data-zh="十个可直接上手的浏览器作品，涵盖数据、地图、图形和流程界面。">Try ten browser tools for data, maps, graphics and workflow design.</p>
+  </section>
+  <div class="discover">
+    <label for="filter">
+      <span data-en="Find a demo" data-zh="查找演示">Find a demo</span>
+      <input id="filter" type="search" placeholder="Try CSV, map or slider" data-placeholder-en="Try CSV, map or slider" data-placeholder-zh="例如 CSV、地图或滑块">
+    </label>
+    <output id="result-count" for="filter" aria-live="polite"></output>
+  </div>
+  <p class="empty" id="no-results" hidden data-en="No matching demos. Try another term." data-zh="没有找到相关演示，请换个关键词。">No matching demos. Try another term.</p>
+  <section class="collection data" aria-labelledby="data-tools">
+    <div><span class="eyeline" aria-hidden="true"></span><h2 id="data-tools" data-en="Data and maps" data-zh="数据与地图工具">Data and maps</h2></div>
+    <ul class="cards">
+      <li><a href="demo-data-map-tools.html#csv" data-demo><strong data-en="CSV workbench" data-zh="CSV 工作台">CSV workbench</strong><p data-en="Import a local CSV, filter records and export JSON." data-zh="在浏览器导入 CSV、筛选记录并导出 JSON。">Import a local CSV, filter records and export JSON.</p></a></li>
+      <li><a href="demo-data-map-tools.html#route" data-demo><strong data-en="Riverwalk route sketch" data-zh="滨河路线画板">Riverwalk route sketch</strong><p data-en="Draw and measure your own path on a fictional map." data-zh="在虚构地图上手绘路线并查看长度。">Draw and measure your own path on a fictional map.</p></a></li>
+    </ul>
   </section>
   <section class="collection" aria-labelledby="tools">
     <div><span class="eyeline" aria-hidden="true"></span><h2 id="tools" data-en="Workflow interfaces" data-zh="流程与信息界面">Workflow interfaces</h2></div>
@@ -81,7 +105,30 @@ footer{border-top:1px solid var(--line);padding:18px 0 38px;color:var(--muted);f
 "use strict";
 
 const switcher = document.getElementById("language");
+const filter = document.getElementById("filter");
+const demos = [...document.querySelectorAll("[data-demo]")];
 let chinese = new URLSearchParams(location.search).get("lang") === "zh";
+const searchText = value => value.normalize("NFKC").toLocaleLowerCase();
+
+function filterDemos() {
+  const query = searchText(filter.value.trim());
+  let count = 0;
+  for (const demo of demos) {
+    const group = demo.closest(".collection");
+    const translated = [...demo.querySelectorAll("[data-en]"), group.querySelector("h2")];
+    const description = translated.map(node => node.dataset.en + " " + node.dataset.zh).join(" ");
+    const visible = searchText(description).includes(query);
+    demo.closest("li").hidden = !visible;
+    if (visible) count += 1;
+  }
+  document.querySelectorAll(".collection").forEach(group => {
+    group.hidden = !group.querySelector(".cards li:not([hidden])");
+  });
+  document.getElementById("no-results").hidden = count !== 0;
+  document.getElementById("result-count").value = chinese
+    ? `${count} / ${demos.length} 个作品`
+    : `${count} of ${demos.length} demos`;
+}
 
 function renderLanguage() {
   document.documentElement.lang = chinese ? "zh-CN" : "en";
@@ -89,7 +136,7 @@ function renderLanguage() {
   document.querySelectorAll("[data-en]").forEach(item => {
     item.textContent = chinese ? item.dataset.zh : item.dataset.en;
   });
-  document.querySelectorAll("[data-demo]").forEach(item => {
+  demos.forEach(item => {
     const target = new URL(item.href);
     if (chinese) target.searchParams.set("lang", "zh");
     else target.searchParams.delete("lang");
@@ -97,11 +144,14 @@ function renderLanguage() {
   });
   switcher.textContent = chinese ? "English" : "中文";
   switcher.lang = chinese ? "en" : "zh-CN";
+  filter.placeholder = chinese ? filter.dataset.placeholderZh : filter.dataset.placeholderEn;
+  filterDemos();
 }
 switcher.addEventListener("click", () => {
   chinese = !chinese;
   renderLanguage();
 });
+filter.addEventListener("input", filterDemos);
 renderLanguage();
 
 </script>
