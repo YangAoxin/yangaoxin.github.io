@@ -59,11 +59,17 @@
     .section h2 { margin-bottom: 1.7rem; }
     .topics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem 2.1rem; }
     .topics article { border-top: 2px solid #99b8a9; padding-top: 1rem; }
+    .research-intro { margin: -.5rem 0 1.4rem; max-width: 70ch; color: var(--muted); }
+    .research-methods { border-top: 1px solid var(--line); margin-top: 1.5rem; padding-top: .9rem; }
+    .research-methods h3 { font-size: .94rem; margin-bottom: .35rem; }
+    .research-methods p { color: var(--muted); max-width: 79ch; }
     .topics p, .project p, .paper details p { color: var(--muted); margin-top: .5rem; }
     .paper { padding: 1.2rem 0; border-bottom: 1px solid var(--line); }
     .paper:first-of-type { border-top: 1px solid var(--line); }
     .paper h3 { margin-bottom: .36rem; max-width: 74ch; }
     .paper-meta { color: var(--green-dark); font-size: .88rem; }
+    .paper .paper-actions { margin-top: .45rem; }
+    .paper-title, .authors { overflow-wrap: anywhere; }
     .authors { color: var(--muted); font-size: .92rem; margin-block: .15rem .65rem; }
     .authors strong { color: var(--ink); }
     .paper-actions { display: flex; gap: 1rem; align-items: baseline; font-size: .9rem; }
@@ -104,7 +110,8 @@
       <nav aria-label="Primary navigation">
         <a href="#about" data-zh="简介">About</a>
         <a href="#projects" data-zh="作品">Projects</a>
-        <a href="#research" data-zh="研究兴趣">Research</a>
+        <a href="#research" data-zh="研究方向">Research</a>
+        <a href="#publications" data-zh="发表">Publications</a>
       </nav>
       <button class="language" type="button" lang="zh-CN" hidden>中文</button>
     </div>
@@ -123,7 +130,7 @@
       </div>
       <figure class="terrain">
         <img src="terrain.jpg" alt="" width="1200" height="800">
-        <figcaption data-zh="山地河谷 · AI 生成的配图">Mountain river valley · AI-generated illustration</figcaption>
+        <figcaption data-zh="山地河谷示意">Mountain river valley illustration</figcaption>
       </figure>
     </section>
 
@@ -165,26 +172,48 @@
     <div class="band">
       <section class="section wrap" id="research" aria-labelledby="research-title">
         <h2 id="research-title" data-zh="研究方向">Research interests</h2>
+        <p class="research-intro" data-zh="我关注自然灾害防治与城市安全，尤其是风险如何被识别、应急资源怎样组织，以及城市如何在受扰动时维持公共服务。">I study natural hazard risk and urban safety, with an interest in how risks are identified, how emergency resources are organised and how cities sustain public services during disruptions.</p>
         <div class="topics">
           <article>
-            <h3 data-zh="灾害应急协同">Emergency coordination</h3>
-            <p data-zh="不同地区和组织怎样协同开展灾害应对。">How organisations coordinate work and support one another during disasters.</p>
+            <h3 data-zh="灾害风险治理与应急管理">Disaster risk governance and emergency management</h3>
+            <p data-zh="关注灾前准备、灾时响应与灾后恢复中，应急预案、组织协作和灾情信息如何衔接。">How emergency plans, organisational coordination and incident information support preparedness, response and recovery.</p>
           </article>
           <article>
-            <h3 data-zh="救灾物资与配送">Relief logistics</h3>
-            <p data-zh="救灾资源怎样配置，居民如何获得需要的支持。">How relief resources are allocated and how residents reach the support they need.</p>
+            <h3 data-zh="应急资源配置与公共服务">Emergency resource allocation and public services</h3>
+            <p data-zh="关注应急物资、避难空间和公共服务的配置，以及不同地区与人群在平时和灾时获得支持的机会。">How relief supplies, shelter space and public services are allocated, and how access varies across places and groups in everyday and emergency conditions.</p>
           </article>
           <article>
-            <h3 data-zh="自然灾害风险">Natural hazard risk</h3>
-            <p data-zh="用空间资料理解自然灾害风险与公共服务。">Using spatial evidence to study natural hazard risk and access to public services.</p>
+            <h3 data-zh="城市韧性与空间发展">Urban resilience and spatial development</h3>
+            <p data-zh="关注土地利用、设施布局和人群流动的变化怎样影响城市运行，以及城市如何适应自然灾害等扰动。">How changes in land use, facility layout and human mobility affect urban systems, and how cities adapt to hazards and other disruptions.</p>
           </article>
+        </div>
+        <div class="research-methods">
+          <h3 data-zh="研究方法">Research methods</h3>
+          <p data-zh="使用地理信息系统（GIS）、空间分析、文本与网络分析和情景模拟，也在探索人工智能辅助分析与交互工具开发。">I use GIS, spatial analysis, text and network analysis, and scenario simulation. I also explore AI-assisted analysis and develop interactive tools.</p>
         </div>
       </section>
     </div>
 
     <section class="section wrap" id="publications" aria-labelledby="publications-title">
-      <h2 id="publications-title" data-zh="代表性发表">Selected publication</h2>
-      <p><a href="https://doi.org/10.3390/su18199988">A Multiscale Review of Emergency Collaboration Across Natural Hazards</a> · <i>Sustainability</i> · 2026 · <span data-zh="第一作者">First author</span></p>
+      <h2 id="publications-title" data-zh="代表性发表">Selected publications</h2>
+      <article class="paper">
+        <h3 class="paper-title" lang="en">A Multiscale Review of Emergency Collaboration Across Natural Hazards</h3>
+        <p class="authors" lang="en"><strong>Aoxin Yang</strong>, Daming Wu, Beinan Guo, Zixiao Li, Shaofei Lan, Peng Lu</p>
+        <p class="paper-meta"><i>Sustainability</i> · 2026 · 18(19), 9988 · <span data-zh="第一作者">First author</span></p>
+        <div class="paper-actions"><a href="https://doi.org/10.3390/su18199988" data-zh="阅读期刊全文">Read the journal article</a></div>
+      </article>
+      <article class="paper">
+        <h3 class="paper-title" lang="en">Execution-Consistent Event-Responsive Truck–UAV Coordination Under Simulated Progressive Road Disruption</h3>
+        <p class="authors" lang="en">Peng Lu, Daming Wu, Zixiao Li, Beinan Guo, Shaofei Lan, <strong>Aoxin Yang</strong></p>
+        <p class="paper-meta"><i>Drones</i> · 2026 · 10(10), 778 · <span data-zh="合著">Co-author</span></p>
+        <div class="paper-actions"><a href="https://doi.org/10.3390/drones10100778" data-zh="阅读期刊全文">Read the journal article</a></div>
+      </article>
+      <article class="paper">
+        <h3 class="paper-title" lang="en">Landslide Susceptibility Assessment in Badong County, Hubei Province, Based on Machine Learning and SHAP Interpretability Analysis</h3>
+        <p class="authors" lang="en">Shaofei Lan, Daming Wu, Peng Lu, <strong>Aoxin Yang</strong>, Beinan Guo, Zixiao Li</p>
+        <p class="paper-meta"><i>Land</i> · 2026 · 15(10), 1972 · <span data-zh="合著">Co-author</span></p>
+        <div class="paper-actions"><a href="https://doi.org/10.3390/land15101972" data-zh="阅读期刊全文">Read the journal article</a></div>
+      </article>
     </section>
   </main>
   <footer>
