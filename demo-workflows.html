@@ -145,6 +145,8 @@ h2 { font-size: clamp(1.55rem, 3.5vw, 2.2rem); letter-spacing: -.038em; line-hei
 
 </style>
   
+  <link rel="stylesheet" href="demo-showcase.css">
+  <script src="demo-showcase.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main" data-en="Skip to demo" data-zh="跳到演示">Skip to demo</a>
@@ -165,7 +167,7 @@ h2 { font-size: clamp(1.55rem, 3.5vw, 2.2rem); letter-spacing: -.038em; line-hei
       <a href="#handover" data-en="Handover board" data-zh="交接看板">Handover board</a>
       <a href="#compare" data-en="Notice comparison" data-zh="公告对照">Notice comparison</a>
     </nav>
-    <section id="schedule" class="demo" aria-labelledby="schedule-heading">
+    <section data-focus-demo="schedule" id="schedule" class="demo" aria-labelledby="schedule-heading">
       <div class="section-head">
         <div>
           <h2 id="schedule-heading" data-en="Community programme" data-zh="社区活动日程">Community programme</h2>
@@ -182,7 +184,7 @@ h2 { font-size: clamp(1.55rem, 3.5vw, 2.2rem); letter-spacing: -.038em; line-hei
         <aside id="session-detail" class="detail dark" aria-live="polite"></aside>
       </div>
     </section>
-    <section id="routes" class="demo" aria-labelledby="routes-heading" hidden>
+    <section data-focus-demo="routes" id="routes" class="demo" aria-labelledby="routes-heading" hidden>
       <div class="section-head">
         <div>
           <h2 id="routes-heading" data-en="Gallery guide" data-zh="展馆导览">Gallery guide</h2>
@@ -198,7 +200,7 @@ h2 { font-size: clamp(1.55rem, 3.5vw, 2.2rem); letter-spacing: -.038em; line-hei
         <aside id="route-detail" class="detail dark" aria-live="polite"></aside>
       </div>
     </section>
-    <section id="handover" class="demo" aria-labelledby="handover-heading" hidden>
+    <section data-focus-demo="handover" id="handover" class="demo" aria-labelledby="handover-heading" hidden>
       <div class="section-head">
         <div>
           <h2 id="handover-heading" data-en="Room preparation handover" data-zh="场地准备交接看板">Room preparation handover</h2>
@@ -209,7 +211,7 @@ h2 { font-size: clamp(1.55rem, 3.5vw, 2.2rem); letter-spacing: -.038em; line-hei
       <div id="kanban" class="kanban"></div>
       <p id="board-status" class="notice" role="status"></p>
     </section>
-    <section id="compare" class="demo" aria-labelledby="compare-heading" hidden>
+    <section data-focus-demo="compare" id="compare" class="demo" aria-labelledby="compare-heading" hidden>
       <div class="section-head">
         <div>
           <h2 id="compare-heading" data-en="Event notice comparison" data-zh="活动公告版本对照">Event notice comparison</h2>
@@ -499,7 +501,7 @@ const demos = ["schedule", "routes", "handover", "compare"];
 let current = "schedule";
 
 function showDemo() {
-  const hash = location.hash.slice(1);
+  const hash = new URLSearchParams(location.search).get("demo") || location.hash.slice(1);
   if (!hash) current = "schedule";
   else if (demos.includes(hash)) current = hash;
   demos.forEach((id) => {

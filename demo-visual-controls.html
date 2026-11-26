@@ -155,6 +155,8 @@ input[type="range"] { width: 100%; margin: 0; height: 30px; accent-color: #a9cef
 
 </style>
   
+  <link rel="stylesheet" href="demo-showcase.css">
+  <script src="demo-showcase.js" defer></script>
 </head>
 <body>
   <header class="site">
@@ -169,7 +171,7 @@ input[type="range"] { width: 100%; margin: 0; height: 30px; accent-color: #a9cef
       <p data-en="Adjust the sliders to explore colour and image size." data-zh="拖动滑块，探索灯光颜色和图像尺寸的变化。">Adjust the sliders to explore colour and image size.</p>
     </header>
     <div class="demos">
-      <section class="card" aria-labelledby="light-heading">
+      <section data-focus-demo="light" class="card" aria-labelledby="light-heading">
         <div class="section-title">
           <h2 id="light-heading" data-en="Stage lighting palette" data-zh="舞台灯光配色">Stage lighting palette</h2>
           <p data-en="The marker and colour swatch follow both sliders." data-zh="图上定位点和色样随两个滑块同步变化。">The marker and colour swatch follow both sliders.</p>
@@ -204,7 +206,7 @@ input[type="range"] { width: 100%; margin: 0; height: 30px; accent-color: #a9cef
         </div>
       </section>
 
-      <section class="card" aria-labelledby="size-heading">
+      <section data-focus-demo="format" class="card" aria-labelledby="size-heading">
         <div class="section-title">
           <h2 id="size-heading" data-en="Image format comparison" data-zh="图像画幅对比">Image format comparison</h2>
           <p data-en="Compare the heights of three formats at the same width." data-zh="在相同宽度下，对比三种画幅的高度。">Compare the heights of three formats at the same width.</p>

@@ -9,37 +9,6 @@
   <link rel="stylesheet" href="projects.css">
   <style>
     html { scroll-behavior: auto; }
-    .showcase {
-      padding: clamp(16px, 3vw, 28px);
-      margin-bottom: 20px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: #eaf0e6;
-    }
-    .showcase-head {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 4px 20px;
-      margin-bottom: 12px;
-    }
-    .showcase-head h2 { margin: 0; font-size: clamp(1.5rem, 3vw, 2.15rem); }
-    .showcase-head a { color: var(--green); font-size: .88rem; font-weight: 650; }
-    .showcase-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
-    .showcase-group { min-width: 0; padding: 10px; border-radius: 7px; background: #fafcf7; }
-    .showcase-group h3 { margin: 0 0 .35rem; color: var(--muted); font-size: .84rem; }
-    .showcase-group ul { margin: 0; padding: 0; list-style: none; }
-    .showcase-group a {
-      display: block;
-      padding: .3rem 0;
-      color: var(--green);
-      font-size: .88rem;
-      font-weight: 600;
-      line-height: 1.35;
-    }
-    @media (max-width: 720px) { .showcase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 380px) { .showcase-group { padding: 8px; } }
     .portfolio-intro { padding: clamp(22px, 4vw, 44px) 0 25px; }
     .portfolio-intro h1 { margin-bottom: .55rem; }
     .portfolio-index {
@@ -87,7 +56,6 @@
     }
     #city-safety > #urban { padding-top: 0; }
     #city-safety > #data { padding-bottom: 0; }
-    .showcase-head-links { display: flex; flex-wrap: wrap; gap: .3rem 1rem; }
     @media (max-width: 710px) {
       .portfolio-index { grid-template-columns: minmax(0, 1fr); gap: 7px; }
       .portfolio-index-group { padding: 9px 11px; }
@@ -96,6 +64,8 @@
   <script src="catalog-data.js" defer></script>
   <script src="city-atlas.js" defer></script>
   <script src="projects.js" defer></script>
+  <link rel="stylesheet" href="demo-showcase.css">
+  <script src="demo-showcase.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#content" data-zh="跳到正文">Skip to content</a>
@@ -370,68 +340,18 @@
       </article>
     </section>
 
-    <section id="interactive-demos" class="showcase" aria-labelledby="showcase-title">
-      <div class="showcase-head">
-        <h2 id="showcase-title" data-zh="交互小作品">Interactive demos</h2>
-        <div class="showcase-head-links">
-          <a href="interface-demos.html" data-showcase-link data-zh="浏览和搜索全部 11 个作品">Browse and search all 11 demos</a>
-          <a class="portfolio-return" href="#project-index" data-zh="返回作品索引 ↑">Back to project index ↑</a>
-        </div>
+    <section id="interactive-demos" class="portfolio-family" aria-labelledby="showcase-title">
+      <div class="portfolio-family-head">
+        <h2 id="showcase-title" data-zh="交互小作品">Interactive projects</h2>
+        <a class="portfolio-return" href="#project-index" data-zh="返回作品索引 ↑">Back to project index ↑</a>
       </div>
-      <div class="showcase-grid">
-        <div class="showcase-group">
-          <h3 data-zh="数据与地图">Data &amp; maps</h3>
-          <ul>
-          <li><a href="demo-data-map-tools.html#csv" data-showcase-link data-zh="CSV 工作台">CSV workbench</a></li>
-          <li><a href="demo-data-map-tools.html#route" data-showcase-link data-zh="滨河路线画板">Riverwalk route sketch</a></li>
-          </ul>
-        </div>
-        <div class="showcase-group">
-          <h3 data-zh="流程与信息">Workflow interfaces</h3>
-          <ul>
-          <li><a href="demo-workflows.html#schedule" data-showcase-link data-zh="社区活动日程">Community programme</a></li>
-          <li><a href="demo-workflows.html#routes" data-showcase-link data-zh="展馆导览">Gallery guide</a></li>
-          <li><a href="demo-workflows.html#handover" data-showcase-link data-zh="场地交接看板">Room handover board</a></li>
-          <li><a href="demo-workflows.html#compare" data-showcase-link data-zh="活动公告对照">Event notice comparison</a></li>
-          </ul>
-        </div>
-        <div class="showcase-group">
-          <h3 data-zh="滑块与图表">Sliders &amp; charts</h3>
-          <ul>
-          <li><a href="demo-visual-controls.html#light-heading" data-showcase-link data-zh="舞台灯光配色">Stage lighting palette</a></li>
-          <li><a href="demo-visual-controls.html#size-heading" data-showcase-link data-zh="图像画幅对比">Image format comparison</a></li>
-          </ul>
-        </div>
-        <div class="showcase-group">
-          <h3 data-zh="创作工具">Creative tools</h3>
-          <ul>
-          <li><a href="demo-creative-workbench.html#map" data-showcase-link data-zh="街区拼搭">Neighbourhood builder</a></li>
-          <li><a href="demo-creative-workbench.html#poster" data-showcase-link data-zh="展签设计">Exhibition label</a></li>
-          <li><a href="demo-image-annotation.html" data-showcase-link data-zh="图片标注">Image annotation</a></li>
-          </ul>
-        </div>
+      <div data-demo-showcase>
+        <a href="interface-demos.html" data-zh="打开全部 11 个作品的总览">Browse all 11 interactive projects</a>
       </div>
     </section>
-
     <noscript>Please enable JavaScript to try the demos. / 请启用 JavaScript 来体验作品。</noscript>
   </main>
 
   <footer class="site-footer"><div class="wrap footer-inner"><span>Aoxin Yang · 杨奥新</span><a href="https://github.com/YangAoxin">GitHub</a></div></footer>
-  <script>
-    (() => {
-      const links = [...document.querySelectorAll('[data-showcase-link]')];
-      function applyLocale(chinese) {
-        for (const link of links) {
-          const url = new URL(link.href);
-          if (chinese) url.searchParams.set('lang', 'zh');
-          else url.searchParams.delete('lang');
-          link.href = url.href;
-        }
-      }
-      applyLocale(new URL(location.href).searchParams.get('lang') === 'zh');
-      new MutationObserver(() => applyLocale(document.documentElement.lang === 'zh-CN'))
-        .observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
-    })();
-  </script>
 </body>
 </html>
