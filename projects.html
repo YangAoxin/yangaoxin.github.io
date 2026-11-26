@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f7f7f1">
   <meta name="description" content="Explore Aoxin Yang’s urban and public safety projects, software applications, and interactive browser demos.">
   <title>Projects · Aoxin Yang</title>
-  <link rel="stylesheet" href="projects.css">
+  <link rel="stylesheet" href="projects.css?v=practice-workspace">
   <style>
     html { scroll-behavior: auto; }
     .portfolio-intro { padding: clamp(22px, 4vw, 44px) 0 25px; }
@@ -63,7 +63,7 @@
   </style>
   <script src="catalog-data.js" defer></script>
   <script src="city-atlas.js" defer></script>
-  <script src="projects.js" defer></script>
+  <script src="projects.js?v=practice-workspace" defer></script>
   <link rel="stylesheet" href="demo-showcase.css">
   <script src="demo-showcase.js" defer></script>
 </head>
@@ -179,23 +179,51 @@
         <div class="project-head">
           <div>
             <h3 class="portfolio-project-title" id="plan-title" data-zh="灾情与预案工作台">Incident to plan workspace</h3>
-            <p data-zh="输入一个示例情景，查看按事件类型预设的待核实事项和任务草稿。已知情况会原样显示在输出中。">Enter a sample incident to see preset checks and draft tasks for the selected event type. Your note is displayed in the output.</p>
+            <p data-zh="用虚构情景体验从接收报告、核对信息到导出记录的过程。切换时间节点，每一步都有一条新的示例消息。">Use a fictional exercise to review incoming reports, check details and export a record. Each time step adds an example update.</p>
           </div>
         </div>
         <div class="plan-layout">
           <form id="plan-form" class="plan-form">
-            <h3 data-zh="情景输入">Scenario input</h3>
+            <h4 data-zh="编辑演练情景">Edit exercise scenario</h4>
             <label class="field" for="hazard"><span data-zh="事件类型">Event type</span><select id="hazard"><option value="rain" data-zh="强降雨">Heavy rainfall</option><option value="earthquake" data-zh="地震">Earthquake</option><option value="heat" data-zh="高温">Extreme heat</option></select></label>
             <label class="field" for="area"><span data-zh="示例区域">Example area</span><input id="area" maxlength="60" required placeholder="District A" data-placeholder-zh="例如 A 区"></label>
-            <label class="field" for="incident-note"><span data-zh="已知情况">Known conditions</span><textarea id="incident-note" rows="3" maxlength="240" placeholder="Add an example situation" data-placeholder-zh="输入一条示例情况"></textarea></label>
+            <label class="field" for="incident-note"><span data-zh="初始记录">Initial note</span><textarea id="incident-note" rows="3" maxlength="240" placeholder="Add an example situation" data-placeholder-zh="输入一条示例情况"></textarea></label>
             <div class="plan-actions">
-              <button class="action" type="submit" data-zh="生成示例输出">Generate sample output</button>
+              <button class="action" type="submit" data-zh="开始演练">Start exercise</button>
               <button class="quiet" id="load-plan-example" type="button" data-zh="填入示例">Fill in an example</button>
             </div>
           </form>
-          <section class="plan-output" aria-labelledby="plan-result-title">
-            <h3 id="plan-result-title" data-zh="示例输出">Example output</h3>
-            <div id="plan-result" aria-live="polite"></div>
+          <div class="plan-exercise">
+            <div class="plan-brief">
+              <p class="plan-kicker" data-zh="模拟演练">Practice exercise</p>
+              <h4 id="plan-summary"></h4>
+              <p id="plan-note"></p>
+            </div>
+            <section class="plan-output" aria-labelledby="plan-result-title">
+              <h4 id="plan-result-title" data-zh="演练时间线">Exercise timeline</h4>
+              <div class="plan-stages" role="group" aria-label="Exercise stage" data-aria-zh="演练阶段">
+                <button type="button" data-plan-step="0"><time datetime="09:00">09:00</time><span data-zh="收到报告">Report received</span></button>
+                <button type="button" data-plan-step="1"><time datetime="09:20">09:20</time><span data-zh="补充信息">More information</span></button>
+                <button type="button" data-plan-step="2"><time datetime="09:45">09:45</time><span data-zh="汇总记录">Review record</span></button>
+              </div>
+              <p id="plan-result" aria-live="polite"></p>
+              <button class="quiet" id="next-plan-step" type="button" data-zh="查看下一条更新">Next update</button>
+            </section>
+          </div>
+        </div>
+        <div class="plan-review">
+          <section class="plan-check-panel" aria-labelledby="plan-check-title">
+            <div class="plan-check-head">
+              <h4 id="plan-check-title" data-zh="核实清单">Verification checklist</h4>
+              <span id="plan-progress" role="status"></span>
+            </div>
+            <progress id="plan-progress-bar" value="0" max="1" aria-label="Checks completed" data-aria-zh="核实进度"></progress>
+            <div id="plan-checks" class="plan-checks"></div>
+          </section>
+          <section class="plan-next-panel" aria-labelledby="plan-task-title">
+            <h4 id="plan-task-title" data-zh="本步任务草稿">Task draft for this step</h4>
+            <p id="plan-task"></p>
+            <button class="action" id="export-plan" type="button" data-zh="导出演练记录 .txt">Export exercise record .txt</button>
           </section>
         </div>
       </section>

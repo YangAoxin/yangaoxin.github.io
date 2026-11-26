@@ -498,76 +498,192 @@ byId('trade-action').addEventListener('submit', event => {
   if (trade.finished) byId('trade-current').focus();
 });
 
-const planExamples = {
-  rain: [
-    ['Confirm the time and coverage of the rainfall report and the source of reports about local ponding.', '核对降雨报告的时间、覆盖范围和积水信息来源。'],
-    ['Summarise location reports and record which site conditions still need to be checked.', '汇总地点记录，注明哪些点位的情况还有待核实。'],
-    ['Rainfall example · Section 2, incident records and status updates', '强降雨示例 · 第 2 节 灾情记录与动态更新'],
-  ],
-  earthquake: [
-    ['Confirm the source and issue time of the event bulletin and the status of initial impact reports.', '核对地震速报来源、发布时间和初步影响信息的状态。'],
-    ['Group submitted observations by area and flag locations with conflicting reports.', '分区整理已收到的情况记录，标注不同来源说法不一致的地点。'],
-    ['Earthquake example · Section 3, initial impact reporting', '地震示例 · 第 3 节 初步影响信息归集'],
-  ],
-  heat: [
-    ['Check the validity period of the heat notice and the date of public service updates.', '核对高温提示的有效时段及公共服务信息的更新时间。'],
-    ['Summarise reported service availability and flag entries awaiting confirmation.', '汇总已有的服务开放记录，标出尚待确认的条目。'],
-    ['Heat example · Section 2, service information updates', '高温示例 · 第 2 节 公共服务信息更新'],
-  ],
-};
-const exampleNotes = {
-  rain: ['Ponding was reported in two areas; the latest update is still pending.', '有两处报告积水，最新情况待更新。'],
-  earthquake: ['Location reports have arrived from two sources and need to be compared.', '已收到两个来源的地点记录，有待交叉核对。'],
-  heat: ['The opening hours of two public service sites are still being checked.', '有两处公共服务点的开放时段仍在核实。'],
+const planExercises = {
+  rain: {
+    area: ['Riverside Square', '河畔广场'],
+    note: ['The information desk has received a note about water on the square.', '服务台收到一条关于广场积水的留言。'],
+    steps: [
+      {
+        report: ['A volunteer logs the first message. The note gives a place name but no observation time.', '志愿者登记了第一条留言。记录有地点名称，缺少观察时间。'],
+        check: ['Check the place name on the first message.', '核对第一条留言里的地点名称。'],
+        task: ['Create a record for the first message and mark the observation time as missing.', '建立首条留言记录，把观察时间标为缺失。'],
+      },
+      {
+        report: ['A second example message includes a photo caption with an observation time.', '第二条示例消息附有照片说明，补充了观察时间。'],
+        check: ['Compare the time in the photo caption with the message log.', '对照照片说明与留言登记的时间。'],
+        task: ['Add the photo caption and its time to the record.', '把照片说明和对应时间补进记录。'],
+      },
+      {
+        report: ['The desk sends a revised list of reports. One place is written two different ways.', '服务台发来更新后的留言清单，其中一个地点有两种写法。'],
+        check: ['Flag the two names that could refer to the same place.', '标出可能指向同一地点的两种名称。'],
+        task: ['Prepare a short handover note with the confirmed entries and the naming question.', '整理一条简短交接说明，写清已核对条目和地点名称疑问。'],
+      },
+    ],
+  },
+  earthquake: {
+    area: ['Maple Community Room', '枫林社区活动室'],
+    note: ['The community room has received two example messages that use different location names.', '社区活动室收到两条示例留言，使用了不同的地点名称。'],
+    steps: [
+      {
+        report: ['The desk opens a record for both messages and keeps the original wording.', '服务台为两条消息建立记录，并保留原始表述。'],
+        check: ['Find the location named in each message.', '找出两条消息各自提到的地点。'],
+        task: ['Record both descriptions and leave the location field open for checking.', '登记两条描述，把地点保留为待核实。'],
+      },
+      {
+        report: ['The sender of one message supplies an observation time and a room number.', '其中一条消息的发送者补充了观察时间和房间号。'],
+        check: ['Check which message the room number belongs to.', '核对房间号对应的是哪条消息。'],
+        task: ['Update that message with the additional details while keeping the other entry separate.', '补充该条消息的细节，另一条仍单独记录。'],
+      },
+      {
+        report: ['The practice desk combines the messages into one list for the next shift.', '演练服务台把两条消息整理成一张清单，准备交给下一班。'],
+        check: ['Review which entry still needs a location check.', '查看哪条记录仍需要核实地点。'],
+        task: ['Write a handover note showing which details were added and which are still missing.', '在交接说明中列出已补充的信息和仍缺的内容。'],
+      },
+    ],
+  },
+  heat: {
+    area: ['Maple Community Centre', '枫林社区中心'],
+    note: ['An example public notice mentions revised opening times for the community centre.', '一则示例公告提到社区中心调整了开放时间。'],
+    steps: [
+      {
+        report: ['The desk receives a draft opening-hours notice, but it has no effective date.', '服务台收到一份开放时间公告草稿，尚无生效日期。'],
+        check: ['Look for an effective date in the draft notice.', '查看公告草稿是否包含生效日期。'],
+        task: ['Record the advertised hours and note that the effective date needs checking.', '记录公告上的时间，把生效日期标为待核实。'],
+      },
+      {
+        report: ['A revised notice arrives with an effective date and a different closing time.', '修订版公告补充了生效日期，结束时间也有变化。'],
+        check: ['Compare the dates and closing times in the two notices.', '对照两版公告的日期和结束时间。'],
+        task: ['Keep a copy of both versions in the exercise record.', '在演练记录里保留两版公告。'],
+      },
+      {
+        report: ['The centre sends a final example notice and identifies which earlier copy it replaces.', '中心发来示例公告的最终版，并注明替代哪个旧版本。'],
+        check: ['Confirm which notice is the latest one in the record.', '核对记录中哪一版公告是最新版。'],
+        task: ['Mark the current notice in the handover record and retain the earlier versions.', '在交接记录中标明当前版本，留存旧版。'],
+      },
+    ],
+  },
 };
 const areaInput = byId('area');
 const hazardInput = byId('hazard');
-let plan = null;
+const planNoteInput = byId('incident-note');
+const planStageButtons = [...document.querySelectorAll('#plan-workspace [data-plan-step]')];
+let planFormUsesExample = true;
+let plan = { hazard: 'rain', step: 0, checked: new Set(), example: true };
 
-function renderPlan() {
-  const output = byId('plan-result');
-  if (!plan) {
-    output.replaceChildren(element('p', t('Choose an event type and enter an area to see an example.', '选择事件类型并填写示例区域，即可查看输出。'), 'plan-empty'));
-    return;
-  }
-
-  const example = planExamples[plan.hazard];
-  const hazard = [...hazardInput.options].find(option => option.value === plan.hazard).textContent;
-  const sections = [
-    [t('Scenario', '情景'), hazard + ' · ' + plan.area],
-  ];
-  if (plan.note) sections.push([t('Submitted note', '输入记录'), plan.note]);
-  sections.push(
-    [t('Items to verify', '待核实事项'), t(...example[0])],
-    [t('Draft task', '任务草稿'), t(...example[1])],
-    [t('Example plan entry', '示例预案条目'), t(...example[2])],
-  );
-  const details = element('dl', '');
-  for (const [label, value] of sections) {
-    const group = element('div', '');
-    group.append(element('dt', label), element('dd', value));
-    details.append(group);
-  }
-  output.replaceChildren(details);
+function planArea() {
+  return plan.example ? t(...planExercises[plan.hazard].area) : plan.area;
 }
 
+function planNote() {
+  return plan.example ? t(...planExercises[plan.hazard].note) : plan.note;
+}
+
+function planHazardLabel() {
+  return [...hazardInput.options].find(option => option.value === plan.hazard).textContent;
+}
+
+function updatePlanProgress() {
+  const visible = plan.step + 1;
+  const checked = [...plan.checked].filter(index => index < visible).length;
+  const progress = byId('plan-progress-bar');
+  progress.max = visible;
+  progress.value = checked;
+  byId('plan-progress').textContent = t(
+    `${checked} of ${visible} checked`,
+    `已核实 ${checked} / ${visible} 项`,
+  );
+}
+
+function renderPlan() {
+  const steps = planExercises[plan.hazard].steps;
+  if (planFormUsesExample) {
+    areaInput.value = planArea();
+    planNoteInput.value = planNote();
+  }
+  byId('plan-summary').textContent = planHazardLabel() + ' · ' + planArea();
+  const note = planNote();
+  byId('plan-note').textContent = note;
+  byId('plan-note').hidden = !note;
+  planStageButtons.forEach((button, index) => {
+    button.setAttribute('aria-pressed', String(index === plan.step));
+  });
+  byId('plan-result').textContent = t(...steps[plan.step].report);
+  byId('plan-task').textContent = t(...steps[plan.step].task);
+  byId('next-plan-step').disabled = plan.step + 1 === steps.length;
+
+  byId('plan-checks').replaceChildren(...steps.slice(0, plan.step + 1).map((step, index) => {
+    const label = element('label', '', 'plan-check-row');
+    const checkbox = element('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = plan.checked.has(index);
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) plan.checked.add(index);
+      else plan.checked.delete(index);
+      updatePlanProgress();
+    });
+    label.append(checkbox, element('span', t(...step.check)));
+    return label;
+  }));
+  updatePlanProgress();
+}
+
+byId('plan-form').addEventListener('input', () => { planFormUsesExample = false; });
+hazardInput.addEventListener('change', () => { planFormUsesExample = false; });
 areaInput.addEventListener('input', () => areaInput.setCustomValidity(''));
 byId('load-plan-example').addEventListener('click', () => {
   areaInput.setCustomValidity('');
-  areaInput.value = t('District A', 'A 区');
-  byId('incident-note').value = t(...exampleNotes[hazardInput.value]);
-  byId('plan-form').requestSubmit();
+  plan = { hazard: hazardInput.value, step: 0, checked: new Set(), example: true };
+  planFormUsesExample = true;
+  renderPlan();
 });
 byId('plan-form').addEventListener('submit', event => {
   event.preventDefault();
   const area = areaInput.value.trim();
   if (!area) {
-    areaInput.setCustomValidity(t('Enter an example area.', '请输入示例区域。'));
+    areaInput.setCustomValidity(t('Enter an example area.','请输入示例区域。'));
     areaInput.reportValidity();
     return;
   }
-  plan = { area, hazard: hazardInput.value, note: byId('incident-note').value.trim() };
+  const usesExample = planFormUsesExample && hazardInput.value === plan.hazard;
+  plan = { area, hazard: hazardInput.value, note: planNoteInput.value.trim(), step: 0, checked: new Set(), example: usesExample };
+  planFormUsesExample = usesExample;
   renderPlan();
+});
+planStageButtons.forEach((button, index) => button.addEventListener('click', () => {
+  plan.step = index;
+  renderPlan();
+}));
+byId('next-plan-step').addEventListener('click', () => {
+  if (plan.step + 1 >= planStageButtons.length) return;
+  plan.step += 1;
+  renderPlan();
+  if (byId('next-plan-step').disabled) planStageButtons[plan.step].focus({ preventScroll: true });
+});
+byId('export-plan').addEventListener('click', () => {
+  const steps = planExercises[plan.hazard].steps;
+  const lines = [
+    t('Practice exercise record','模拟演练记录'),
+    planHazardLabel() + ' · ' + planArea(),
+  ];
+  if (planNote()) lines.push('', t('Initial note','初始记录'), planNote());
+  lines.push('', t('Timeline','时间线'));
+  for (const [index, step] of steps.slice(0, plan.step + 1).entries()) {
+    const button = planStageButtons[index];
+    lines.push(button.querySelector('time').textContent + ' · ' + button.querySelector('span').textContent);
+    lines.push(t(...step.report));
+  }
+  lines.push('', t('Verification checklist','核实清单'));
+  steps.slice(0, plan.step + 1).forEach((step, index) => {
+    lines.push((plan.checked.has(index) ? '[x] ' : '[ ] ') + t(...step.check));
+  });
+  lines.push('', t('Task draft for this step','本步任务草稿'), t(...steps[plan.step].task));
+  const file = new Blob(['\uFEFF', lines.join('\r\n'), '\r\n'], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(file);
+  const link = element('a');
+  link.href = url;
+  link.download = 'practice-record.txt';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
 });
 
 const comparison = byId('compare-board');
