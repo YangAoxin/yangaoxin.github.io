@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f7f7f1">
   <meta name="description" content="Explore Aoxin Yang’s urban and public safety projects, software applications, and interactive browser demos.">
   <title>Projects · Aoxin Yang</title>
-  <link rel="stylesheet" href="projects.css?v=practice-workspace">
+  <link rel="stylesheet" href="projects.css?v=place-overview">
   <style>
     html { scroll-behavior: auto; }
     .portfolio-intro { padding: clamp(22px, 4vw, 44px) 0 25px; }
@@ -63,7 +63,7 @@
   </style>
   <script src="catalog-data.js" defer></script>
   <script src="city-atlas.js" defer></script>
-  <script src="projects.js?v=practice-workspace" defer></script>
+  <script src="projects.js?v=place-overview" defer></script>
   <link rel="stylesheet" href="demo-showcase.css">
   <script src="demo-showcase.js" defer></script>
 </head>
@@ -232,13 +232,57 @@
         <div class="project-head">
           <div>
             <h3 class="portfolio-project-title" id="systems-title" data-zh="整体安全系统概览">System overview</h3>
-            <p data-zh="选择示例情景，查看城市设施、公共服务和信息更新的不同状态。界面使用预设示例，用于展示系统概览与状态切换。">Choose a sample scenario to view different statuses for facilities, services and information updates. This interface uses preset examples.</p>
+            <p data-zh="查看一座虚构社区中心的六个场所。切换示例情景、筛选状态，或点开场所查看更新记录。">Explore six places in a fictional community centre. Switch scenarios, filter by status or open a place to see its latest sample update.</p>
           </div>
         </div>
         <div class="system-panel">
-          <label class="field" for="system-scenario"><span data-zh="示例情景">Sample scenario</span><select id="system-scenario"><option value="normal" data-zh="日常运行">Everyday operations</option><option value="disturbance" data-zh="受到扰动">During disruption</option><option value="recovery" data-zh="逐步恢复">Gradual recovery</option></select></label>
-          <div id="system-status" class="system-status" aria-live="polite"></div>
-          <p class="system-note" data-zh="状态为演示示例，选择不同情景即可查看切换效果。">Statuses are illustrative. Select another scenario to see them change.</p>
+          <div class="system-toolbar">
+            <label class="field" for="system-scenario">
+              <span data-zh="示例情景">Sample scenario</span>
+              <select id="system-scenario">
+                <option value="normal" data-zh="日常运行">Everyday operations</option>
+                <option value="disturbance" selected data-zh="受到扰动">During disruption</option>
+                <option value="recovery" data-zh="逐步恢复">Gradual recovery</option>
+              </select>
+            </label>
+            <label class="system-compare">
+              <input type="checkbox" id="system-changes">
+              <span data-zh="只看与日常状态不同的场所">Only show changes from everyday operations</span>
+            </label>
+          </div>
+          <div class="system-filters" role="group" aria-label="Filter by venue status" data-aria-zh="按场所状态筛选">
+            <button type="button" data-system-filter="all"><span data-zh="全部场所">All places</span><strong></strong></button>
+            <button type="button" data-system-filter="available"><span data-zh="可用">Available</span><strong></strong></button>
+            <button type="button" data-system-filter="verify"><span data-zh="待核对">Needs review</span><strong></strong></button>
+            <button type="button" data-system-filter="paused"><span data-zh="暂停">Paused</span><strong></strong></button>
+          </div>
+          <div class="system-board">
+            <section class="system-list" aria-labelledby="system-list-title">
+              <div class="system-list-heading">
+                <h4 id="system-list-title" data-zh="场所状态">Place status</h4>
+                <p id="system-result-count" role="status"></p>
+              </div>
+              <div id="system-status" class="system-status"></div>
+              <div id="system-empty" class="system-empty" hidden>
+                <p data-zh="当前筛选下没有场所。">No places match the current filters.</p>
+                <button type="button" id="system-clear" class="quiet" data-zh="清除筛选">Clear filters</button>
+              </div>
+            </section>
+            <aside class="system-detail" aria-labelledby="system-detail-title" aria-live="polite">
+              <h4 id="system-detail-title" data-zh="场所详情">Place details</h4>
+              <p id="system-detail-empty" data-zh="选择一个场所查看记录。">Select a place to see its record.</p>
+              <div id="system-detail-content" hidden>
+                <h5 id="system-place-name"></h5>
+                <p id="system-place-note"></p>
+                <dl>
+                  <div><dt data-zh="日常状态">Everyday status</dt><dd id="system-before"></dd></div>
+                  <div><dt data-zh="当前状态">Current status</dt><dd id="system-current"></dd></div>
+                  <div><dt data-zh="示例更新时间">Sample update time</dt><dd id="system-time"></dd></div>
+                  <div><dt data-zh="示例来源">Sample source</dt><dd id="system-source"></dd></div>
+                </dl>
+              </div>
+            </aside>
+          </div>
         </div>
       </section>
 

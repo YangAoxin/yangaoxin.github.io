@@ -731,21 +731,143 @@ comparison.addEventListener('pointermove', event => {
 });
 
 const systemScenario = byId('system-scenario');
-const systemNames = [['Facilities', '基础设施'], ['Public services', '公共服务'], ['Information updates', '信息更新']];
-const systemExamples = {
-  normal: [['Operating', '正常运行'], ['Available', '正常提供'], ['Routine updates', '常态更新']],
-  disturbance: [['Under review', '状态核查中'], ['Partially available', '部分可用'], ['Updates pending', '等待更新']],
-  recovery: [['Restoring', '逐步恢复'], ['Resuming', '陆续恢复'], ['Updating', '持续更新']],
+const systemChanges = byId('system-changes');
+const systemStatusLabels = {
+  available: ['Available', '可用'],
+  verify: ['Needs review', '待核对'],
+  paused: ['Paused', '暂停'],
 };
-function renderSystem() {
-  const status = byId('system-status');
-  status.replaceChildren(...systemNames.map((name, index) => {
-    const card = element('article', '', 'system-card');
-    card.append(element('h3', t(...name)), element('p', t(...systemExamples[systemScenario.value][index])));
-    return card;
-  }));
+const systemPlaces = [
+  {
+    key: 'lobby',
+    name: ['Entrance lobby', '入口大厅'],
+    source: ['Welcome desk sample', '迎宾台示例记录'],
+    records: {
+      normal: { status: 'available', time: '09:00', note: ['The lobby is open and the example welcome sign is in place.', '大厅开放，示例牌已摆到迎宾台。'] },
+      disturbance: { status: 'available', time: '09:20', note: ['The welcome desk keeps the usual lobby opening hours.', '迎宾台登记大厅按原时段开放。'] },
+      recovery: { status: 'available', time: '10:10', note: ['The lobby remains open in the latest example record.', '最新示例记录显示大厅继续开放。'] },
+    },
+  },
+  {
+    key: 'courtyard',
+    name: ['Courtyard', '庭院'],
+    source: ['Venue desk sample', '场地服务台示例记录'],
+    records: {
+      normal: { status: 'available', time: '09:02', note: ['The courtyard is listed as open in the sample schedule.', '示例日程将庭院列为开放。'] },
+      disturbance: { status: 'paused', time: '09:27', note: ['The sample notices show the courtyard activity as paused.', '最新示例公告把庭院活动标为暂停。'] },
+      recovery: { status: 'verify', time: '10:15', note: ['The draft lists a new activity time. The venue desk has yet to confirm it.', '草稿给出了新的活动时间，场地服务台尚待确认。'] },
+    },
+  },
+  {
+    key: 'activity',
+    name: ['Activity room', '活动室'],
+    source: ['Activities desk sample', '活动台示例记录'],
+    records: {
+      normal: { status: 'available', time: '09:05', note: ['The room is available during the hours listed on the sample notice.', '活动室按示例公告上的时段开放。'] },
+      disturbance: { status: 'verify', time: '09:32', note: ['Two versions of the room notice give different opening times.', '活动室的两版公告列出了不同开放时间。'] },
+      recovery: { status: 'available', time: '10:18', note: ['The activities desk has posted one current version of the room notice.', '活动台已张贴活动室公告的当前版本。'] },
+    },
+  },
+  {
+    key: 'reading',
+    name: ['Reading room', '阅览室'],
+    source: ['Reading room sample', '阅览室示例记录'],
+    records: {
+      normal: { status: 'available', time: '09:07', note: ['The reading room is ready in the example opening record.', '示例开放记录显示阅览室已准备就绪。'] },
+      disturbance: { status: 'available', time: '09:35', note: ['The reading room record keeps the same opening hours.', '阅览室的开放记录沿用原时段。'] },
+      recovery: { status: 'available', time: '10:20', note: ['The sample record still lists the room as open.', '示例记录仍将阅览室列为开放。'] },
+    },
+  },
+  {
+    key: 'desk',
+    name: ['Service desk', '服务台'],
+    source: ['Service desk sample', '服务台示例记录'],
+    records: {
+      normal: { status: 'available', time: '09:10', note: ['The service desk is listed as available for visitor enquiries.', '示例登记显示服务台可接受访客咨询。'] },
+      disturbance: { status: 'available', time: '09:38', note: ['The service desk remains available in the current example.', '当前示例中，服务台继续开放。'] },
+      recovery: { status: 'available', time: '10:22', note: ['The service desk has added a note marking the latest notice version.', '服务台在记录里补记了最新公告版本。'] },
+    },
+  },
+  {
+    key: 'board',
+    name: ['Notice board', '公告栏'],
+    source: ['Notice board sample', '公告栏示例记录'],
+    records: {
+      normal: { status: 'available', time: '09:12', note: ['The notice board displays the current example programme.', '公告栏展示当前示例活动安排。'] },
+      disturbance: { status: 'verify', time: '09:41', note: ['Both old and revised notices are listed in the sample photo notes.', '示例照片记录同时提到了旧版和修订版公告。'] },
+      recovery: { status: 'available', time: '10:25', note: ['The latest example record identifies the notice that is now displayed.', '最新示例记录已注明公告栏当前展示的版本。'] },
+    },
+  },
+];
+const systemFilterButtons = [...document.querySelectorAll('#systems [data-system-filter]')];
+let systemFilter = 'all';
+let systemSelected = 'courtyard';
+
+function renderSystemDetail(place, record) {
+  byId('system-detail-empty').hidden = Boolean(place);
+  byId('system-detail-content').hidden = !place;
+  if (!place) return;
+  byId('system-place-name').textContent = t(...place.name);
+  byId('system-place-note').textContent = t(...record.note);
+  byId('system-before').textContent = t(...systemStatusLabels[place.records.normal.status]);
+  byId('system-current').textContent = t(...systemStatusLabels[record.status]);
+  byId('system-time').textContent = record.time;
+  byId('system-source').textContent = t(...place.source);
 }
+
+function renderSystem() {
+  const mode = systemScenario.value;
+  const records = systemPlaces.map(place => ({ place, record: place.records[mode] }));
+  systemFilterButtons.forEach(button => {
+    const filter = button.dataset.systemFilter;
+    const count = filter === 'all' ? records.length : records.filter(({ record }) => record.status === filter).length;
+    button.querySelector('strong').textContent = String(count);
+    button.setAttribute('aria-pressed', String(systemFilter === filter));
+  });
+
+  const visible = records.filter(({ place, record }) => {
+    const matchesStatus = systemFilter === 'all' || record.status === systemFilter;
+    const changed = record.status !== place.records.normal.status;
+    return matchesStatus && (!systemChanges.checked || changed);
+  });
+  const active = visible.find(({ place }) => place.key === systemSelected) || visible[0];
+  byId('system-result-count').textContent = t(
+    `${visible.length} of ${records.length} places`,
+    `显示 ${visible.length} / ${records.length} 个场所`,
+  );
+  byId('system-empty').hidden = Boolean(visible.length);
+
+  const list = byId('system-status');
+  list.replaceChildren(...visible.map(({ place, record }) => {
+    const button = element('button', '', 'system-place');
+    button.type = 'button';
+    button.dataset.systemPlace = place.key;
+    button.setAttribute('aria-pressed', String(active?.place.key === place.key));
+    const badge = element('span', t(...systemStatusLabels[record.status]), 'system-badge');
+    badge.dataset.status = record.status;
+    button.append(element('span', t(...place.name), 'system-place-name'), badge);
+    button.addEventListener('click', () => {
+      systemSelected = place.key;
+      for (const item of list.children) item.setAttribute('aria-pressed', String(item === button));
+      renderSystemDetail(place, record);
+    });
+    return button;
+  }));
+  renderSystemDetail(active?.place, active?.record);
+}
+
 systemScenario.addEventListener('change', renderSystem);
+systemChanges.addEventListener('change', renderSystem);
+systemFilterButtons.forEach(button => button.addEventListener('click', () => {
+  systemFilter = button.dataset.systemFilter;
+  renderSystem();
+}));
+byId('system-clear').addEventListener('click', () => {
+  systemChanges.checked = false;
+  systemFilter = 'all';
+  renderSystem();
+  systemFilterButtons[0].focus({ preventScroll: true });
+});
 
 function applyLanguage() {
   document.documentElement.lang = t('en','zh-CN');
